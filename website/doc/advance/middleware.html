@@ -1,0 +1,218 @@
+<h1 id="%e4%b8%ad%e9%97%b4%e4%bb%b6">中间件</h1>
+<p><code>kayrx::web</code>的中间件系统允许我们向请求/响应处理添加其他行为。中间件可以挂接到传入的请求流程中，使我们能够修改请求以及暂停请求处理以尽早返回响应.</p>
+<p>中间件也可以加入响应处理. 通常，中间件涉及以下操作：</p>
+<ul>
+<li>预处理请求</li>
+<li>后处理响应</li>
+<li>修改应用程序状态</li>
+<li>访问外部服务(redis, 日志记录, 会话)</li>
+</ul>
+<p>中间件被注入每个<code>App</code>,<code>scope</code>或<code>Resource</code>, 并按照相反的顺序执行.  通常，中间件是一种实现 <code>Service</code> trait和<code>Transform</code> trait的类型。特征中的每个方法都有一个默认实现。每个方法都可以立即返回结果或<code>future</code>的对象。</p>
+<p>以下演示了如何创建一个简单的中间件：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> std::pin::Pin;
+<span class="hljs-keyword">use</span> std::task::{Context, Poll};
+
+<span class="hljs-keyword">use</span> kayrx::service::{Service, Transform};
+<span class="hljs-keyword">use</span> kayrx::web::{dev::ServiceRequest, dev::ServiceResponse, Error};
+<span class="hljs-keyword">use</span> futures::future::{ok, Ready};
+<span class="hljs-keyword">use</span> futures::Future;
+
+<span class="hljs-comment">// There are two steps in middleware processing.</span>
+<span class="hljs-comment">// 1. Middleware initialization, middleware factory gets called with</span>
+<span class="hljs-comment">//    next service in chain as parameter.</span>
+<span class="hljs-comment">// 2. Middleware's call method gets called with normal request.</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SayHi</span></span>;
+
+<span class="hljs-comment">// Middleware factory is `Transform` trait from kayrx::service crate</span>
+<span class="hljs-comment">// `S` - type of the next service</span>
+<span class="hljs-comment">// `B` - type of response's body</span>
+<span class="hljs-keyword">impl</span>&lt;S, B&gt; Transform&lt;S&gt; <span class="hljs-keyword">for</span> SayHi
+<span class="hljs-keyword">where</span>
+    S: Service&lt;Request = ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: <span class="hljs-symbol">'static</span>,
+    B: <span class="hljs-symbol">'static</span>,
+{
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Request</span></span> = ServiceRequest;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Response</span></span> = ServiceResponse&lt;B&gt;;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Error</span></span> = Error;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">InitError</span></span> = ();
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Transform</span></span> = SayHiMiddleware&lt;S&gt;;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Future</span></span> = Ready&lt;<span class="hljs-built_in">Result</span>&lt;Self::Transform, Self::InitError&gt;&gt;;
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new_transform</span></span>(&amp;<span class="hljs-keyword">self</span>, service: S) -&gt; Self::Future {
+        ok(SayHiMiddleware { service })
+    }
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SayHiMiddleware</span></span>&lt;S&gt; {
+    service: S,
+}
+
+<span class="hljs-keyword">impl</span>&lt;S, B&gt; Service <span class="hljs-keyword">for</span> SayHiMiddleware&lt;S&gt;
+<span class="hljs-keyword">where</span>
+    S: Service&lt;Request = ServiceRequest, Response = ServiceResponse&lt;B&gt;, Error = Error&gt;,
+    S::Future: <span class="hljs-symbol">'static</span>,
+    B: <span class="hljs-symbol">'static</span>,
+{
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Request</span></span> = ServiceRequest;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Response</span></span> = ServiceResponse&lt;B&gt;;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Error</span></span> = Error;
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Future</span></span> = Pin&lt;<span class="hljs-built_in">Box</span>&lt;dyn Future&lt;Output = <span class="hljs-built_in">Result</span>&lt;Self::Response, Self::Error&gt;&gt;&gt;&gt;;
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">poll_ready</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, cx: &amp;<span class="hljs-keyword">mut</span> Context&lt;<span class="hljs-symbol">'_</span>&gt;) -&gt; Poll&lt;<span class="hljs-built_in">Result</span>&lt;(), Self::Error&gt;&gt; {
+        <span class="hljs-keyword">self</span>.service.poll_ready(cx)
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">call</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, req: ServiceRequest) -&gt; Self::Future {
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Hi from start. You requested: {}"</span>, req.path());
+
+        <span class="hljs-keyword">let</span> fut = <span class="hljs-keyword">self</span>.service.call(req);
+
+        <span class="hljs-built_in">Box</span>::pin(async <span class="hljs-keyword">move</span> {
+            <span class="hljs-keyword">let</span> res = fut.await?;
+
+            <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Hi from response"</span>);
+            <span class="hljs-literal">Ok</span>(res)
+        })
+    }
+}
+</div></code></pre>
+<p>另外，对于简单的用例，可以使用<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/struct.App.html#method.wrap_fn">wrap_fn</a>创建小型的临时中间件：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::service::Service;
+<span class="hljs-keyword">use</span> kayrx::web::{web, App};
+<span class="hljs-keyword">use</span> futures::future::FutureExt;
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+    <span class="hljs-keyword">let</span> app = App::new()
+        .wrap_fn(|req, srv| {
+            <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Hi from start. You requested: {}"</span>, req.path());
+            srv.call(req).map(|res| {
+                <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Hi from response"</span>);
+                res
+            })
+        })
+        .route(
+            <span class="hljs-string">"/index.html"</span>,
+            web::get().to(|| async {
+                <span class="hljs-string">"Hello, middleware!"</span>
+            }),
+        );
+}
+</div></code></pre>
+<blockquote>
+<p><code>kayrx::web</code>提供了几种有用的中间件，例如 <em>logging</em>, <em>cors</em>, <em>compress</em> .</p>
+</blockquote>
+<h2 id="%e6%97%a5%e5%bf%97">日志</h2>
+<p>日志记录是作为中间件实现的。通常将日志记录中间件注册为该应用程序的第一个中间件。记录中间件必须为每个应用注册.</p>
+<p>该<code>Logger</code>中间件使用标准<code>log</code> crate 记录信息。您应该为<code>kayrx</code>软件包启用记录器以查看访问日志(<code>env_logger</code>或类似的)</p>
+<p>Create <code>Logger</code> middleware with the specified <code>format</code>.  Default <code>Logger</code> can be created
+with <code>default</code> method, it uses the default format:</p>
+<p><code>Logger</code>使用指定的格式创建中间件, 可以使用<code>defaul</code>方法 创建<code>Logger</code>默认值，它使用默认格式：</p>
+<pre><code class="language-ignore"><code><div>  %a %t &quot;%r&quot; %s %b &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; %T
+</div></code></code></pre>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::middleware::Logger;
+<span class="hljs-keyword">use</span> env_logger;
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+
+    std::env::set_var(<span class="hljs-string">"RUST_LOG"</span>, <span class="hljs-string">"kayrx::web=info"</span>);
+    env_logger::init();
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(Logger::<span class="hljs-keyword">default</span>())
+            .wrap(Logger::new(<span class="hljs-string">"%a %{User-Agent}i"</span>))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>以下是默认日志记录格式的示例：</p>
+<pre><code class="language-rust"><div>INFO:kayrx::web::middleware::logger: <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">59934</span> \[<span class="hljs-number">02</span>/Dec/<span class="hljs-number">2017</span>:<span class="hljs-number">00</span>:<span class="hljs-number">21</span>:<span class="hljs-number">43</span> -<span class="hljs-number">0800</span>] <span class="hljs-string">"GET / HTTP/1.1"</span> <span class="hljs-number">302</span> <span class="hljs-number">0</span> <span class="hljs-string">"-"</span> <span class="hljs-string">"curl/7.54.0"</span> <span class="hljs-number">0.000397</span>
+INFO:kayrx::web::middleware::logger: <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">59947</span> \[<span class="hljs-number">02</span>/Dec/<span class="hljs-number">2017</span>:<span class="hljs-number">00</span>:<span class="hljs-number">22</span>:<span class="hljs-number">40</span> -<span class="hljs-number">0800</span>] <span class="hljs-string">"GET /index.html HTTP/1.1"</span> <span class="hljs-number">200</span> <span class="hljs-number">0</span> <span class="hljs-string">"-"</span> <span class="hljs-string">"Mozilla/5.0 
+(Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0"</span> <span class="hljs-number">0.000646</span>
+</div></code></pre>
+<h2 id="%e6%a0%bc%e5%bc%8f">格式</h2>
+<ul>
+<li><code>%%</code>   百分号</li>
+<li><code>%a</code>  远程IP地址（如果使用反向代理，则为代理的IP地址）</li>
+<li><code>%t</code>  请求开始处理的时间</li>
+<li><code>%P</code>  为请求提供服务的子进程ID</li>
+<li><code>%r</code>  第一行要求</li>
+<li><code>%s</code>  响应状态码</li>
+<li><code>%b</code>  响应大小（以字节为单位），包括HTTP标头</li>
+<li><code>%T</code>  服务请求所用的时间，以秒为单位，浮动分数为.06f格式</li>
+<li><code>%D</code>  服务请求所花费的时间（以毫秒为单位）</li>
+<li><code>%{FOO}i</code>  请求头\['FOO']</li>
+<li><code>%{FOO}o</code>  响应头\['FOO']</li>
+<li><code>%{FOO}e</code>  os.environ\['FOO']</li>
+</ul>
+<h2 id="%e9%bb%98%e8%ae%a4%e6%a0%87%e5%a4%b4">默认标头</h2>
+<p>要设置默认响应头，可以使用<code>DefaultHeaders</code>中间件. 如果响应头已经包含指定的报头,所述 <code>DefaultHeaders</code>中间件不设置标题</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{http, middleware, HttpResponse};
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::DefaultHeaders::new().header(<span class="hljs-string">"X-Version"</span>, <span class="hljs-string">"0.2"</span>))
+            .service(
+                web::resource(<span class="hljs-string">"/test"</span>)
+                    .route(web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+                    .route(
+                        web::method(http::Method::HEAD)
+                            .to(|| HttpResponse::MethodNotAllowed()),
+                    ),
+            )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<h2 id="%e9%94%99%e8%af%af%e5%a4%84%e7%90%86">错误处理</h2>
+<p><code>ErrorHandlers</code> 中间件使我们能够提供自定义的响应处理.</p>
+<p>您可以使用该<code>ErrorHandlers::handler()</code>方法为特定状态代码注册自定义错误处理, 您可以修改现有响应或创建一个全新的响应, 错误处理程序可以立即返回响应，也可以返回解析为<code>Future</code>的响应.</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
+<span class="hljs-keyword">use</span> kayrx::web::{dev, http, HttpResponse, <span class="hljs-built_in">Result</span>};
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">render_500</span></span>&lt;B&gt;(<span class="hljs-keyword">mut</span> res: dev::ServiceResponse&lt;B&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;ErrorHandlerResponse&lt;B&gt;&gt; {
+    res.response_mut().headers_mut().insert(
+        http::header::CONTENT_TYPE,
+        http::HeaderValue::from_static(<span class="hljs-string">"Error"</span>),
+    );
+    <span class="hljs-literal">Ok</span>(ErrorHandlerResponse::Response(res))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(
+                ErrorHandlers::new()
+                    .handler(http::StatusCode::INTERNAL_SERVER_ERROR, render_500),
+            )
+            .service(
+                web::resource(<span class="hljs-string">"/test"</span>)
+                    .route(web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+                    .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
+            )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+
+
+[set title Kayrx / middleware]
+[set doc-section advance-middleware]
+[stash doc-content][require raw ../_side.html]

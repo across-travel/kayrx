@@ -1,0 +1,24 @@
+<h1 id="%e5%ae%89%e8%a3%85rust">安装Rust</h1>
+<p>由于<code>kayrx</code>是Rust框架，因此您将需要Rust来使用. 我们建议您使用它<code>rustup</code>来管理您的Rust安装。该 <a href="https://doc.rust-lang.org/book/ch01-01-installation.html">官员Rust入门</a>精彩的部分。</p>
+<p>当前，我们至少需要Rust  1.39，因此请确保您 <code>rustup update</code>拥有最新和最好的Rust版本。特别是，本指南将假定您实际运行Rust 1.39 或更高版本。</p>
+<h2 id="%e5%ae%89%e8%a3%85kayrx">安装<code>kayrx</code></h2>
+<p>感谢<code>Rust</code> 的<code>cargo</code>软件包管理器，您无需显式安装 <code>kayrx</code>。只需依靠它，您就可以开始了。对于不太可能要使用<code>kayrx</code>开发版本的情况，可以直接依赖git存储库.</p>
+<p>发布版本：</p>
+<pre><code class="language-toml"><div><span class="hljs-section">\[dependencies]</span>
+<span class="hljs-attr">kayrx</span> = <span class="hljs-string">"0.7"</span>
+</div></code></pre>
+<p>开发版本：</p>
+<pre><code class="language-toml"><div><span class="hljs-section">\[dependencies]</span>
+<span class="hljs-attr">kayrx</span> = { git = <span class="hljs-string">"https://github.com/kayrx/kayrx"</span> }
+</div></code></pre>
+<h2 id="%e6%b7%b1%e5%85%a5">深入</h2>
+<p>您可以在此处采取两种方法。您可以按照指南进行操作，如果您不耐烦，则可以查看我们广泛的<a href="https://github.com/kayrx/awesome/tree/master/kayrx-examples" target="_black">示例存储库</a>并运行其中的示例。例如，这是您运行所包含<code>basic</code> 示例的方式：</p>
+<pre><code class="language-shell"><div>git clone https://github.com/kayrx/awesome
+cd kayrx-examples/basic
+cargo run
+</div></code></pre>
+
+
+[set title Kayrx / doc / install]
+[set doc-section intro-install]
+[stash doc-content][require raw ../_side.html]

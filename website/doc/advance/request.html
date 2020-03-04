@@ -1,0 +1,123 @@
+<h1 id="%e8%af%b7%e6%b1%82">请求</h1>
+<h2 id="%e5%86%85%e5%ae%b9%e7%bc%96%e7%a0%81">内容编码</h2>
+<p><code>kayrx::web</code> 自动解压/缩内容负载。支持以下编/解码器：</p>
+<ul>
+<li>Brotli</li>
+<li>Chunked</li>
+<li>Compress</li>
+<li>Gzip</li>
+<li>Deflate</li>
+<li>Identity</li>
+<li>Trailers</li>
+<li>EncodingExt</li>
+</ul>
+<p>如果请求标头包含<code>Content-Encoding</code>标头，则根据标头值对请求有效负载进行解压缩。不支持多个编/解码器，即：<code>Content-Encoding: br, gzip</code>.</p>
+<h2 id="json%e8%af%b7%e6%b1%82">JSON请求</h2>
+<p><code>json</code>正文反序列化有几种选择 :</p>
+<p>第一种选择是使用<code>Json</code>提取器。首先，定义一个处理函数接受<code>Json&lt;T&gt;</code>作为参数，然后，使用该<code>.to()</code>方法注册该处理函数。也可以通过使用<code>serde_json::Valuetype</code> 作为类型<code>T</code>, 来接受任意有效的<code>json</code>对象.</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer, <span class="hljs-built_in">Result</span>};
+<span class="hljs-keyword">use</span> serde::Deserialize;
+
+<span class="hljs-meta">#\[derive(Deserialize)]</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+    username: <span class="hljs-built_in">String</span>,
+}
+
+<span class="hljs-comment">/// extract `Info` using serde</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Json&lt;Info&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+    <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, info.username))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| App::new().route(<span class="hljs-string">"/"</span>, web::post().to(index)))
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+}
+</div></code></pre>
+<p>您也可以将有效负载(payload)手动加载到内存中，然后反序列化。</p>
+<p>在下面的示例中，我们将反序列化<code>MyObj</code>结构。我们需要先加载请求主体，然后将<code>json</code>反序列化为一个对象。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{error, web, App, Error, HttpResponse};
+<span class="hljs-keyword">use</span> bytes::BytesMut;
+<span class="hljs-keyword">use</span> futures::StreamExt;
+<span class="hljs-keyword">use</span> serde::{Deserialize, Serialize};
+<span class="hljs-keyword">use</span> serde_json;
+
+<span class="hljs-meta">#\[derive(Serialize, Deserialize)]</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">MyObj</span></span> {
+    name: <span class="hljs-built_in">String</span>,
+    number: <span class="hljs-built_in">i32</span>,
+}
+
+<span class="hljs-keyword">const</span> MAX_SIZE: <span class="hljs-built_in">usize</span> = <span class="hljs-number">262_144</span>; <span class="hljs-comment">// max payload size is 256k</span>
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index_manual</span></span>(<span class="hljs-keyword">mut</span> payload: web::Payload) -&gt; <span class="hljs-built_in">Result</span>&lt;HttpResponse, Error&gt; {
+    <span class="hljs-comment">// payload is a stream of Bytes objects</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> body = BytesMut::new();
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">let</span> <span class="hljs-literal">Some</span>(chunk) = payload.next().await {
+        <span class="hljs-keyword">let</span> chunk = chunk?;
+        <span class="hljs-comment">// limit max size of in-memory payload</span>
+        <span class="hljs-keyword">if</span> (body.len() + chunk.len()) &gt; MAX_SIZE {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">Err</span>(error::ErrorBadRequest(<span class="hljs-string">"overflow"</span>));
+        }
+        body.extend_from_slice(&amp;chunk);
+    }
+
+    <span class="hljs-comment">// body is loaded, now we can deserialize serde-json</span>
+    <span class="hljs-keyword">let</span> obj = serde_json::from_slice::&lt;MyObj&gt;(&amp;body)?;
+    <span class="hljs-literal">Ok</span>(HttpResponse::<span class="hljs-literal">Ok</span>().json(obj)) <span class="hljs-comment">// &lt;- send response</span>
+}
+</div></code></pre>
+<blockquote>
+<p><a href="https://github.com/kayrx/awesome/tree/master/examples/json">示例</a>中提供了这两个选项的完整示例.</p>
+</blockquote>
+<h2 id="%e5%88%86%e5%9d%97%e4%bc%a0%e8%be%93%e7%bc%96%e7%a0%81">分块传输编码</h2>
+<p><code>kayrx::web</code>自动解码分块编码。该<code>web::Payload</code> 提取已经包含了解码的字节流。如果使用支持的压缩编解码器(br, gzip, deflate)之一压缩请求负载，则将字节流解压缩</p>
+<h2 id="multipart-body">Multipart body</h2>
+<p><code>kayrx::web</code>使用<a href="https://github.com/kayrx/keclc/tree/master/keclc-multipart">keclc_multipart</a>提供<code>Multipart body</code>支持.</p>
+<blockquote>
+<p>目录中提供了完整的<a href="https://github.com/kayrx/awesome/tree/master/examples/multipart">示例</a></p>
+</blockquote>
+<h2 id="urlencoded-body">Urlencoded body</h2>
+<p><code>kayrx::web</code>为<code>application / x-www-form-urlencoded</code>编码内容提供支持, 通过<code>web::Form</code>提取器解析为反序列化实例. 实例的类型必须实现<code>serde</code>的<code>Deserialize</code>特征</p>
+<p>该url编码将若干情况下可以解析成错误：</p>
+<ul>
+<li>内容类型不是<code> application/x-www-form-urlencoded</code></li>
+<li>传输编码为<code>chunked</code></li>
+<li>内容长度大于256k</li>
+<li>负载(payload)因错误而终止。</li>
+</ul>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, HttpResponse};
+<span class="hljs-keyword">use</span> serde::Deserialize;
+
+<span class="hljs-meta">#\[derive(Deserialize)]</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">FormData</span></span> {
+    username: <span class="hljs-built_in">String</span>,
+}
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(form: web::Form&lt;FormData&gt;) -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"username: {}"</span>, form.username))
+}
+</div></code></pre>
+<h2 id="%e6%b5%81%e8%af%b7%e6%b1%82">流请求</h2>
+<p><code>HttpRequest</code>是Bytes对象流。它可用于读取请求主体负载.</p>
+<p>在以下示例中，我们逐块读取并打印请求负载：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, Error, HttpResponse};
+<span class="hljs-keyword">use</span> futures::StreamExt;
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(<span class="hljs-keyword">mut</span> body: web::Payload) -&gt; <span class="hljs-built_in">Result</span>&lt;HttpResponse, Error&gt; {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> bytes = web::BytesMut::new();
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">let</span> <span class="hljs-literal">Some</span>(item) = body.next().await {
+        bytes.extend_from_slice(&amp;item?);
+    }
+
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Chunk: {:?}"</span>, bytes);
+    <span class="hljs-literal">Ok</span>(HttpResponse::<span class="hljs-literal">Ok</span>().finish())
+}
+</div></code></pre>
+
+
+[set title Kayrx / request]
+[set doc-section advance-request]
+[stash doc-content][require raw ../_side.html]

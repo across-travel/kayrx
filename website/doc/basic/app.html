@@ -1,0 +1,195 @@
+<h1 id="%e7%bc%96%e5%86%99%e5%ba%94%e7%94%a8">编写应用</h1>
+    <p><code>kayrx</code> 提供了用Rust构建Web服务器和应用程序的各种基础类型。它提供了 路由，中间件，<code>http</code>请求的预处理，响应的后处理，<code>websocket</code>协议处理，<code>multipart</code>流，等等.</p>
+    <p>所有<code>kayrx</code>服务器都是围绕该<code>App</code>实例构建的。它用于为资源和中间件,注册路由。它还存储同一应用程序中所有处理程序之间共享的应用程序状态.</p>
+    <p>应用程序充当所有路由的命名空间，即特定应用程序的所有路由具有相同的url路径前缀。应用程序前缀总是包含一个前导的“/”斜杠。如果提供的前缀不包含前导斜杠，则会自动插入。前缀应该由路径值组成.</p>
+    <p>对于具有前缀<code>/app</code>的应用程序，与任何请求路径中有<code>/app</code>，<code>/app/</code>或<code>/app/test</code>匹配;  然而,路径<code>/application</code>不匹配。</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, Responder, HttpServer};
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-string">"Hello world!"</span>
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| {
+            App::new().service(
+                web::scope(<span class="hljs-string">"/app"</span>).route(<span class="hljs-string">"/index.html"</span>, web::get().to(index)),
+            )
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>在此示例中，将创建具有<code>/app</code>前缀和<code>index.html</code>资源的应用。该资源可通过<code>/app/index.html</code>路径获得。</p>
+    <blockquote>
+    <p>有关更多信息，请查看<a href="../advance/url-dispatch">URL Dispatch</a>部分。</p>
+    </blockquote>
+    <h2 id="%e7%8a%b6%e6%80%81">状态</h2>
+    <p>应用程序状态在同一范围内的所有路由和资源共享。状态可以使用<code>web::Data&lt;T&gt;</code>提取器访问，其中T是状态的类型。状态也可用于中间件.</p>
+    <p>让我们编写一个简单的应用程序并将应用程序名称存储在状态中：</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+    <span class="hljs-keyword">use</span> std::sync::Mutex;
+    
+    <span class="hljs-comment">// This struct represents state</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">AppState</span></span> {
+        app_name: <span class="hljs-built_in">String</span>,
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(data: web::Data&lt;AppState&gt;) -&gt; <span class="hljs-built_in">String</span> {
+        <span class="hljs-keyword">let</span> app_name = &amp;data.app_name; <span class="hljs-comment">// &lt;- get app_name</span>
+    
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Hello {}!"</span>, app_name) <span class="hljs-comment">// &lt;- response with app_name</span>
+    }
+    </div></code></pre>
+    <p>并在初始化应用程序时传递状态，然后启动应用程序：</p>
+    <pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| {
+            App::new()
+                .data(AppState {
+                    app_name: <span class="hljs-built_in">String</span>::from(<span class="hljs-string">"kayrx web"</span>),
+                })
+                .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>可以在应用程序中注册任意数量的状态类型</p>
+    <h2 id="%e5%85%b1%e4%ba%ab%e5%8f%af%e5%8f%98%e7%8a%b6%e6%80%81">共享可变状态</h2>
+    <p><code>HttpServer</code>接受应用工厂而不是应用实例。Http服务器为每个线程构造一个应用实例，因此必须多次构造应用数据。如果要在不同线程之间共享数据，则应使用可共享对象，例如“Send + Sync”。</p>
+    <p>内部<code>web::Data</code>使用<code>Arc</code>。因此，为了避免产生双<code> Arc</code>，我们应该在使用<code>App::app_data()</code>进行注册之前创建数据.</p>
+    <p>在下面的示例中，我们将编写一个具有可变共享状态的应用程序。首先，我们定义状态并创建处理程序：</p>
+    <pre><code class="language-rust"><div><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">AppStateWithCounter</span></span> {
+        counter: Mutex&lt;<span class="hljs-built_in">i32</span>&gt;, <span class="hljs-comment">// &lt;- Mutex is necessary to mutate safely across threads</span>
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">_index</span></span>(data: web::Data&lt;AppStateWithCounter&gt;) -&gt; <span class="hljs-built_in">String</span> {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> counter = data.counter.lock().unwrap(); <span class="hljs-comment">// &lt;- get counter's MutexGuard</span>
+        *counter += <span class="hljs-number">1</span>; <span class="hljs-comment">// &lt;- access counter inside MutexGuard</span>
+    
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Request number: {}"</span>, counter) <span class="hljs-comment">// &lt;- response with count</span>
+    }
+    </div></code></pre>
+    <p>并在应用中注册数据：</p>
+    <pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">_main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">let</span> counter = web::Data::new(AppStateWithCounter {
+            counter: Mutex::new(<span class="hljs-number">0</span>),
+        });
+    
+        HttpServer::new(<span class="hljs-keyword">move</span> || {
+            <span class="hljs-comment">// move counter into the closure</span>
+            App::new()
+                .app_data(counter.clone()) <span class="hljs-comment">// &lt;- register the created data</span>
+                .route(<span class="hljs-string">"/"</span>, web::get().to(_index))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <h2 id="%e4%bd%bf%e7%94%a8%e5%ba%94%e7%94%a8scope%e6%9d%a5%e7%bc%96%e5%86%99%e5%ba%94%e7%94%a8">使用应用<code>Scope</code>来编写应用</h2>
+    <p>该<code>web::scope()</code>方法允许设置特定的应用前缀。此范围(Scope)表示资源前缀，该前缀将附加到资源配置添加的所有资源模式中。这可用于帮助将一组路由安装在与所包含的可调用者不同的位置，同时仍保持相同的资源名称。</p>
+    <p>例如：</p>
+    <pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+        App::new()
+            .service(
+                web::scope(<span class="hljs-string">"/users"</span>)
+                    .route(<span class="hljs-string">"/show"</span>, web::get().to(show_users)));
+    }
+    </div></code></pre>
+    <p>在上面的示例中，<code>show_users</code>路由将具有<code>/ users / show</code>而不是<code>/ show</code>的有效路由模式， 因为应用的<code>scope</code>参数将被添加到该模式之前。然后，仅当URL路径为<code>/users /show</code>时，路由才会匹配，并且<code>HttpRequest.url_for()</code>使用<code>show_users</code>路由名称调用该函数时，它将生成具有相同路径的URL</p>
+    <h2 id="%e5%ba%94%e7%94%a8%e9%98%b2%e6%8a%a4%e5%92%8c%e8%99%9a%e6%8b%9f%e4%b8%bb%e6%9c%ba">应用防护和虚拟主机</h2>
+    <p>您可以将<code>Guard</code>看作一个简单的函数，它接受请求对象引用并返回<code>true</code>或<code>false</code>。形式上，守卫是实现该<code>Guard</code>特征的任何对象 。<code>kayrx</code>提供了几种保护措施，您可以检查 <code>api</code>文档的<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/guard/index.html#functions">函数部分</a>。</p>
+    <p>提供的防护之一是<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/guard/fn.Header.html"><code>Header</code></a>，它可以根据请求的标头信息用作应用的过滤器。</p>
+    <pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| {
+            App::new()
+                .service(
+                    web::scope(<span class="hljs-string">"/"</span>)
+                        .guard(guard::Header(<span class="hljs-string">"Host"</span>, <span class="hljs-string">"www.rust-lang.org"</span>))
+                        .route(<span class="hljs-string">""</span>, web::to(|| HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"www"</span>))),
+                )
+                .service(
+                    web::scope(<span class="hljs-string">"/"</span>)
+                        .guard(guard::Header(<span class="hljs-string">"Host"</span>, <span class="hljs-string">"users.rust-lang.org"</span>))
+                        .route(<span class="hljs-string">""</span>, web::to(|| HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"user"</span>))),
+                )
+                .route(<span class="hljs-string">"/"</span>, web::to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <h2 id="%e9%85%8d%e7%bd%ae">配置</h2>
+    <p>为了简单和可重用性，<code>App</code>和<code>web::Scope</code>提供了该<code>configure</code>方法。此函数对于将配置的部分移动到其他模块甚至库中很有用。例如，某些资源的配置可以移到其他模块</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpResponse, HttpServer};
+    
+    <span class="hljs-comment">// this function could be located in different module</span>
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">scoped_config</span></span>(cfg: &amp;<span class="hljs-keyword">mut</span> web::ServiceConfig) {
+        cfg.service(
+            web::resource(<span class="hljs-string">"/test"</span>)
+                .route(web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"test"</span>)))
+                .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
+        );
+    }
+    
+    <span class="hljs-comment">// this function could be located in different module</span>
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">config</span></span>(cfg: &amp;<span class="hljs-keyword">mut</span> web::ServiceConfig) {
+        cfg.service(
+            web::resource(<span class="hljs-string">"/app"</span>)
+                .route(web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"app"</span>)))
+                .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
+        );
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| {
+            App::new()
+                .configure(config)
+                .service(web::scope(<span class="hljs-string">"/api"</span>).configure(scoped_config))
+                .route(<span class="hljs-string">"/"</span>, web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"/"</span>)))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>上面示例的结果将是：</p>
+    <pre><code class="language-shell"><div>/         -&gt; "/"
+    /app      -&gt; "app"
+    /api/test -&gt; "test"
+    </div></code></pre>
+    <p>每个<code>ServiceConfig</code>可以有它自己的<code>data</code>，<code>routes</code>和<code>services</code></p>
+    <p>也可以在单独的函数中创建应用对象。 <code>App</code>类型使用复杂的泛型，<code>result</code>类型必须使用<code>impl Trait</code>功能。这对于单元测试很有用</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::service::ServiceFactory;
+    <span class="hljs-keyword">use</span> kayrx::web::dev::{MessageBody, ServiceRequest, ServiceResponse};
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, Error, HttpResponse};
+    
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">create_app</span></span>() -&gt; App&lt;
+        <span class="hljs-keyword">impl</span> ServiceFactory&lt;
+            Config = (),
+            Request = ServiceRequest,
+            Response = ServiceResponse&lt;<span class="hljs-keyword">impl</span> MessageBody&gt;,
+            Error = Error,
+        &gt;,
+        <span class="hljs-keyword">impl</span> MessageBody,
+    &gt; {
+        App::new().service(
+            web::scope(<span class="hljs-string">"/app"</span>)
+                .route(<span class="hljs-string">"/index.html"</span>, web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>())),
+        )
+    }
+    </div></code></pre>
+
+
+    [set title Kayrx / doc / app]
+    [set doc-section basic-app]
+    [stash doc-content][require raw ../_side.html]

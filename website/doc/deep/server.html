@@ -1,0 +1,42 @@
+<h1 id="httpserver">HttpServer</h1>
+<h2 id="httpserver%e5%88%9d%e5%a7%8b%e5%8c%96">HttpServer初始化</h2>
+<p>下面是HttpServer初始化的示意图，它发生在以下代码上</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .route(<span class="hljs-string">"/"</span>, web::to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p><img src="../../static/http_server.png" alt=""></p>
+<h2 id="%e8%bf%9e%e6%8e%a5%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f">连接生命周期</h2>
+<p>服务器已经开始听所有<code>sockets</code>，<code>Accept</code>和<code>Worker</code>是负责处理传入的客户端连接的两个主要循环。</p>
+<p>一旦接受连接，应用程序级协议处理就会在由<code>Worker</code>产生协议特定的<code>Dispatcher</code>循环中发生.</p>
+<blockquote>
+<p>请注意，以下图表仅概述了路径方案。</p>
+</blockquote>
+<p><img src="../../static/connection_overview.svg" alt=""></p>
+<h2 id="%e8%af%b7%e6%b1%82%e5%be%aa%e7%8e%af">请求循环</h2>
+<blockquote>
+<p>请求循环的大多数代码实现都位于<code>kayrx::web</code>和<code>kayrx::http</code>中</p>
+</blockquote>
+<p><img src="../../static/connection_request.png" alt=""></p>
+<h2 id="accept%e5%be%aa%e7%8e%af"><code>Accept</code>循环</h2>
+<blockquote>
+<p>大多数代码实现都驻留在<code>kayrx::kcore</code>中的Accept</p>
+</blockquote>
+<p><img src="../../static/connection_accept.svg" alt=""></p>
+<h2 id="worker%e5%be%aa%e7%8e%af"><code>Worker</code>循环</h2>
+<blockquote>
+<p>大多数代码实现都驻留在<code>kayrx::kcore</code>中的Worker</p>
+</blockquote>
+<p><img src="../../static/connection_worker.png" alt=""></p>
+
+
+[set title Kayrx / server]
+[set doc-section deep-server]
+[stash doc-content][require raw ../_side.html]

@@ -1,0 +1,67 @@
+<h1 id="kayrx">Kayrx</h1>
+<p><strong>kayrx</strong> : 异步非阻塞-事件驱动, I/O-Net-HTTP-Web-Client全栈开源平台.</p>
+<h2 id="info">Info</h2>
+<blockquote>
+<p><strong>Kayrx 诞生于 Actix-* 和 Tokio</strong> 可作为定制版(兼容Actix-web 2.0 - 查看 <a href="https://github.com/kayrx/awesome/tree/master/examples">Examples</a>)</p>
+</blockquote>
+<h2 id="features">特征</h2>
+<ul>
+<li>Fiber异步运行时</li>
+<li>多线程服务器 </li>
+<li>IO, FS, Net (Tcp, Udp, Uds)</li>
+<li>同步原语和通道</li>
+<li>计时器：超时，延迟和定时</li>
+<li>编解码器：解码，编码，帧</li>
+<li>支持HTTP / 1.x和HTTP / 2.0协议</li>
+<li>Streaming and pipelining</li>
+<li>Keep-alive and slow requests handling</li>
+<li>服务器/客户端WebSockets支持</li>
+<li>透明的内容压缩/解压缩(br，gzip，deflate)</li>
+<li>可配置的请求路由器</li>
+<li>Multipart streams</li>
+<li>Static assets</li>
+<li>Rustls的SSL支持</li>
+<li>中间件(Logger, CORS, 等)</li>
+<li>异步HTTP客户端</li>
+</ul>
+<h2 id="ecosystem-component-librarys">生态组件库</h2>
+<ul>
+<li><a href="https://github.com/kayrx/keclc/tree/master/keclc-file">keclc-file</a></li>
+<li><a href="https://github.com/kayrx/keclc/tree/master/keclc-framed">keclc-framed	</a></li>
+<li><a href="https://github.com/kayrx/keclc/tree/master/keclc-httpauth">keclc-httpauth</a></li>
+<li><a href="https://github.com/kayrx/keclc/tree/master/keclc-ioframe">keclc-ioframe</a></li>
+<li><a href="https://github.com/kayrx/keclc/tree/master/keclc-multipart">keclc-multipart</a></li>
+</ul>
+<p><a href="https://github.com/kayrx/keclc">And More</a></p>
+<h2 id="example">Example</h2>
+<p>Dependencies:</p>
+<pre><code class="language-toml"><div><span class="hljs-section">\[dependencies]</span>
+<span class="hljs-attr">kayrx</span> = <span class="hljs-string">"0.7"</span>
+</div></code></pre>
+<p>Code:</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[macro_use]</span>
+<span class="hljs-keyword">extern</span> <span class="hljs-keyword">crate</span> kayrx;
+
+<span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer, Responder};
+
+<span class="hljs-meta">#\[get(<span class="hljs-meta-string">"/{id}/{name}/index.html"</span>)]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;(<span class="hljs-built_in">u32</span>, <span class="hljs-built_in">String</span>)&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+    <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Hello {}! id:{}"</span>, info.<span class="hljs-number">1</span>, info.<span class="hljs-number">0</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+        .bind(<span class="hljs-string">"127.0.0.1:8080"</span>)?
+        .run()
+        .await
+}
+</div></code></pre>
+<p>查看更多 <a href="https://github.com/kayrx/awesome/tree/master/examples"><strong>Examples</strong></a></p>
+<h2 id="license">License</h2>
+<p>MIT license (LICENSE-MIT or <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>)</p>
+     
+
+[set title Kayrx / doc / index]
+[set doc-section index]
+[stash doc-content][require raw ./_side.html]

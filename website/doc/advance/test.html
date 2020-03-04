@@ -1,0 +1,143 @@
+<h1 id="%e6%b5%8b%e8%af%95">测试</h1>
+<p>每个应用程序都应该经过良好的测试。<code>kayrx::web</code>提供了执行单元和集成测试的工具.</p>
+<h2 id="%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95">单元测试</h2>
+<p>对于单元测试，<code>kayrx::web</code>提供了请求构建器类型。 <code>TestRequest</code>实现类似构建器的模式, 您可以使用生成 <code>HttpRequest</code>实例带<code>to_http_request()</code>, 并使用处理函数调用它.</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[cfg(test)]</span>
+<span class="hljs-keyword">mod</span> tests {
+    <span class="hljs-keyword">use</span> super::*;
+    <span class="hljs-keyword">use</span> kayrx::web::test;
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_index_ok</span></span>() {
+        <span class="hljs-keyword">let</span> req = test::TestRequest::with_header(<span class="hljs-string">"content-type"</span>, <span class="hljs-string">"text/plain"</span>).to_http_request();
+        <span class="hljs-keyword">let</span> resp = index(req).await;
+        <span class="hljs-built_in">assert_eq!</span>(resp.status(), http::StatusCode::OK);
+    }
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_index_not_ok</span></span>() {
+        <span class="hljs-keyword">let</span> req = test::TestRequest::<span class="hljs-keyword">default</span>().to_http_request();
+        <span class="hljs-keyword">let</span> resp = index(req).await;
+        <span class="hljs-built_in">assert_eq!</span>(resp.status(), http::StatusCode::BAD_REQUEST);
+    }
+}
+</div></code></pre>
+<h2 id="%e9%9b%86%e6%88%90%e6%b5%8b%e8%af%95">集成测试</h2>
+<p>有几种方法可以测试您的应用程序。<code>kayrx::web</code>可用于在实际的<code>http</code>服务器中使用特定的处理程序来运行应用.</p>
+<p><code>TestRequest::get()</code>, <code>TestRequest::post()</code>以及其他方法可用于将请求发送到测试服务器。</p>
+<p>要创建测试用的<code>Service</code>，请使用<code>test::init_service</code>接受常规<code>App</code>构建器方法。</p>
+<p>查看<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/test/index.html">api文档</a>以获取更多信息.</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[cfg(test)]</span>
+<span class="hljs-keyword">mod</span> tests {
+    <span class="hljs-keyword">use</span> super::*;
+    <span class="hljs-keyword">use</span> kayrx::web::{test, web, App};
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_index_get</span></span>() {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> app = test::init_service(App::new().route(<span class="hljs-string">"/"</span>, web::get().to(index))).await;
+        <span class="hljs-keyword">let</span> req = test::TestRequest::with_header(<span class="hljs-string">"content-type"</span>, <span class="hljs-string">"text/plain"</span>).to_request();
+        <span class="hljs-keyword">let</span> resp = test::call_service(&amp;<span class="hljs-keyword">mut</span> app, req).await;
+        <span class="hljs-built_in">assert!</span>(resp.status().is_success());
+    }
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_index_post</span></span>() {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> app = test::init_service(App::new().route(<span class="hljs-string">"/"</span>, web::get().to(index))).await;
+        <span class="hljs-keyword">let</span> req = test::TestRequest::post().uri(<span class="hljs-string">"/"</span>).to_request();
+        <span class="hljs-keyword">let</span> resp = test::call_service(&amp;<span class="hljs-keyword">mut</span> app, req).await;
+        <span class="hljs-built_in">assert!</span>(resp.status().is_client_error());
+    }
+}
+</div></code></pre>
+<p>如果需要更复杂的应用程序，则配置测试应与创建普通应用程序非常相似。例如，您可能需要初始化应用程序状态。就像使用普通应用程序一样，使用<code>App</code>的 <code>data</code>方法创建一个 并附加状态</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[cfg(test)]</span>
+<span class="hljs-keyword">mod</span> tests {
+    <span class="hljs-keyword">use</span> super::*;
+    <span class="hljs-keyword">use</span> kayrx::web::{test, web, App};
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_index_get</span></span>() {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> app = test::init_service(
+            App::new()
+                .data(AppState { count: <span class="hljs-number">4</span> })
+                .route(<span class="hljs-string">"/"</span>, web::get().to(index)),
+        ).await;
+        <span class="hljs-keyword">let</span> req = test::TestRequest::get().uri(<span class="hljs-string">"/"</span>).to_request();
+        <span class="hljs-keyword">let</span> resp: AppState = test::read_response_json(&amp;<span class="hljs-keyword">mut</span> app, req).await;
+
+        <span class="hljs-built_in">assert_eq!</span>(resp.count, <span class="hljs-number">4</span>);
+    }
+}
+</div></code></pre>
+<h2 id="%e6%b5%81%e5%93%8d%e5%ba%94%e6%b5%8b%e8%af%95">流响应测试</h2>
+<p>如果您需要测试流，则只需调用<code>take_body()</code>并将结果<code>ResponseBody</code>转换 为<code>future</code>并执行它就足够了. 例如，测试服务器发送事件(SSE)</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> std::task::Poll;
+<span class="hljs-keyword">use</span> bytes::Bytes;
+<span class="hljs-keyword">use</span> futures::stream::poll_fn;
+
+<span class="hljs-keyword">use</span> kayrx::http::{<span class="hljs-keyword">self</span>, ContentEncoding, StatusCode};
+<span class="hljs-keyword">use</span> kayrx::web::{web, App, Error, HttpRequest, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">sse</span></span>(_req: HttpRequest) -&gt; HttpResponse {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> counter: <span class="hljs-built_in">usize</span> = <span class="hljs-number">5</span>;
+
+    <span class="hljs-comment">// yields `data: N` where N in \[5; 1]</span>
+    <span class="hljs-keyword">let</span> server_events = poll_fn(<span class="hljs-keyword">move</span> |_cx| -&gt; Poll&lt;<span class="hljs-built_in">Option</span>&lt;<span class="hljs-built_in">Result</span>&lt;Bytes, Error&gt;&gt;&gt; {
+        <span class="hljs-keyword">if</span> counter == <span class="hljs-number">0</span> {
+            <span class="hljs-keyword">return</span> Poll::Ready(<span class="hljs-literal">None</span>);
+        }
+        <span class="hljs-keyword">let</span> payload = <span class="hljs-built_in">format!</span>(<span class="hljs-string">"data: {}\n\n"</span>, counter);
+        counter -= <span class="hljs-number">1</span>;
+        Poll::Ready(<span class="hljs-literal">Some</span>(<span class="hljs-literal">Ok</span>(Bytes::from(payload))))
+    });
+
+    HttpResponse::build(StatusCode::OK)
+        .set_header(http::header::CONTENT_TYPE, <span class="hljs-string">"text/event-stream"</span>)
+        .set_header(
+            http::header::CONTENT_ENCODING,
+            ContentEncoding::Identity.as_str(),
+        )
+        .streaming(server_events)
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+    App::new().route(<span class="hljs-string">"/"</span>, web::get().to(sse));
+}
+
+<span class="hljs-meta">#\[cfg(test)]</span>
+<span class="hljs-keyword">mod</span> tests {
+    <span class="hljs-keyword">use</span> super::*;
+    <span class="hljs-keyword">use</span> kayrx;
+
+    <span class="hljs-keyword">use</span> futures_util::stream::StreamExt;
+    <span class="hljs-keyword">use</span> futures_util::stream::TryStreamExt;
+
+    <span class="hljs-keyword">use</span> kayrx::web::{test, web, App};
+
+    <span class="hljs-meta">#\[kayrx::test]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test_stream</span></span>() {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> app = test::init_service(App::new().route(<span class="hljs-string">"/"</span>, web::get().to(sse))).await;
+        <span class="hljs-keyword">let</span> req = test::TestRequest::get().to_request();
+
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> resp = test::call_service(&amp;<span class="hljs-keyword">mut</span> app, req).await;
+        <span class="hljs-built_in">assert!</span>(resp.status().is_success());
+
+        <span class="hljs-comment">// first chunk</span>
+        <span class="hljs-keyword">let</span> (bytes, <span class="hljs-keyword">mut</span> resp) = resp.take_body().into_future().await;
+        <span class="hljs-built_in">assert_eq!</span>(bytes.unwrap().unwrap(), Bytes::from_static(<span class="hljs-string">b"data: 5\n\n"</span>));
+
+        <span class="hljs-comment">// second chunk</span>
+        <span class="hljs-keyword">let</span> (bytes, <span class="hljs-keyword">mut</span> resp) = resp.take_body().into_future().await;
+        <span class="hljs-built_in">assert_eq!</span>(bytes.unwrap().unwrap(), Bytes::from_static(<span class="hljs-string">b"data: 4\n\n"</span>));
+
+        <span class="hljs-comment">// remaining part</span>
+        <span class="hljs-keyword">let</span> bytes = test::load_stream(resp.take_body().into_stream()).await;
+        <span class="hljs-built_in">assert_eq!</span>(bytes.unwrap(), Bytes::from_static(<span class="hljs-string">b"data: 3\n\ndata: 2\n\ndata: 1\n\n"</span>));
+    }
+}
+</div></code></pre>
+
+
+[set title Kayrx / test]
+[set doc-section advance-test]
+[stash doc-content][require raw ../_side.html]

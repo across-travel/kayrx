@@ -1,0 +1,101 @@
+<h1 id="%e8%af%b7%e6%b1%82%e5%a4%84%e7%90%86">请求处理</h1>
+    <p>请求处理是一个异步函数，该函数接受零个或多个可以从请求中提取的参数（即<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/trait.FromRequest.html">impl FromRequest</a>），并返回可以转换为<code>HttpResponse</code>的类型（即<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/trait.Responder.html">impl Responder</a>）。</p>
+    <p>请求处理分为两个阶段。首先，调用处理程序对象，返回实现<code>Responder特质</code>的任何对象。然后，在返回的对象上调用<code>respond_to()</code>，将其自身转换为<code>HttpResponseor</code> 或 <code>Error</code>。</p>
+    <p>默认情况下<code>kayrx::web</code>提供了一些标准类型的<code>Responder</code>实现，诸如<code>&amp;'static str</code>，<code>String</code>等</p>
+    <blockquote>
+    <p>有关实现的完整列表，请参阅<a href="">Responder</a>文档。</p>
+    </blockquote>
+    <p>有效的处理程序示例：</p>
+    <pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(_req: HttpRequest) -&gt; &amp;<span class="hljs-symbol">'static</span> <span class="hljs-built_in">str</span> {
+        <span class="hljs-string">"Hello world!"</span>
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index2</span></span>(_req: HttpRequest) -&gt; <span class="hljs-built_in">String</span> {
+        <span class="hljs-string">"Hello world!"</span>.to_owned()
+    }
+    </div></code></pre>
+    <p>您还可以将返回签名更改为 <code>impl Responder</code>，如果涉及到更复杂的类型，效果很好</p>
+    <pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(_req: HttpRequest) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        Bytes::from_static(<span class="hljs-string">b"Hello world!"</span>)
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-built_in">Box</span>&lt;Future&lt;Item=HttpResponse, Error=Error&gt;&gt; {
+        ...
+    }
+    </div></code></pre>
+    <h2 id="%e8%87%aa%e5%ae%9a%e4%b9%89%e5%93%8d%e5%ba%94%e7%9a%84%e7%b1%bb%e5%9e%8b">自定义响应的类型</h2>
+    <p>要直接从处理函数返回自定义类型，该类型需要实现<code>Responder</code>特质.</p>
+    <p>让我们为序列化为<code>application/json</code>的响应创建一个自定义类型：</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{Error, HttpRequest, HttpResponse, Responder};
+    <span class="hljs-keyword">use</span> serde::Serialize;
+    <span class="hljs-keyword">use</span> futures::future::{ready, Ready};
+    
+    <span class="hljs-meta">#\[derive(Serialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">MyObj</span></span> {
+        name: &amp;<span class="hljs-symbol">'static</span> <span class="hljs-built_in">str</span>,
+    }
+    
+    <span class="hljs-comment">// Responder</span>
+    <span class="hljs-keyword">impl</span> Responder <span class="hljs-keyword">for</span> MyObj {
+        <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Error</span></span> = Error;
+        <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Future</span></span> = Ready&lt;<span class="hljs-built_in">Result</span>&lt;HttpResponse, Error&gt;&gt;;
+    
+        <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">respond_to</span></span>(<span class="hljs-keyword">self</span>, _req: &amp;HttpRequest) -&gt; Self::Future {
+            <span class="hljs-keyword">let</span> body = serde_json::to_string(&amp;<span class="hljs-keyword">self</span>).unwrap();
+    
+            <span class="hljs-comment">// Create response and set content type</span>
+            ready(<span class="hljs-literal">Ok</span>(HttpResponse::<span class="hljs-literal">Ok</span>()
+                .content_type(<span class="hljs-string">"application/json"</span>)
+                .body(body)))
+        }
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; <span class="hljs-keyword">impl</span> Responder {
+        MyObj { name: <span class="hljs-string">"user"</span> }
+    }
+    </div></code></pre>
+    <h2 id="%e6%b5%81%e5%bc%8f%e5%93%8d%e5%ba%94%e4%b8%bb%e4%bd%93">流式响应主体</h2>
+    <p>响应主体(Response body)可以异步生成。在这种情况下，<code>body</code>必须实现<code>stream</code> 特质 即： <code>Stream&lt;Item=Bytes, Error=Error&gt;</code>.</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer, Error, HttpResponse};
+    <span class="hljs-keyword">use</span> bytes::Bytes;
+    <span class="hljs-keyword">use</span> futures::stream::<span class="hljs-keyword">once</span>;
+    <span class="hljs-keyword">use</span> futures::future::ok;
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+        <span class="hljs-keyword">let</span> body = <span class="hljs-keyword">once</span>(ok::&lt;_, Error&gt;(Bytes::from_static(<span class="hljs-string">b"test"</span>)));
+    
+        HttpResponse::<span class="hljs-literal">Ok</span>()
+            .content_type(<span class="hljs-string">"application/json"</span>)
+            .streaming(body)
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| App::new().route(<span class="hljs-string">"/async"</span>, web::to(index)))
+            .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+            .run()
+            .await
+    }
+    </div></code></pre>
+    <h2 id="%e8%bf%94%e5%9b%9e%e4%b8%8d%e5%90%8c%e7%b1%bb%e5%9e%8b-either">返回不同类型 (Either)</h2>
+    <p>有时，您需要返回不同类型的响应。例如，您可以进行错误检查并返回错误，返回异步响应或需要两种不同类型的任何结果。</p>
+    <p>在这种情况下，可以使用<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/enum.Either.html">Either</a>类型。 <code>Either</code>允许将两种不同的响应者类型组合为一个类型.</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{Either, Error, HttpResponse};
+    
+    <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">RegisterResult</span></span> = Either&lt;HttpResponse, <span class="hljs-built_in">Result</span>&lt;&amp;<span class="hljs-symbol">'static</span> <span class="hljs-built_in">str</span>, Error&gt;&gt;;
+    
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; RegisterResult {
+        <span class="hljs-keyword">if</span> is_a_variant() {
+            <span class="hljs-comment">// &lt;- choose variant A</span>
+            Either::A(HttpResponse::BadRequest().body(<span class="hljs-string">"Bad data"</span>))
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// &lt;- variant B</span>
+            Either::B(<span class="hljs-literal">Ok</span>(<span class="hljs-string">"Hello!"</span>))
+        }
+    }
+    </div></code></pre>
+
+
+[set title Kayrx / doc / handler]
+[set doc-section basic-handler]
+[stash doc-content][require raw ../_side.html]

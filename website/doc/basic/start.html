@@ -1,0 +1,61 @@
+<h1 id="%e5%85%a5%e9%97%a8">入门</h1>
+    <p>让我们来编写我们的第一个<code>kayrx</code> app！</p>
+    <h2 id="hello-world">Hello world</h2>
+    <p>首先创建一个新的基于二进制的Cargo项目，然后切换到新目录：</p>
+    <pre><code class="language-bash"><div>cargo new hello-world
+    <span class="hljs-built_in">cd</span> hello-world
+    </div></code></pre>
+    <p>现在, <code>kayrx</code>通过确保<code>Cargo.toml</code> 包含以下内容，将其添加为项目的依赖项：</p>
+    <pre><code class="language-ini"><div><span class="hljs-section">\[dependencies]</span>
+    <span class="hljs-attr">kayrx</span> = <span class="hljs-string">"0.7"</span>
+    </div></code></pre>
+    <p>为了实现Web服务器，我们首先需要创建一个请求处理程序.</p>
+    <p>请求处理程序是一个异步函数，它接受零个或多个可以从请求中提取的参数（即 <code>impl FromRequest</code>），并返回可以转换为<code>HttpResponse</code>的类型（即<code>impl Responder</code>）：</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpResponse, HttpServer, Responder};
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; <span class="hljs-keyword">impl</span> Responder {
+        HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hello world!"</span>)
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index2</span></span>() -&gt; <span class="hljs-keyword">impl</span> Responder {
+        HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hello world again!"</span>)
+    }
+    </div></code></pre>
+    <p>接下来，创建一个<code>App</code>实例，并<code>path</code>路径上使用<code>app</code>的<code>route</code>和特定的<code>HTTP</code>方法注册请求处理程序 。之后<code>HttpServer</code>可以将<code>app</code>实例用于侦听传入的连接。服务器接受 函数 返回<code>app</code>工厂.</p>
+    <pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        HttpServer::new(|| {
+            App::new()
+                .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+                .route(<span class="hljs-string">"/again"</span>, web::get().to(index2))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>现在，使用<code>cargo run</code>编译并运行程.。去<code>http://localhost:8088/</code> 看看结果。</p>
+    <p><strong>注意</strong>：您可能会注意到<code>#\[kayrx::main]</code>属性宏。该宏在<code>kayrx</code>运行时中执行异步标记的函数。任何异步函数都可以通过此宏进行标记和执行。</p>
+    <h3 id="%e4%bd%bf%e7%94%a8%e5%b1%9e%e6%80%a7%e5%ae%8f%e5%ae%9a%e4%b9%89%e8%b7%af%e7%94%b1">使用属性宏定义路由</h3>
+    <p>您可以使用宏属性定义路由，这些宏属性允许您在函数上方指定路由，如下所示：</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::get;
+    
+    <span class="hljs-meta">#\[get(<span class="hljs-meta-string">"/hello"</span>)]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index3</span></span>() -&gt; <span class="hljs-keyword">impl</span> Responder {
+        HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hey there!"</span>)
+    }
+    </div></code></pre>
+    <p>然后，您可以使用来<code>service()</code>注册路由：</p>
+    <pre><code class="language-rust"><div>App::new()
+        .service(index3)
+    </div></code></pre>
+    <p>出于一致性的原因，本文档仅使用本页开头显示的显式语法。但是，如果您更喜欢这种语法，那么在声明路由时就可以随意使用它，因为它只是语法糖.</p>
+    <p>要了解更多信息，请参见<a href="https://docs.rs/kayrx-macro">kayrx-macro</a></p>
+    <h3 id="%e8%87%aa%e5%8a%a8%e9%87%8d%e8%bd%bd">自动重载</h3>
+    <p>如果需要，您可以在开发过程中拥有一个自动重载服务器，该服务器可以按需重新编译。这不是必需的，但是它使快速原型制作更加方便，因为您可以在保存时立即看到更改。要了解如何完成此任务，请看一下<a href="../pattern/autoreload.html">autoreload模式</a>.</p>
+    
+
+
+    [set title Kayrx / doc / start]
+    [set doc-section basic-start]
+    [stash doc-content][require raw ../_side.html]

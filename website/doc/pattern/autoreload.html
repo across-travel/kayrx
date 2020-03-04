@@ -1,0 +1,42 @@
+<h1 id="%e8%87%aa%e5%8a%a8%e9%87%8d%e8%bd%bd%e5%bc%80%e5%8f%91%e6%9c%8d%e5%8a%a1%e5%99%a8">自动重载开发服务器</h1>
+<p>在开发过程中，让<code>cargo</code>在更改时自动重新编译代码会非常方便。这可以通过使用<a href="https://github.com/passcod/cargo-watch">cargo-watch</a>来完成。由于应用程序通常会绑定到端口以侦听传入的<code>HTTP</code>请求，因此将其与<a href="https://crates.io/crates/listenfd">listenfd</a>和<a href="https://github.com/mitsuhiko/systemfd">systemfd</a> 实用程序结合使用以确保套接字在应用程序编译和重新加载时保持打开状态是有意义的。</p>
+<p><code>systemfd</code>将打开一个套接字并将其传递给<code>cargo-watch</code>，以监视更改，然后调用编译器并运行您的应用。然后应用程序将<code>listenfd</code>用于拾取<code>systemfd</code>打开的套接字.</p>
+<h2 id="%e5%bf%85%e8%a6%81%e7%9a%84%e4%ba%8c%e8%bf%9b%e5%88%b6%e6%96%87%e4%bb%b6">必要的二进制文件</h2>
+<p>要获得自动重装，您需要安装<code>cargo-watch</code>和 <code>安装systemfd</code>。两者都是用<code>Rust</code>编写的，<code>cargo install</code>可以安装：</p>
+<pre><code class="language-rust"><div>cargo install systemfd cargo-watch
+</div></code></pre>
+<h2 id="%e4%bb%a3%e7%a0%81%e5%8f%98%e6%9b%b4">代码变更</h2>
+<p>您需要稍微修改一下应用程序，以便它可以拾取由<code>systemfd</code>打开的外部套接字。将<code>listenfd</code>依赖项添加到您的应用程序：</p>
+<pre><code class="language-toml"><div><span class="hljs-section">\[dependencies]</span>
+<span class="hljs-attr">listenfd</span> = <span class="hljs-string">"0.3"</span>
+</div></code></pre>
+<p>然后修改服务器代码，使其仅作为<code>bind</code>后备调用：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpRequest, HttpServer, Responder};
+<span class="hljs-keyword">use</span> listenfd::ListenFd;
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(_req: HttpRequest) -&gt; <span class="hljs-keyword">impl</span> Responder {
+    <span class="hljs-string">"Hello World!"</span>
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> listenfd = ListenFd::from_env();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> server = HttpServer::new(|| App::new().route(<span class="hljs-string">"/"</span>, web::get().to(index)));
+
+    server = <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-literal">Some</span>(l) = listenfd.take_tcp_listener(<span class="hljs-number">0</span>).unwrap() {
+        server.listen(l)?
+    } <span class="hljs-keyword">else</span> {
+        server.bind(<span class="hljs-string">"127.0.0.1:3000"</span>)?
+    };
+
+    server.run().await
+}
+</div></code></pre>
+<h2 id="%e8%bf%90%e8%a1%8c%e6%9c%8d%e5%8a%a1%e5%99%a8">运行服务器</h2>
+<p>现在要运行开发服务器，请用以下命令：</p>
+<pre><code class="language-shell"><div>systemfd --no-pid -s http::3000 -- cargo watch -x run
+</div></code></pre>
+
+[set title Kayrx / autoreload]
+[set doc-section pattern-autoreload]
+[stash doc-content][require raw ../_side.html]

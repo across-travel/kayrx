@@ -1,0 +1,488 @@
+<h1 id="%e8%b7%af%e7%94%b1%e5%88%86%e5%8f%91">路由分发</h1>
+<p>URL分发提供了一种使用简单的模式匹配将URL映射到处理程序代码的方法. 如果其中一种模式与与请求关联的路径信息匹配，则调用特定的处理程序对象。</p>
+<blockquote>
+<p>请求处理程序是一个函数，该函数接受零个或多个可以从请求中提取的参数（即<code>impl FromRequest</code>），并返回可以转换为<code>HttpResponse</code>的类型(即<code>impl Responder</code>). 有关更多信息，请参见<a href="../basic/handler.html">处理程序</a>部分。</p>
+</blockquote>
+<h2 id="%e8%b5%84%e6%ba%90%e9%85%8d%e7%bd%ae">资源配置</h2>
+<p>资源配置是向应用程序添加新资源的动作。资源具有名称，该名称用于URL生成的标识符。该名称还允许开发人员向现有资源添加路由。资源也有一个模式，这意味着匹配一个<code>URL</code>的<code>PATH</code>部分(该<code>scheme</code>和端口/port 后面的部分，例如在URL<code>http://localhost:8080/foo/bar?q=value</code> 的<code>/foo/bar</code>). 它不匹配针对<code>QUERY</code>部分(<code>？</code>后面的部分，例如<code>http://localhost:8080/foo/bar?q=value</code>中的<code>q=value</code>).</p>
+<p>的 <a href="https://docs.rs/kayrx/0.7.5/kayrx/web/struct.App.html#method.route">App::route()</a>方法提供注册路由的简单方法。此方法将单个路由添加到应用程序路由表。该方法接受 <strong>path pattern</strong>,<strong>http method</strong> 和处理函数。对于同一路径，可以多次调用该<code>route()</code>方法，在这种情况下，多个路由注册同一资源路径。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpResponse, HttpServer};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hello"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+            .route(<span class="hljs-string">"/user"</span>, web::post().to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>虽然<code>App :: route()</code>提供了注册路由的简单方法，但要访问完整的资源配置，则必须使用其他方法。该<a href="">*App::service()</a>方法将单个的资源添加到应用路由表。此方法接受 路径模式(path pattern)，守卫(guards)和一条或多条路由</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{guard, web, App, HttpResponse};
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hello"</span>)
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+    App::new()
+        .service(web::resource(<span class="hljs-string">"/prefix"</span>).to(index))
+        .service(
+            web::resource(<span class="hljs-string">"/user/{name}"</span>)
+                .name(<span class="hljs-string">"user_detail"</span>)
+                .guard(guard::Header(<span class="hljs-string">"content-type"</span>, <span class="hljs-string">"application/json"</span>))
+                .route(web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+                .route(web::put().to(|| HttpResponse::<span class="hljs-literal">Ok</span>())),
+        );
+}
+</div></code></pre>
+<p>如果资源不包含任何路由或不具有任何匹配的路由，则它将返回<code>NOT FOUND</code> http响应。</p>
+<h2 id="%e9%85%8d%e7%bd%ae%e8%b7%af%e7%94%b1">配置路由</h2>
+<p>资源包含一组路由。每个路由依次具有一组守卫(guards)和一个处理程序。可以使用<code>Resource::route()</code>方法创建新路由，该方法返回对新<code>Route</code>实例的引用。默认情况下，该路由不包含任何守卫，因此会匹配所有请求，并且默认处理函数为<code>HttpNotFound</code>。</p>
+<p>该应用程序根据在资源注册和路由注册期间定义的路由标准来路由传入的请求。资源按照通过路由注册(<code>Resource::route()</code>)的顺序匹配它包含的所有路由。</p>
+<blockquote>
+<p>一个路由可以包含任意数量的守卫(guards)，但只能包含一个处理程序</p>
+</blockquote>
+<pre><code class="language-rust"><div>App::new().service(
+    web::resource(<span class="hljs-string">"/path"</span>).route(
+        web::route()
+            .guard(guard::Get())
+            .guard(guard::Header(<span class="hljs-string">"content-type"</span>, <span class="hljs-string">"text/plain"</span>))
+            .to(|| HttpResponse::<span class="hljs-literal">Ok</span>()),
+    ),
+)
+</div></code></pre>
+<p>在此示例中，如果请求包含<code>Content-Type</code>标头，此标头的值为<code>text / plain</code>且路径等于<code>/path</code>，<code>GET</code>请求则返回为<code>HttpResponse::Ok()</code>。</p>
+<p>如果资源不能匹配任何路由，则返回<code>NOT FOUND</code>响应。</p>
+<p><a href="%5Bresourcehandler%5D(https://docs.rs/kayrx/0.7.5/kayrx/web/struct.Resource.html#method.route)">ResourceHandler::route()</a> 返回 <a href="https://docs.rs/kayrx/0.7.5/kayrx/web//struct.Route.html">Route</a>对象。可以使用类似构建器的模式来配置<code>Route</code>路由。提供以下配置方法：</p>
+<ul>
+<li><code>Route::guard()</code> 注册一个新的守卫, 每个路线可以注册任意数量的守卫.</li>
+<li><code>Route::method()</code> 注册方法守卫, 每个路线可以注册任意数量的守卫.</li>
+<li><code>Route::to()</code> 注册此路由的处理函数, 只能注册一个处理程序, 通常处理程序注册是最后的配置操作.</li>
+<li><code>Route::to_async()</code> 为此路由注册一个异步处理函数, 只能注册一个处理程序, 通常处理程序注册是最后的配置操作</li>
+</ul>
+<h2 id="%e8%b7%af%e7%94%b1%e5%8c%b9%e9%85%8d">路由匹配</h2>
+<p>路由配置的主要目的是根据URL<code>path</code>路径 模式匹配或不匹配请求, <code>path</code>代表所请求URL的路径部分.</p>
+<p>当请求进入系统时，对于系统中存在的每个资源配置声明，<code>kayrx::web</code>都会根据声明的模式检查请求的路径。该检查按照通过<code>App::service()</code>方法声明路由的顺序进行。如果找不到资源，则将默认资源用作匹配的资源。</p>
+<p>声明路由配置时，它可能包含路由守卫参数。与路由声明关联的所有路由守卫必须true用于在检查期间将路由配置用于给定的请求。如果false在检查期间返回给路由配置的一组路由守卫参数中的任何守卫返回，则该路由将被跳过，并且路由匹配将继续通过有序路由集合。</p>
+<p>When a route configuration is declared, it may contain route guard arguments. All route
+guards associated with a route declaration must be <code>true</code> for the route configuration to be used for a given request during a check. If any guard in the set of route guard
+arguments provided to a route configuration returns <code>false</code> during a check, that route is skipped and route matching continues through the ordered set of routes.</p>
+<p>如果有任何路由匹配，则路由匹配过程停止，并调用与该路由关联的处理程序。如果在所有路由模式都用尽之后没有路由匹配，则 返回<code>NOT FOUND</code>响应</p>
+<h2 id="%e8%b5%84%e6%ba%90%e6%a8%a1%e5%bc%8f%e8%af%ad%e6%b3%95">资源模式语法</h2>
+<p>在参数中使用的模式匹配的语法很简单。</p>
+<p>路由配置中使用的模式可以以斜杠字符开头。如果该模式不以斜杠字符开头，则在匹配时将在其前面添加一个隐式斜杠。例如，以下模式是等效的 :</p>
+<pre><code class="language-rust"><div>{foo}/bar/baz
+</div></code></pre>
+<pre><code class="language-rust"><div>/{foo}/bar/baz
+</div></code></pre>
+<p>可变部分(替换标记)用<code>{标识符}</code>的形式指定，其中，该配置 &quot;接受任何字符到下一个斜线字符并使用它作为<code>HttpRequest.match_info()</code>对象中的名称&quot;.</p>
+<p>模式中的替换标记匹配正则表达式: <code>\[^{}/]+</code></p>
+<p><code>match_info</code>是代表根据路由模式从URL提取的<code>Params</code>对象的动态部分 。它可以作<code>request.match_info</code>使用。例如，以下模式定义一个文字段<code>（foo）</code>和两个替换标记（<code>baz</code>和<code>bar</code>）：</p>
+<pre><code class="language-rust"><div>foo/{baz}/{bar}
+</div></code></pre>
+<p>上面的模式将匹配这些URL，生成以下匹配信息：</p>
+<pre><code class="language-rust"><div>foo/<span class="hljs-number">1</span>/<span class="hljs-number">2</span>        -&gt; Params {<span class="hljs-symbol">'baz</span><span class="hljs-string">':'</span><span class="hljs-number">1</span>', <span class="hljs-symbol">'bar</span><span class="hljs-string">':'</span><span class="hljs-number">2</span>'}
+foo/abc/def    -&gt; Params {<span class="hljs-symbol">'baz</span><span class="hljs-string">':'</span>abc', <span class="hljs-symbol">'bar</span><span class="hljs-string">':'</span>def'}
+</div></code></pre>
+<p>但是，它将不符合以下模式：</p>
+<pre><code class="language-rust"><div>foo/<span class="hljs-number">1</span>/<span class="hljs-number">2</span>/        -&gt; No <span class="hljs-keyword">match</span> (trailing slash)
+bar/abc/def     -&gt; First segment literal mismatch
+</div></code></pre>
+<p>段中段替换标记的匹配将仅进行到模式中段中第一个非字母数字字符为止。因此，例如，如果使用此路由模式：</p>
+<p>The match for a segment replacement marker in a segment will be done only up to
+the first non-alphanumeric character in the segment in the pattern. So, for instance,
+if this route pattern was used:</p>
+<pre><code class="language-rust"><div>foo/{name}.html
+</div></code></pre>
+<p>字符串路径<code>/foo/biz.html</code>将匹配上述路由模式，匹配结果将为<code>Params{'name': 'biz'}</code>。然而，字符串路径<code>/foo/biz</code>将不匹配，因为在所代表的段的端点<code>{name}.html</code>, 它不包含一个字面的<code>.html</code>（它仅包含<code>biz</code>，而不是<code>biz.html</code>）。</p>
+<p>要捕获两个片段，可以使用两个替换标记：</p>
+<pre><code class="language-rust"><div>foo/{name}.{ext}
+</div></code></pre>
+<p>字面路径<code>/foo/biz.html</code>将匹配上述路由模式，并且匹配结果将为<code>Params {'name'：'biz'，'ext'：'html'}</code>。发生这种情况是因为的字面部分(句点)在两个替换标记<code>{name}</code>和<code>{ext}</code>之间。</p>
+<p>替换标记可以选择指定正则表达式，该正则表达式将用于确定路径段是否应与标记匹配。若要指定替换标记仅应匹配正则表达式定义的一组特定字符，则必须使用稍微扩展形式的替换标记语法。在大括号内，替换标记名必须后跟一个冒号，然后是正则表达式。与替换标记<code>\[^ /] +</code>关联的默认正则表达式匹配是一个或多个非斜杠字符。例如，在内部，替换标记<code>{foo}</code>可以更详细地拼写为<code>{foo：\[^ /] +}</code>。您可以将其更改为任意正则表达式以匹配任意字符序列，例如<code>{foo：\ d +}</code>以仅匹配数字。</p>
+<p>段必须至少包含一个字符才能匹配段替换标记。例如，对于URL<code>/ abc /</code>：</p>
+<ul>
+<li>*/abc/{foo}*将不匹配</li>
+<li><em>/{foo}/</em> 将匹配</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：在匹配模式之前，将对路径进行<code>URL-unquoted</code>并将其解码为有效的<code>unicode</code>字符串，并且表示匹配路径段的值也将被<code>URL-unquoted</code></p>
+</blockquote>
+<pre><code class="language-rust"><div>foo/{bar}
+</div></code></pre>
+<p>匹配以下网址时：</p>
+<pre><code class="language-rust"><div>http:<span class="hljs-comment">//example.com/foo/La%20Pe%C3%B1a</span>
+</div></code></pre>
+<p><code>match dict</code>看起来像这样（值是URL解码的）：</p>
+<pre><code class="language-rust"><div>Params{<span class="hljs-symbol">'bar</span>': <span class="hljs-symbol">'La</span> Pe\xf1a'}
+</div></code></pre>
+<p>路径段中的文字字符串应代表路径的解码值。您应在模式中使用URL编码的值。例如：</p>
+<pre><code class="language-rust"><div>/Foo%<span class="hljs-number">20</span>Bar/{baz}
+</div></code></pre>
+<p>您应使用以下内容：</p>
+<pre><code class="language-rust"><div>/Foo Bar/{baz}
+</div></code></pre>
+<p>可以得到 &quot;尾部匹配&quot; , 必须使用自定义正则表达式:</p>
+<pre><code class="language-rust"><div>foo/{bar}/{tail:.*}
+</div></code></pre>
+<p>上面的模式将匹配这些URL，生成以下匹配信息：</p>
+<pre><code class="language-rust"><div>foo/<span class="hljs-number">1</span>/<span class="hljs-number">2</span>/           -&gt; Params{<span class="hljs-symbol">'bar</span><span class="hljs-string">':'</span><span class="hljs-number">1</span>', <span class="hljs-symbol">'tail</span>': '<span class="hljs-number">2</span>/'}
+foo/abc/def/a/b/c  -&gt; Params{<span class="hljs-symbol">'bar</span>':u<span class="hljs-symbol">'abc</span>', <span class="hljs-symbol">'tail</span>': <span class="hljs-symbol">'def</span>/a/b/c'}
+</div></code></pre>
+<h2 id="%e8%b7%af%e7%94%b1%e5%9f%9f">路由域</h2>
+<p>范围界定可以帮助您组织共享公共根路径的路由。您可以将范围嵌套在范围内。</p>
+<p>假设您要组织用于查看&quot;用户&quot;的端点的路径。这些路径可能包括：</p>
+<ul>
+<li>/users</li>
+<li>/users/show</li>
+<li>/users/show/{id}</li>
+</ul>
+<p>这些路径的作​​用域布局如下所示</p>
+<pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">show_users</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Show users"</span>)
+}
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">user_detail</span></span>(path: web::Path&lt;(<span class="hljs-built_in">u32</span>,)&gt;) -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"User detail: {}"</span>, path.<span class="hljs-number">0</span>))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(<span class="hljs-string">"/users"</span>)
+                .route(<span class="hljs-string">"/show"</span>, web::get().to(show_users))
+                .route(<span class="hljs-string">"/show/{id}"</span>, web::get().to(user_detail)),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>作用域(scope)路径可以包含可变路径段作为资源。与无作用域的路径一致。</p>
+<p>您可以从<code>HttpRequest::match_info()</code>获得可变路径段, <code>Path</code>提取器还能够提取作用域范围级别的变量段.</p>
+<h2 id="%e5%8c%b9%e9%85%8d%e4%bf%a1%e6%81%af">匹配信息</h2>
+<p>代表匹配路径段的所有值都可在<code>HttpRequest::match_info</code>中找到。可以使用<code>Path::get()</code>检索特定值。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{HttpRequest, HttpResponse, <span class="hljs-built_in">Result</span>};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+    <span class="hljs-keyword">let</span> v1: <span class="hljs-built_in">u8</span> = req.match_info().get(<span class="hljs-string">"v1"</span>).unwrap().parse().unwrap();
+    <span class="hljs-keyword">let</span> v2: <span class="hljs-built_in">u8</span> = req.match_info().query(<span class="hljs-string">"v2"</span>).parse().unwrap();
+    <span class="hljs-keyword">let</span> (v3, v4): (<span class="hljs-built_in">u8</span>, <span class="hljs-built_in">u8</span>) = req.match_info().load().unwrap();
+    <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Values {} {} {} {}"</span>, v1, v2, v3, v4))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .route(<span class="hljs-string">"/a/{v1}/{v2}/"</span>, web::get().to(index))
+            .route(<span class="hljs-string">""</span>, web::get().to(|| HttpResponse::<span class="hljs-literal">Ok</span>()))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>对于此示例的路径<code>/a/1/2/</code>，值<code>v1</code>和<code>v2</code>将解析为“ 1”和“ 2”</p>
+<p>可以从尾部路径参数创建一个<code>PathBuf</code>。返回的<code>PathBuf</code>内容已<code>percent-decoded</code>。如果一个段等于“ ..”，则跳过前一个段（如果有）。</p>
+<p>为了安全起见，如果段满足以下任一条件，则返回<code>Err</code>：</p>
+<ul>
+<li>解码的段以以下任意一项开头：<code>.</code> ( <code>..</code>除外), <code>*</code></li>
+<li>解码的段以以下任意一项结尾：<code>:</code>, <code>&gt;</code>, <code>&lt;</code></li>
+<li>解码的段包含以下任何内容： /</li>
+<li>在Windows上，解码的段包含以下任何内容：<code>\</code></li>
+<li>Percent-encoding 结果是无效的UTF8</li>
+</ul>
+<p>这些条件的结果是，从请求路径参数解析的<code>PathBuf</code>结果可以安全地插在路径中或用作路径的后缀，而无需其他检查。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{HttpRequest, <span class="hljs-built_in">Result</span>};
+<span class="hljs-keyword">use</span> std::path::PathBuf;
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+    <span class="hljs-keyword">let</span> path: PathBuf = req.match_info().query(<span class="hljs-string">"tail"</span>).parse().unwrap();
+    <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Path {:?}"</span>, path))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| App::new().route(<span class="hljs-string">r"/a/{tail:.*}"</span>, web::get().to(index)))
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+}
+</div></code></pre>
+<h2 id="%e8%b7%af%e5%be%84%e4%bf%a1%e6%81%af%e6%8f%90%e5%8f%96%e5%99%a8">路径信息提取器</h2>
+<p><code>kayrx::web</code>提供了用于类型安全路径信息提取的功能。 路径 提取信息，目标类型可以几种不同的形式定义。最简单的方法是使用<code>tuple</code>类型。元组中的每个元素必须对应于路径模式中的一个元素。即您可以将路径模式<code>/{id}/{username}/</code>与 <code>Path&lt;(u32, String)&gt;</code>类型进行匹配，但<code>Path&lt;(String, String, String)&gt;</code>类型将始终失败</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;(<span class="hljs-built_in">String</span>, <span class="hljs-built_in">u32</span>)&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+    <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}! id: {}"</span>, info.<span class="hljs-number">0</span>, info.<span class="hljs-number">1</span>))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new().route(
+            <span class="hljs-string">"/{username}/{id}/index.html"</span>, <span class="hljs-comment">// &lt;- define path parameters</span>
+            web::get().to(index),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>还可以将路径模式信息提取到结构。在这种情况下，此结构必须实现<code>serde</code>的<code> Deserialize</code>特征。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+<span class="hljs-keyword">use</span> serde::Deserialize;
+
+<span class="hljs-meta">#\[derive(Deserialize)]</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+    username: <span class="hljs-built_in">String</span>,
+}
+
+<span class="hljs-comment">// extract path info using serde</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;Info&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+    <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, info.username))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new().route(
+            <span class="hljs-string">"/{username}/index.html"</span>, <span class="hljs-comment">// &lt;- define path parameters</span>
+            web::get().to(index),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p><code>Query</code>为请求查询参数提供了类似的功能.</p>
+<h2 id="%e7%94%9f%e6%88%90%e8%b5%84%e6%ba%90urls">生成资源URLs</h2>
+<p>使用<code>HttpRequest.url_for()</code>方法可基于资源模式生成<code>URL</code>。例如，如果您使用名称 &quot; foo&quot; 和模式 &quot; {a} / {b} / {c}&quot; 配置了资源，则可以这样做：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{guard, http::header, HttpRequest, HttpResponse, <span class="hljs-built_in">Result</span>};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-built_in">Result</span>&lt;HttpResponse&gt; {
+    <span class="hljs-keyword">let</span> url = req.url_for(<span class="hljs-string">"foo"</span>, &amp;\[<span class="hljs-string">"1"</span>, <span class="hljs-string">"2"</span>, <span class="hljs-string">"3"</span>])?; <span class="hljs-comment">// &lt;- generate url for "foo" resource</span>
+
+    <span class="hljs-literal">Ok</span>(HttpResponse::Found()
+        .header(header::LOCATION, url.as_str())
+        .finish())
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .service(
+                web::resource(<span class="hljs-string">"/test/{a}/{b}/{c}"</span>)
+                    .name(<span class="hljs-string">"foo"</span>) <span class="hljs-comment">// &lt;- set resource name, then it could be used in `url_for`</span>
+                    .guard(guard::Get())
+                    .to(|| HttpResponse::<span class="hljs-literal">Ok</span>()),
+            )
+            .route(<span class="hljs-string">"/test/"</span>, web::get().to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>这将返回类似于<code>http://example.com/test/1/2/3</code>的字符串信息（至少在当前协议和主机名暗含<code>http://example.com的情况下</code>）。 <code>url_for()</code>方法返回Url对象，因此您可以修改此<code>url</code> (添加查询参数，锚点等)。 <code>url_for()</code>只能为命名资源调用，否则将返回错误</p>
+<h2 id="%e5%a4%96%e9%83%a8%e8%b5%84%e6%ba%90">外部资源</h2>
+<p>可以将有效URL的资源注册为外部资源。它们仅用于生成URL，在请求时从不考虑匹配。</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{HttpRequest, Responder};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-keyword">impl</span> Responder {
+    <span class="hljs-keyword">let</span> url = req.url_for(<span class="hljs-string">"youtube"</span>, &amp;\[<span class="hljs-string">"oHg5SJYRHA0"</span>]).unwrap();
+    <span class="hljs-built_in">assert_eq!</span>(url.as_str(), <span class="hljs-string">"https://youtube.com/watch/oHg5SJYRHA0"</span>);
+
+    url.into_string()
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+            .external_resource(<span class="hljs-string">"youtube"</span>, <span class="hljs-string">"https://youtube.com/watch/{video_id}"</span>)
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<h2 id="%e8%b7%af%e5%be%84%e8%a7%84%e8%8c%83%e5%8c%96%e5%b9%b6%e9%87%8d%e5%ae%9a%e5%90%91%e5%88%b0%e6%96%9c%e6%9d%a0%e9%99%84%e5%8a%a0%e7%9a%84%e8%b7%af%e7%94%b1">路径规范化并重定向到斜杠附加的路由</h2>
+<p>通过规范化意味着：</p>
+<ul>
+<li>向路径添加尾部斜杠</li>
+<li>用一个代替多个斜杠</li>
+</ul>
+<p>处理程序找到正确解析的路径后立即返回。如果全部启用，标准化条件的顺序为1）合并，2）合并和附加 3）附加。如果路径至少满足上述条件之一，则它将重定向到新路径</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{middleware, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Hello"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::NormalizePath)
+            .route(<span class="hljs-string">"/resource/"</span>, web::to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>在此示例中，<code>//resource///</code>将重定向到<code>/resource/</code></p>
+<p>在此示例中，所有方法都注册了路径规范化处理程序，但是您不应依赖此机制来重定向<code>POST</code>请求。带有斜杠的<code>Not Found</code>重定向会将<code>POST</code>请求转换为<code>GET</code>，从而丢失原始请求中的所有 <code>POST</code>数据。</p>
+<p>可以仅针对<code>GET</code>请求注册路径规范化：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{http::Method, middleware, web, App, HttpServer};
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::NormalizePath)
+            .route(<span class="hljs-string">"/resource/"</span>, web::get().to(index))
+            .default_service(web::route().method(Method::GET))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<h2 id="%e4%bd%bf%e7%94%a8%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f%e5%89%8d%e7%bc%80%e7%bc%96%e5%86%99%e5%ba%94%e7%94%a8">使用应用程序前缀编写应用</h2>
+<p>该<code>web::scope()</code>方法允许设置特定的应用范围。此范围表示资源前缀，该前缀将附加到资源配置添加的所有资源模式中。这可用于帮助将一组路由安装在与所包含的可调用者不同的位置，同时仍保持相同的资源名称。</p>
+<p>例如：</p>
+<pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">show_users</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"Show users"</span>)
+}
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">user_detail</span></span>(path: web::Path&lt;(<span class="hljs-built_in">u32</span>,)&gt;) -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"User detail: {}"</span>, path.<span class="hljs-number">0</span>))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().service(
+            web::scope(<span class="hljs-string">"/users"</span>)
+                .route(<span class="hljs-string">"/show"</span>, web::get().to(show_users))
+                .route(<span class="hljs-string">"/show/{id}"</span>, web::get().to(user_detail)),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>在上面的示例中，<code>show_users</code>路由将具有<code>/ users / show</code>而不是<code>/ show</code>的有效路由模式， 因为应用的作用域将位于该模式之前。然后，仅当URL路径为<code>/ users / show</code>时，路由才会匹配，并且使用路由<code>show_users</code>名称调用该<code>HttpRequest.url_for()</code>函数时，它将生成具有相同的UR路径L</p>
+<h2 id="%e8%87%aa%e5%ae%9a%e4%b9%89%e8%b7%af%e7%94%b1%e5%ae%88%e5%8d%ab">自定义路由守卫</h2>
+<p>您可以将<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/guard/trait.Guard.html">Guard</a>看作一个简单的函数，它接受<code>request</code>对象引用并返回<code>true</code>或<code>false</code>。形式上，守卫是实现该<code>Guard</code>特征的任何对象 。<code>kayrx::web</code>提供了多个谓词，您可以检查 api文档的<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/guard/index.html#functions">functions部分</a>。</p>
+<p>这是一个简单的守卫，用于检查请求是否包含特定的标头：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{dev::RequestHead, guard::Guard, http, HttpResponse};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ContentTypeHeader</span></span>;
+
+<span class="hljs-keyword">impl</span> Guard <span class="hljs-keyword">for</span> ContentTypeHeader {
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">check</span></span>(&amp;<span class="hljs-keyword">self</span>, req: &amp;RequestHead) -&gt; <span class="hljs-built_in">bool</span> {
+        req.headers().contains_key(http::header::CONTENT_TYPE)
+    }
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new().route(
+            <span class="hljs-string">"/"</span>,
+            web::route()
+                .guard(ContentTypeHeader)
+                .to(|| HttpResponse::<span class="hljs-literal">Ok</span>()),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>在此示例中，仅当请求包含<code>CONTENT-TYPE</code>标头时才调用<code>index</code>处理程序。</p>
+<p>守卫无法访问或修改请求对象，但是可以在<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/struct.HttpRequest.html#method.extensions">请求扩展</a>中存储额外的信息</p>
+<h2 id="%e4%bf%ae%e6%94%b9%e5%ae%88%e5%8d%ab%e5%80%bc">修改守卫值</h2>
+<p>您可以通过将任何谓词值包装在<code>Not</code>谓词中来反转其含义。例如，如果要为除 <code>GET</code>以外的所有方法返回 <code>METHOD NOT ALLOWED</code>响应，请执行以下操作：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{guard, web, App, HttpResponse, HttpServer};
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new().route(
+            <span class="hljs-string">"/"</span>,
+            web::route()
+                .guard(guard::Not(guard::Get()))
+                .to(|| HttpResponse::MethodNotAllowed()),
+        )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>该<code>Any</code>守卫接受 守卫列表, 如果提供的任何守卫匹配，则匹配 :</p>
+<pre><code class="language-rust"><div>guard::Any(guard::Get()).or(guard::Post())
+</div></code></pre>
+<p>该<code>All</code>守卫接受守卫列表,和匹配的列表，如果提供的所有守卫匹配, 则匹配 :</p>
+<pre><code class="language-rust"><div>guard::All(guard::Get()).and(guard::Header(<span class="hljs-string">"content-type"</span>, <span class="hljs-string">"plain/text"</span>))
+</div></code></pre>
+<h2 id="%e6%9b%b4%e6%94%b9%e9%bb%98%e8%ae%a4%e7%9a%84not-found%e5%93%8d%e5%ba%94">更改默认的<code>Not Found</code>响应</h2>
+<p>如果在路由表中找不到路径模式或资源找不到匹配的路由，则使用默认资源。默认响应是<code>NOT FOUND</code>。可以使用<code>App::default_service()</code>来覆盖<code>NOT FOUND</code>响应。此方法接受与使用<code>App::service()</code>进行常规资源配置方法相同的配置功函数.</p>
+<pre><code class="language-rust"><div><span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| {
+        App::new()
+            .service(web::resource(<span class="hljs-string">"/"</span>).route(web::get().to(index)))
+            .default_service(
+                web::route()
+                    .guard(guard::Not(guard::Get()))
+                    .to(|| HttpResponse::MethodNotAllowed()),
+            )
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+
+
+[set title Kayrx / url-dispatch]
+[set doc-section advance-url-dispatch]
+[stash doc-content][require raw ../_side.html]

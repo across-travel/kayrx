@@ -1,0 +1,28 @@
+  <h1 id="kayrx">Kayrx在这里</h1>
+
+  <blockquote><p>2020-01-01</p></blockquote>
+  <p>记得在我学习<code>Rust</code>的时候，我做了一个在线论坛叫<code>Ruster</code>，他开始是用<code>Rocket</code>框架做的，但是它使用rust 的 <code>nightly</code>版本，由于快速发展
+  频繁升级，总是遇到各种错误，除错时间远远大于开发功能时间，由于我是做web开发，无意间发现<code>Actix</code>框架，功能非常丰富，作者之前开发<code>aiohttp</code>作品
+  广受欢迎，于是迅速切换到<code>Actix-web</code>, 开发了Ruster的高级版本<code>muro</code>, 它实现类似Reddit自由创建和定制社区功能。使用它的在线网站就是 <a href="http://kriry.com" target="_black">kriry.com</a> </p>
+
+  <p> 一直以来我只希望Rust有个稳定可靠基础，我对nightly, 各种高大上的东西关注的不多，大部分人总是争论那个框架好坏官方拥护之类. 在我决心研究Actix系列的时候，我发现下面tokio又是一个系列
+    型框架!</p>
+
+  <p>我只在乎好不好研究能不能掌握。随着<code>Tokio 0.2</code>发布，所有crates合并成一个，但是大部分内容和Actix是不兼容(actix系列使用tokio一些组件)，研究更加
+  费劲了，然而Actix这边作者却不断开始拆分Crate, 然后又不断添加Crate, Crate数量迅速超过十多个. 由于Actix系列发展非常快，正准备升级1.0时，Rust马
+  上<code>Async/await</code>要来了，我想在等下吧，不然又要重构，然后等到Actix-web的2.0发布，正准备升级，突然作者在多次遭受社区UB争论中宣布不做开源了，这让人
+  有点无所适从。</p>
+
+  <p>于是在Actix-web发布2.0时，我决定自己组合Actix系列Crate，然后合并下面依赖使用的部分Tokio组件，做一个统一的Crate便于理解掌握。这就是Kayrx, 终于出
+  现在这里，目前兼容<code>Actix-web 2.0</code></p>
+
+  <p><strong> <code>kayrx</code>的诞生源于我一直希望一个稳定的基础，去开发<a href="http://kriry.com" target="_black">kriry.com</a> </strong></p>
+
+  <p>kayrx是Actix-web 2.0的定制版，优先我自己使用，在Actix作者宣布离开时我把他发布了，现在Actix项目有了新的领导者，重新走向新的未来, GOOD LUCK!</p>
+
+  <p><strong>注: 建议优先选择Actix-web</strong></p>
+
+
+  [set title Kayrx / blog / kayrxtishere]
+  [set doc-section blog-kayrxtishere]
+  [stash doc-content][require raw ../_side.html]

@@ -1,0 +1,280 @@
+<h1 id="%e6%8f%90%e5%8f%96%e5%99%a8">提取器</h1>
+    <p><code>kayrx::web</code> 提供了一种用于类型安全的请求信息访问的工具, 称为提取器. (即 <code>impl FromRequest</code>). 默认情况下，<code>kayrx::web</code>提供了几种提取器实现.</p>
+    <p>提取器可以作为处理函数的参数进行访问。<code>kayrx::web</code> 每个处理函数最多支持10个提取器。参数位置无关紧要。</p>
+    <pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(
+        path: web::Path&lt;(<span class="hljs-built_in">String</span>, <span class="hljs-built_in">String</span>)&gt;,
+        json: web::Json&lt;MyInfo&gt;,
+    ) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"{} {} {} {}"</span>, path.<span class="hljs-number">0</span>, path.<span class="hljs-number">1</span>, json.id, json.username)
+    }
+    </div></code></pre>
+    <h2 id="path">Path</h2>
+    <p><a href="https://docs.rs/kayrx/0.7.5/kayrx/web/dev/struct.Path.html">Path</a> (路径)提供可以从请求的路径中提取信息。您可以从路径反序列化任何变量段。</p>
+    <p>例如，对于在<code>/users/{userid}/{friend}</code>路径中注册的资源，可以反序列化两个段，<code>userid</code>和<code>friend</code>。这些片段可以提取到<code>tuple</code>，即 <code>Path&lt;(u32, String)&gt;</code>或者从<code>Serde</code> crate 中实现该<code>Deserialize</code>特征的任何结构</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+    
+    <span class="hljs-comment">/// extract path info from "/users/{userid}/{friend}" url</span>
+    <span class="hljs-comment">/// {userid} -  - deserializes to a u32</span>
+    <span class="hljs-comment">/// {friend} - deserializes to a String</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;(<span class="hljs-built_in">u32</span>, <span class="hljs-built_in">String</span>)&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+        <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}, userid {}!"</span>, info.<span class="hljs-number">1</span>, info.<span class="hljs-number">0</span>))
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        HttpServer::new(|| {
+            App::new().route(
+                <span class="hljs-string">"/users/{userid}/{friend}"</span>, <span class="hljs-comment">// &lt;- define path parameters</span>
+                web::get().to(index),
+            )
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>还可以提取路径信息(实现<code>serde</code>的<code>Deserialize</code>特征)到特定类型 。这是一个使用<code>serde</code> 而不是<code>tuple</code>类型的等效示例</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+    <span class="hljs-keyword">use</span> serde::Deserialize;
+    
+    <span class="hljs-meta">#\[derive(Deserialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+        userid: <span class="hljs-built_in">u32</span>,
+        friend: <span class="hljs-built_in">String</span>,
+    }
+    
+    <span class="hljs-comment">/// extract path info using serde</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;Info&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+        <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}, userid {}!"</span>, info.friend, info.userid))
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        HttpServer::new(|| {
+            App::new().route(
+                <span class="hljs-string">"/users/{userid}/{friend}"</span>, <span class="hljs-comment">// &lt;- define path parameters</span>
+                web::get().to(index),
+            )
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>它也可以通过路径名<code>get</code>或<code>query</code>请求的参数：</p>
+    <pre><code class="language-rust"><div>async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(req: HttpRequest) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+        <span class="hljs-keyword">let</span> name: <span class="hljs-built_in">String</span> =
+            req.match_info().get(<span class="hljs-string">"friend"</span>).unwrap().parse().unwrap();
+        <span class="hljs-keyword">let</span> userid: <span class="hljs-built_in">i32</span> = req.match_info().query(<span class="hljs-string">"userid"</span>).parse().unwrap();
+    
+        <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}, userid {}!"</span>, name, userid))
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        HttpServer::new(|| {
+            App::new().route(
+                <span class="hljs-string">"/users/{userid}/{friend}"</span>, <span class="hljs-comment">// &lt;- define path parameters</span>
+                web::get().to(index),
+            )
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <h2 id="query">Query</h2>
+    <p><a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/struct.Query.html">Query</a>类型提供用于请求查询参数的提取功能。下面使用了<code>serde_urlencoded</code> crate.</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::web;
+    <span class="hljs-keyword">use</span> serde::Deserialize;
+    
+    <span class="hljs-meta">#\[derive(Deserialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+        username: <span class="hljs-built_in">String</span>,
+    }
+    
+    <span class="hljs-comment">// this handler get called only if the request's query contains `username` field</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Query&lt;Info&gt;) -&gt; <span class="hljs-built_in">String</span> {
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, info.username)
+    }
+    </div></code></pre>
+    <h2 id="json">Json</h2>
+    <p><a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/struct.Json.html">Json</a> 允许将请求主体反序列化为结构体。要从请求的正文中提取类型化的信息，类型T必须实现<code> serde</code>的<code>Deserialize</code> 特征</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+    <span class="hljs-keyword">use</span> serde::Deserialize;
+    
+    <span class="hljs-meta">#\[derive(Deserialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+        username: <span class="hljs-built_in">String</span>,
+    }
+    
+    <span class="hljs-comment">/// deserialize `Info` from request's body</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Json&lt;Info&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+        <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, info.username))
+    }
+    </div></code></pre>
+    <p>一些提取程序提供了一种配置提取过程的方法。Json提取器的 <code>JsonConfig</code>类型用于配置。要配置提取器，请将其配置对象传递给资源的<code>.data()</code>方法。如果是Json提取器，它将返回<code>JsonConfig</code>。您可以配置<code>json</code>有效负载的最大大小以及自定义错误处理函数.</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{error, web, FromRequest, HttpResponse, Responder};
+    <span class="hljs-keyword">use</span> serde::Deserialize;
+    
+    <span class="hljs-meta">#\[derive(Deserialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Info</span></span> {
+        username: <span class="hljs-built_in">String</span>,
+    }
+    
+    <span class="hljs-comment">/// deserialize `Info` from request's body, max payload size is 4kb</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Json&lt;Info&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, info.username)
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        HttpServer::new(|| {
+            App::new().service(
+                web::resource(<span class="hljs-string">"/"</span>)
+                    <span class="hljs-comment">// change json extractor configuration</span>
+                    .app_data(web::Json::&lt;Info&gt;::configure(|cfg| {
+                        cfg.limit(<span class="hljs-number">4096</span>).error_handler(|err, _req| {
+                            <span class="hljs-comment">// create custom error response</span>
+                            error::InternalError::from_response(
+                                err,
+                                HttpResponse::Conflict().finish(),
+                            )
+                            .into()
+                        })
+                    }))
+                    .route(web::post().to(index)),
+            )
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <h2 id="form">Form</h2>
+    <p>目前仅支持<code>url-encoded</code> forms. 可以将<code>url-encoded</code>的正文提取为特定类型。此类型必须实现<code>Serde</code> Crate的<code>Deserialize</code>特征.</p>
+    <p><a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/struct.FormConfig.html">FormConfig</a>允许配置提取过程</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, <span class="hljs-built_in">Result</span>};
+    <span class="hljs-keyword">use</span> serde::Deserialize;
+    
+    <span class="hljs-meta">#\[derive(Deserialize)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">FormData</span></span> {
+        username: <span class="hljs-built_in">String</span>,
+    }
+    
+    <span class="hljs-comment">/// extract form data using serde</span>
+    <span class="hljs-comment">/// this handler gets called only if the content type is *x-www-form-urlencoded*</span>
+    <span class="hljs-comment">/// and the content of the request could be deserialized to a `FormData` struct</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(form: web::Form&lt;FormData&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;<span class="hljs-built_in">String</span>&gt; {
+        <span class="hljs-literal">Ok</span>(<span class="hljs-built_in">format!</span>(<span class="hljs-string">"Welcome {}!"</span>, form.username))
+    }
+    </div></code></pre>
+    <h2 id="%e5%85%b6%e4%bb%96">其他</h2>
+    <p><code>kayrx::web</code> 还提供了其他几种提取器：</p>
+    <ul>
+    <li><a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/struct.Data.html">Data</a> -如果您需要访问应用程序状态。</li>
+    <li><code>HttpRequest</code> - HttpRequest本身是一个提取器，如果需要访问请求，它会返回<code>self</code>.</li>
+    <li><code>String</code> -您可以将请求的有效负载转换为字符串. <a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/trait.FromRequest.html#example-2">示例</a></li>
+    <li><code>bytes :: Bytes</code>-您可以将请求的有效负载转换为<code>Byte</code>.  <a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/trait.FromRequest.html#example-4">示例</a></li>
+    <li><code>Payload</code> -您可以访问请求的有效负载. <a href="https://docs.rs/kayrx/0.7.5/kayrx/web/web/struct.Payload.html">示例</a></li>
+    </ul>
+    <h2 id="%e5%ba%94%e7%94%a8%e7%8a%b6%e6%80%81">应用状态</h2>
+    <p>应用状态可通过<code>web::Data</code>提取器从处理程序访问；但是，状态作为只读引用进行访问。如果您需要对状态的可变访问，则必须实现它。</p>
+    <blockquote>
+    <p>当心，<code>kayrx::web</code>将创建应用程序状态和处理程序的多个副本，这对于每个线程都是唯一的。如果您在多个线程中运行应用程序，<code>kayrx::web</code>将创建与线程数量相同的应用程序状态对象和处理程序对象。</p>
+    </blockquote>
+    <p>这是存储处理请求数的处理程序示例：</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, Responder};
+    <span class="hljs-keyword">use</span> std::cell::Cell;
+    
+    <span class="hljs-meta">#\[derive(Clone)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">AppState</span></span> {
+        count: Cell&lt;<span class="hljs-built_in">i32</span>&gt;,
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">show_count</span></span>(data: web::Data&lt;AppState&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"count: {}"</span>, data.count.get())
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">add_one</span></span>(data: web::Data&lt;AppState&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-keyword">let</span> count = data.count.get();
+        data.count.set(count + <span class="hljs-number">1</span>);
+    
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"count: {}"</span>, data.count.get())
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        <span class="hljs-keyword">let</span> data = AppState {
+            count: Cell::new(<span class="hljs-number">0</span>),
+        };
+    
+        HttpServer::new(<span class="hljs-keyword">move</span> || {
+            App::new()
+                .app_data(data.clone())
+                .route(<span class="hljs-string">"/"</span>, web::to(show_count))
+                .route(<span class="hljs-string">"/add"</span>, web::to(add_one))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <p>尽管此处理程序可以工作, 但<code>self.0</code>根据线程数和每个线程处理的请求数而有所不同。适当的实现将使用<code>Arc</code>和<code>AtomicUsize</code>.</p>
+    <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, Responder};
+    <span class="hljs-keyword">use</span> std::sync::atomic::{AtomicUsize, Ordering};
+    <span class="hljs-keyword">use</span> std::sync::Arc;
+    
+    <span class="hljs-meta">#\[derive(Clone)]</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">AppState</span></span> {
+        count: Arc&lt;AtomicUsize&gt;,
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">show_count</span></span>(data: web::Data&lt;AppState&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"count: {}"</span>, data.count.load(Ordering::Relaxed))
+    }
+    
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">add_one</span></span>(data: web::Data&lt;AppState&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+        data.count.fetch_add(<span class="hljs-number">1</span>, Ordering::Relaxed);
+    
+        <span class="hljs-built_in">format!</span>(<span class="hljs-string">"count: {}"</span>, data.count.load(Ordering::Relaxed))
+    }
+    
+    <span class="hljs-meta">#\[kayrx::main]</span>
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+        <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+    
+        <span class="hljs-keyword">let</span> data = AppState {
+            count: Arc::new(AtomicUsize::new(<span class="hljs-number">0</span>)),
+        };
+    
+        HttpServer::new(<span class="hljs-keyword">move</span> || {
+            App::new()
+                .app_data(data.clone())
+                .route(<span class="hljs-string">"/"</span>, web::to(show_count))
+                .route(<span class="hljs-string">"/add"</span>, web::to(add_one))
+        })
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+    }
+    </div></code></pre>
+    <blockquote>
+    <p>请注意同步原语，例如<code>Mutex</code>或<code>RwLock</code>。<code>kayrx::web</code>框架异步处理请求。通过阻止线程执行，所有并发请求处理过程都将被阻止。如果需要从多个线程共享或更新某些状态，请考虑使用<code>kayrx::krse::sync</code>同步原语.</p>
+    </blockquote>
+
+
+
+[set title Kayrx / doc / extractor]
+[set doc-section basic-extractor]
+[stash doc-content][require raw ../_side.html]

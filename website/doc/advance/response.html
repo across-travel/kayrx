@@ -1,0 +1,183 @@
+<h1 id="%e5%93%8d%e5%ba%94">响应</h1>
+<p>用类似构建器的模式构建<code>HttpResponse</code>的实例.  <code>HttpResponse</code> 提供了几种返回<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/dev/struct.HttpResponseBuilder.html">HttpResponseBuilder</a>实例的方法，该方法实现了用于构建响应的各种便捷方法。</p>
+<p>方法<code>.body</code>，<code>.finish</code>和<code>.json</code>创建完成响应，并返回一个<code>HttpResponse</code>的实例构造。如果在同一构建器实例上多次调用此方法，则构建器将出现恐慌</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::HttpResponse;
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>()
+        .content_type(<span class="hljs-string">"plain/text"</span>)
+        .header(<span class="hljs-string">"X-Hdr"</span>, <span class="hljs-string">"sample"</span>)
+        .body(<span class="hljs-string">"data"</span>)
+}
+</div></code></pre>
+<h2 id="%e5%86%85%e5%ae%b9%e7%bc%96%e7%a0%81">内容编码</h2>
+<p><code>kayrx::web</code>可以使用<a href="https://docs.rs/kayrx/0.7.5/kayrx/web/middleware/struct.Compress.html">Compress</a>中间件自动压缩内容负载, 支持以下编解码器：</p>
+<ul>
+<li>Brotli</li>
+<li>Gzip</li>
+<li>Deflate</li>
+<li>Identity</li>
+</ul>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{middleware, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index_br</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"data"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::<span class="hljs-keyword">default</span>())
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index_br))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>基于<code>middleware::BodyEncoding</code>特征的编码参数压缩响应负载, 默认情况下使用<code>ContentEncoding::Auto</code>, 如果选择 <code>ContentEncoding::Auto</code>，则压缩取决于请求的 <code>Accept-Encoding</code>标头.</p>
+<blockquote>
+<p><code>ContentEncoding::Identity</code>可用于禁用压缩。如果选择了其他内容编码，则将对该编解码器禁用该压缩。</p>
+</blockquote>
+<p>例如，要对某个处理程序启用<code>brotli</code>，请使用<code>ContentEncoding::Br</code>：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{http::ContentEncoding, dev::BodyEncoding, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index_br</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>()
+        .encoding(ContentEncoding::Br)
+        .body(<span class="hljs-string">"data"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{middleware, web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::<span class="hljs-keyword">default</span>())
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index_br))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>或对于整个应用程序:</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{http::ContentEncoding, dev::BodyEncoding, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index_br</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"data"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{middleware, web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::new(ContentEncoding::Br))
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index_br))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>在这种情况下，我们通过将内容编码设置为一个<code>Identity</code>值来显式禁用内容压缩：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{
+    http::ContentEncoding, middleware, dev::BodyEncoding, HttpResponse,
+};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>()
+        <span class="hljs-comment">// v- disable compression</span>
+        .encoding(ContentEncoding::Identity)
+        .body(<span class="hljs-string">"data"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::<span class="hljs-keyword">default</span>())
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<p>处理已压缩的主体时（例如，在提供<code>assets</code>服务时），请将内容编码设置<code>Identity</code>为避免压缩已压缩的数据，并手动设置<code>content-encoding</code>标头：</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{
+    http::ContentEncoding, middleware, dev::BodyEncoding, HttpResponse,
+};
+
+<span class="hljs-keyword">static</span> HELLO_WORLD: &amp;\[<span class="hljs-built_in">u8</span>] = &amp;\[
+    <span class="hljs-number">0x1f</span>, <span class="hljs-number">0x8b</span>, <span class="hljs-number">0x08</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0xa2</span>, <span class="hljs-number">0x30</span>, <span class="hljs-number">0x10</span>, <span class="hljs-number">0x5c</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0xcb</span>, <span class="hljs-number">0x48</span>, <span class="hljs-number">0xcd</span>, <span class="hljs-number">0xc9</span>,
+    <span class="hljs-number">0xc9</span>, <span class="hljs-number">0x57</span>, <span class="hljs-number">0x28</span>, <span class="hljs-number">0xcf</span>, <span class="hljs-number">0x2f</span>, <span class="hljs-number">0xca</span>, <span class="hljs-number">0x49</span>, <span class="hljs-number">0xe1</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x2d</span>, <span class="hljs-number">0x3b</span>, <span class="hljs-number">0x08</span>, <span class="hljs-number">0xaf</span>,
+    <span class="hljs-number">0x0c</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>,
+];
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>()
+        .encoding(ContentEncoding::Identity)
+        .header(<span class="hljs-string">"content-encoding"</span>, <span class="hljs-string">"gzip"</span>)
+        .body(HELLO_WORLD)
+}
+</div></code></pre>
+<p>也可以在应用程序级别设置默认的内容编码，默认情况下使用<code>ContentEncoding::Auto</code>，这意味着自动进行内容压缩协商</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{http::ContentEncoding, middleware, HttpResponse};
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>() -&gt; HttpResponse {
+    HttpResponse::<span class="hljs-literal">Ok</span>().body(<span class="hljs-string">"data"</span>)
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::new(ContentEncoding::Br))
+            .route(<span class="hljs-string">"/"</span>, web::get().to(index))
+    })
+    .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+    .run()
+    .await
+}
+</div></code></pre>
+<h2 id="json%e5%93%8d%e5%ba%94">JSON响应</h2>
+<p>该<code>Json</code>类型允许使用格式正确的<code>JSON</code>数据进行响应：只需返回<code>Json&lt;T&gt;</code>类型的值，其中<code>T</code>是要序列化为<code>JSON</code>结构的类型。该类型<code>T</code>必须实现<code>serde</code>的<code>Serialize</code>特征</p>
+<pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, HttpResponse, <span class="hljs-built_in">Result</span>};
+<span class="hljs-keyword">use</span> serde::{Deserialize, Serialize};
+
+<span class="hljs-meta">#\[derive(Serialize, Deserialize)]</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">MyObj</span></span> {
+    name: <span class="hljs-built_in">String</span>,
+}
+
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(obj: web::Path&lt;MyObj&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;HttpResponse&gt; {
+    <span class="hljs-literal">Ok</span>(HttpResponse::<span class="hljs-literal">Ok</span>().json(MyObj {
+        name: obj.name.to_string(),
+    }))
+}
+
+<span class="hljs-meta">#\[kayrx::main]</span>
+async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
+
+    HttpServer::new(|| App::new().route(<span class="hljs-string">r"/a/{name}"</span>, web::get().to(index)))
+        .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
+        .run()
+        .await
+}
+</div></code></pre>
+
+[set title Kayrx / response]
+[set doc-section advance-response]
+[stash doc-content][require raw ../_side.html]

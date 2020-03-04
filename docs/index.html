@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://avatars0.githubusercontent.com/u/58360786?s=200&v=4" title="Kayrx">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+    <link rel="stylesheet" type="text/css" href="https://open.kriry.com/kayrx/home.css" />
+    <title>Kayrx</title>
+  </head>
+  <body class="vscode-light">
+    <div id="page" class="page-section-root">
+      <div id="mnav">
+    
+        <div id="lnav">
+          <div id="left">
+            <a id="front" href="/kayrx/"><img src="https://open.kriry.com/kayrx/kayrx.png"/></a>
+            <span id="dlnav">
+              <a class="tail" id="nav-doc" href="/kayrx/doc/" >文档</a>
+              <a class="tail" id="nav-blog" href="/kayrx/blog/2020/kayrxtishere.html" >博客</a>
+            </span>
+          </div>
+          <label ><a href="#" id="menu">M</a></label>
+        </div>
+        <div id="rnav">
+            <li > <a href="https://spectrum.chat/kayrx" target="_black" style="color:green; font-weight: bold;" >群聊</a></li>
+            <li ><a  id="nav-community" href="/kayrx/community" >社区</a></li>
+            <li > <a id="nav-funding" href="/kayrx/funding">赞助</a></li>
+        </div> 
+    </div>
+
+      <div id="content">
+        <div class="container"><div id="home">
+      <div id="topic">
+          <div id="intro">
+            <div id="tmobile"><img src="https://open.kriry.com/kayrx/kayrx.png"></div>
+              <div id="tleft">
+                  <p id="name">Kayrx</p>
+                  <p id="item">异步非阻塞-事件驱动, I/O-Net-HTTP-Web-Client全栈开源平台</p>
+                  <button><a href="/kayrx/doc/">开始</a></button>
+              </div>
+              <div id="tright"><img src="https://open.kriry.com/kayrx/kayrx.png"></div>
+          </div>
+      </div>
+
+    <div id="info">
+        <div id="infoleft">
+          <ul id="features">
+            <li><strong>全栈式</strong><br/> 客户端-服务端</li>
+            <li><strong>事件驱动</strong><br/> 非阻塞事件驱动</li>
+            <li><strong>全异步</strong><br/> 全异步无锁并发</li>
+            <li><strong>高性能</strong><br/> 高性能服务器</li>
+            <li><strong>轻量级        </strong><br/>轻量,简单,灵活</li>
+          </ul>
+        </div>
+        <div id="inforight">
+      
+          <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer, Responder};
+    
+    #[get("/{id}/{name}/index.html")]
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;(<span class="hljs-built_in">u32</span>, <span class="hljs-built_in">String</span>)&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+    <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Hello {}! id:{}"</span>, info.<span class="hljs-number">1</span>, info.<span class="hljs-number">0</span>)
+    }
+    
+    #[kayrx::main]
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+      .bind(<span class="hljs-string">"127.0.0.1:8080"</span>)?
+      .run()
+      .await
+    }</div></code></pre>
+      
+        </div>
+    </div>
+    
+</div>
+
+
+
+</div>
+      </div>
+
+      <div id="footer">
+        &copy; 2019  <a href="https://github.com/kriry/kayrx">Kayrx</a>
+      </div>
+    </div>
+    <script async>
+      window.onload = function() {
+            let menu = document.getElementById('menu');
+            menu.addEventListener('click', function() {
+                let nav = document.getElementById('rnav');
+                if (nav.style.height == 'auto') {
+                        nav.style.height = '0';
+                }else{
+                        nav.style.height = 'auto';
+                }
+            }, false)
+    }
+</script>
+  </body>
+</html>

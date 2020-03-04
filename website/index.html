@@ -1,0 +1,48 @@
+<div id="home">
+      <div id="topic">
+          <div id="intro">
+            <div id="tmobile"><img src="https://open.kriry.com/kayrx/kayrx.png"></div>
+              <div id="tleft">
+                  <p id="name">Kayrx</p>
+                  <p id="item">异步非阻塞-事件驱动, I/O-Net-HTTP-Web-Client全栈开源平台</p>
+                  <button><a href="/kayrx/doc/">开始</a></button>
+              </div>
+              <div id="tright"><img src="https://open.kriry.com/kayrx/kayrx.png"></div>
+          </div>
+      </div>
+
+    <div id="info">
+        <div id="infoleft">
+          <ul id="features">
+            <li><strong>全栈式</strong><br/> 客户端-服务端</li>
+            <li><strong>事件驱动</strong><br/> 非阻塞事件驱动</li>
+            <li><strong>全异步</strong><br/> 全异步无锁并发</li>
+            <li><strong>高性能</strong><br/> 高性能服务器</li>
+            <li><strong>轻量级        </strong><br/>轻量,简单,灵活</li>
+          </ul>
+        </div>
+        <div id="inforight">
+      
+          <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer, Responder};
+    
+    #\[get("/{id}/{name}/index.html")]
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(info: web::Path&lt;(<span class="hljs-built_in">u32</span>, <span class="hljs-built_in">String</span>)&gt;) -&gt; <span class="hljs-keyword">impl</span> Responder {
+    <span class="hljs-built_in">format!</span>(<span class="hljs-string">"Hello {}! id:{}"</span>, info.<span class="hljs-number">1</span>, info.<span class="hljs-number">0</span>)
+    }
+    
+    #\[kayrx::main]
+    async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
+    HttpServer::new(|| App::new().service(index))
+      .bind(<span class="hljs-string">"127.0.0.1:8080"</span>)?
+      .run()
+      .await
+    }</div></code></pre>
+      
+        </div>
+    </div>
+    
+</div>
+
+[set title Kayrx]
+[set page-section root]
+[stash content][require raw _layout.html]

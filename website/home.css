@@ -1,0 +1,446 @@
+/* =================================================================
+   Reset CSS
+   ================================================================= */
+
+   html, body, div, span, applet, object, iframe,
+   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+   a, abbr, acronym, address, big, cite, code,
+   del, dfn, em, img, ins, kbd, q, s, samp,
+   small, strike, strong, sub, sup, tt, var,
+   b, u, i, center,
+   dl, dt, dd, ol, ul, li,
+   fieldset, form, label, legend,
+   table, caption, tbody, tfoot, thead, tr, th, td,
+   article, aside, canvas, details, embed,
+   figure, figcaption, footer, header, hgroup,
+   menu, nav, output, ruby, section, summary,
+   time, mark, audio, video {
+       margin: 0;
+       padding: 0;
+       border: 0;
+       font-size: 100%;
+       font: inherit;
+       vertical-align: baseline;
+   }
+   article, aside, details, figcaption, figure,
+   footer, header, hgroup, menu, nav, section {
+       display: block;
+   }
+
+   table {
+       border-collapse: collapse;
+       border-spacing: 0;
+   }
+
+   
+   /* =================================================================
+      Layout
+      ================================================================= */
+   
+   html,body {
+     width: 100%;
+     height: 100%;
+   }
+   
+   body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+     font-size: 15px;
+     line-height: 1.6; 
+   }
+   
+   h1, h2, h3, h4, h5, h6 {
+     margin-bottom: 1rem;
+   }
+   
+   h1 {
+     font-size: 2rem;
+   }
+   
+   h2 {
+     font-size: 1.8rem;
+   }
+   
+   h3 {
+     font-size: 1.6rem;
+   }
+   
+   h4 {
+     font-size: 1.4rem;
+   }
+   
+   h5 {
+     font-size: 1.2rem;
+   }
+   
+   h6 {
+     font-weight: bold;
+   }
+   
+   p {
+     margin-bottom: 1rem;
+   }
+   
+   strong {
+     font-weight: bold;
+   }
+   
+   dl dt {
+     font-weight: bold;
+   }
+   
+   dl dd {
+     margin-bottom: 1rem;
+   }
+
+   .task-list-item { list-style-type: none; } 
+   .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+
+      /* =================================================================
+          Nav
+      ================================================================= */
+
+    #lnav {
+          position: fixed;
+          width: 100%;
+          line-height: 60px;
+          zoom:1;
+          display: flex;
+          background-color: #ffffff;
+          justify-content: space-between;
+          border-bottom: 1px solid #dfdcdc;  
+    }
+    
+    #mnav   a {
+      color: black;
+    }
+
+    #lnav #left #front img {
+          width: 3.3rem;
+          height: 3.3rem;
+          vertical-align:middle;
+     }
+
+    #lnav label {
+          float: right;
+          font-size: 26px;
+          font-weight: bold;
+          margin: auto 1vw;
+    }
+
+    #lnav label a {
+          margin-right: 1.5vw;
+    }
+
+    @media only screen and (max-width:  767px) {
+          #lnav #dlnav .tail {
+            font-size: 18px;
+            margin-left: 1rem ;
+            vertical-align:middle;
+          }
+          #lnav #left #front img {
+            margin-left: 1.1vw;
+          }
+          #rnav {
+            padding-top: 4rem;
+            height: 0;
+            display: block;
+            overflow: hidden;
+          }
+          #rnav li {
+              list-style-type: none;;
+          }
+          #rnav li a {
+            display:block;
+            font-size: 18px;
+            border-bottom: 1px solid green;
+            padding: 1vh 4vw;
+          }
+    }
+    @media only screen and (min-width:  768px) {
+          #menu {
+            display: none;
+          }
+          #lnav #left #front img {
+            margin-left: 10vw;
+          }
+          #lnav #left .tail {
+            font-size: 18px;
+            margin: auto 1.6rem;
+            vertical-align:middle;
+          }
+          #rnav {
+            position: fixed;
+            right: 0;
+            line-height: 60px;
+            padding-right: 10vw;
+          }
+          #rnav li {
+            display: inline-block;
+          }
+          #rnav li a {
+            font-size: 18px;
+            padding-left: 2vw;
+          }
+    }
+
+
+ /* =================================================================
+          Page
+      ================================================================= */
+   
+   #page {
+     min-height: 100%;
+     align-items: stretch;
+   }
+   
+   #page a {
+     text-decoration: none;
+   }
+   
+   #page a:hover {
+     text-decoration: underline;
+   }
+   
+   #content {
+     margin-bottom: 2rem;
+   }
+
+   .page-section-doc #nav-doc, .page-section-blog #nav-blog, 
+   .page-section-community #nav-community, .page-section-funding #nav-funding  {
+     color: green;
+   }
+
+   #footer {
+     border-top: 1px solid #ccc;
+     padding: 1rem 0;
+     clear: both;
+     text-align: center;
+   }
+  
+   @media only screen and (max-width: 767px) {
+      #content .container {
+        margin: 0 auto;
+        width: 100%;
+      }
+      #content .container #funding, #content .container #community {
+          padding: 2rem 2rem 0;
+      }
+  }
+
+  @media only screen and (min-width: 767px) {
+    #content .container #community, #content .container #funding,
+    .page-section-doc #content .container,
+    .page-section-blog #content .container {
+        margin: 0 auto;
+        width: 66%;
+    }
+    #content .container #funding,  #content .container #community {
+      padding-top: 6rem;
+  }
+}
+    
+   /* =================================================================
+      Homepage
+      ================================================================= */
+   #home #topic {
+     margin-bottom: 2rem;
+     padding: 9rem 2rem 5rem;
+     background: linear-gradient(315deg,  #c9eedd 0%,  #c4c6f7 100%);
+   }
+
+   #home #topic #intro {
+     margin: 0 auto;
+      width: 70%;
+      display: flex;
+  }
+  #home #topic #tleft {
+     width: 66%;
+ }
+
+ #home #topic #tmobile {
+    display: none;
+  }
+
+   #home #topic #name {
+      font-size: 3rem;
+      font-weight: 444;
+      line-height: 4rem;
+   }
+
+   #home #topic #item {
+      font-size: 1.6rem;
+      margin-top: 1.2rem;
+  }
+ #home #topic button {
+      padding: 0.5rem 1.4rem;
+      border: 1px solid #c9eedd;
+      border-radius: 4%;
+      background: linear-gradient(315deg,  #c9eedd 0%,  #c4c6f7 100%);
+  }
+  
+  #home #topic button a {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: blue;
+  }
+
+  #home #info {
+    margin: 0 auto;
+    display: flex;
+    width: 66%;
+  }
+   
+  #home #info #infoleft {
+    width: 40%;
+  }
+
+  #home #info #inforight {
+    flex-grow: 1;
+  }
+
+   #home #features li {
+    list-style-type: none;
+    margin-bottom: 1rem;
+  }
+  
+
+  @media only screen and (max-width:  767px) {
+    #home #topic {
+      margin-bottom: 2rem;
+      padding: 5rem 2rem;
+    }
+
+     #home #topic #intro {
+        display: block;
+     }
+     #home #topic #intro, #home #topic #tleft {
+        width: 100%;
+        text-align: center;
+    }
+    #home #topic #tright {
+        display: none;
+    }
+    #home #topic #tmobile {
+        display: block;
+    }
+
+    #home #info {
+      display: block;
+      width: 100%;
+    }
+
+    #home #info #infoleft {
+      margin: 0 4rem 2rem;
+    }
+    #home #info #inforight {
+       margin: 0 2rem;
+     }
+  }
+
+
+  /* =================================================================
+        Documentation
+        ================================================================= */  
+      
+      .doc-page {
+          display: flex;
+      }
+        
+
+      .doc-nav {
+          white-space: nowrap;
+          padding: 7rem  2rem 2rem;
+          width: 12rem;
+        }
+
+      .doc-nav #mobile {
+            display: none;
+      }
+         
+         .doc-nav #dir {
+            font-size: 1.3rem;
+            margin: -1.5rem 0 0 -0.5rem;
+            color: green;
+         }
+
+         .doc-nav #title {
+            font-size: 1.2rem;
+            margin-top: 0.8rem;
+             margin-bottom: 0.2rem;
+         }
+        
+       
+      .doc-nav #mobile {
+          display: none;
+      }
+     
+     .doc-nav #dir {
+        font-size: 1.3rem;
+        margin: -1.5rem 0 0 -0.5rem;
+        color: green;
+     }
+
+     .doc-nav #title {
+        font-size: 1.2rem;
+        margin-top: 0.8rem;
+         margin-bottom: 0.2rem;
+     }
+    
+    .doc-nav a {
+      display: block;
+    }
+    
+    .doc-content {
+      flex-grow: 1;
+      padding: 5rem 2rem 0 0;
+    }
+
+     .doc-content li {
+      margin-left: 1rem;
+   }
+
+    .doc-content blockquote{
+      border-left: 5px solid green;
+      padding: 0.6rem 0.6rem 0.01rem;
+      background-color: rgba(220, 220, 220, 0.4);
+     margin-bottom: 0.2rem;
+    }
+
+  .doc-content p code {
+      padding: 1px 5px;
+      background-color: #eef; 
+      border-radius: 3px;
+      border: 1px solid #e8e8e8;
+  }   
+    
+  .doc-content p.code {
+      background-color: #eaeaea;
+      padding: 0.1rem 0.2rem;
+      border-radius: 0.1rem;
+    }
+    
+    .doc-content h4, .doc-content h5 {
+      margin-top: 0.8rem;
+    }
+    
+    .doc-content h4:first-of-type, .doc-content h5:first-of-type {
+      margin-top: 0;
+    }
+
+    @media only screen and (max-width: 767px) {
+        .doc-page {
+          display: block;
+        }
+        .doc-nav {
+          padding: 2rem 2rem 0 2rem;
+        }
+        .doc-content {
+          padding: 0 2rem;
+        }
+        .doc-nav #mobile {
+              display: block;
+        }
+        .doc-nav #pc {
+              display: none;
+        }
+    }
