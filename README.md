@@ -5,7 +5,7 @@
   
   <p>
 
-![linux](https://github.com/kriry/kayrx/workflows/linux/badge.svg?branch=master)
+![linux](https://github.com/kayrx/kayrx/workflows/linux/badge.svg?branch=master)
 [![Documentation](https://docs.rs/kayrx/badge.svg)](https://docs.rs/kayrx)
 [![Download](https://img.shields.io/crates/d/kayrx.svg)](https://crates.io/crates/kayrx)
 ![License](https://img.shields.io/crates/l/kayrx.svg)
@@ -13,7 +13,7 @@
   </p>
 
   <h3>
-    <a href="https://open.kriry.com/kayrx">Website</a>
+    <a href="https://kayrx.github.io/kayrx">Website</a>
     <span> | </span>
     <a href="https://spectrum.chat/kayrx/kayrx">Chat</a>
     <span> | </span>
