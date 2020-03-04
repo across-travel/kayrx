@@ -13,6 +13,7 @@ extern crate log;
 pub use kayrx_macro::*;
 pub mod codec;
 pub mod fiber;
+pub mod framed;
 pub mod kcore;
 pub mod krse;
 pub mod service;

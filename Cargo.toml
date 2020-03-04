@@ -52,6 +52,7 @@ mio-uds = "0.6.7"
 encoding_rs = "0.8"
 fxhash = "0.2.1"
 mime = "0.3"
+mime_guess = "2.0.1"
 net2 = "0.2.33"
 pin-project = "0.4.6"
 serde_json = "1.0"
@@ -68,7 +69,9 @@ sha1 = "0.6"
 trust-dns-proto = "=0.18.0-alpha.2"
 trust-dns-resolver = "=0.18.0-alpha.2"
 time = { version = "0.2.7", default-features = false, features = ["std"] }
+twoway = "0.2"
 coo-kie = { version = "0.13.3", package = "cookie", optional = true }
+v_htmlescape = "0.4"
 
 # for secure cookie
 ring = { version = "0.16.9" }
