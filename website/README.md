@@ -1,5 +1,5 @@
-# [kayrx](https://open.kriry.com/kayrx)
+# [kayrx](https://kayrx.github.io/kayrx)
 
 ```shell
-watch start website docs --ext .html
+watch run website docs --ext .html
 ```
