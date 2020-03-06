@@ -158,7 +158,7 @@ const RESERVED: Pack = Pack::most_significant(5);
 
 impl Address {	
     /// Represents no entry, picked to avoid collision with Mio's internals.	
-    /// This value should not be passed to mio.	
+    /// This value should not be passed to linux.	
     pub(crate) const NULL: usize = usize::MAX >> 1;	
 
     /// Re-exported by `Generation`.	

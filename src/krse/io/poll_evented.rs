@@ -1,7 +1,7 @@
 use crate::krse::io::{AsyncRead, AsyncWrite, Registration};
 use crate::krse::io::driver::{platform};
 
-use mio::event::Evented;
+use crate::krse::io::driver::linux::{self, event::Evented};
 use std::fmt;
 use std::io::{self, Read, Write};
 use std::marker::Unpin;
@@ -23,10 +23,10 @@ macro_rules! ready {
     /// [`std::io::Write`] traits with the reactor that drives it.
     ///
     /// `PollEvented` uses [`Registration`] internally to take a type that
-    /// implements [`mio::Evented`] as well as [`std::io::Read`] and or
+    /// implements [`linux::Evented`] as well as [`std::io::Read`] and or
     /// [`std::io::Write`] and associate it with a reactor that will drive it.
     ///
-    /// Once the [`mio::Evented`] type is wrapped by `PollEvented`, it can be
+    /// Once the [`linux::Evented`] type is wrapped by `PollEvented`, it can be
     /// used from within the future's execution model. As such, the
     /// `PollEvented` type provides [`AsyncRead`] and [`AsyncWrite`]
     /// implementations using the underlying I/O resource as well as readiness
@@ -65,8 +65,8 @@ macro_rules! ready {
     /// use tokio::io::PollEvented;
     ///
     /// use futures::ready;
-    /// use mio::Ready;
-    /// use mio::net::{TcpStream, TcpListener};
+    /// use linux::Ready;
+    /// use linux::net::{TcpStream, TcpListener};
     /// use std::io;
     /// use std::task::{Context, Poll};
     ///
@@ -94,7 +94,7 @@ macro_rules! ready {
     ///
     /// ## Platform-specific events
     ///
-    /// `PollEvented` also allows receiving platform-specific `mio::Ready` events.
+    /// `PollEvented` also allows receiving platform-specific `linux::Ready` events.
     /// These events are included as part of the read readiness event stream. The
     /// write readiness event stream is only for `Ready::writable()` events.
     ///
@@ -102,7 +102,6 @@ macro_rules! ready {
     /// [`std::io::Write`]: https://doc.rust-lang.org/std/io/trait.Write.html
     /// [`AsyncRead`]: ../io/trait.AsyncRead.html
     /// [`AsyncWrite`]: ../io/trait.AsyncWrite.html
-    /// [`mio::Evented`]: https://docs.rs/mio/0.6/mio/trait.Evented.html
     /// [`Registration`]: struct.Registration.html
     /// [`TcpListener`]: ../net/struct.TcpListener.html
     /// [`clear_read_ready`]: #method.clear_read_ready
@@ -133,7 +132,7 @@ macro_rules! poll_ready {
         let mask = $mask | platform::hup();
 
         // See if the current readiness matches any bits.
-        let mut ret = mio::Ready::from_usize(cached) & $mask;
+        let mut ret = linux::Ready::from_usize(cached) & $mask;
 
         if ret.is_empty() {
             // Readiness does not match, consume the registration's readiness
@@ -163,7 +162,7 @@ macro_rules! poll_ready {
                 $me.inner.$cache.store(cached, Relaxed);
             }
 
-            Poll::Ready(Ok(mio::Ready::from_usize(cached)))
+            Poll::Ready(Ok(linux::Ready::from_usize(cached)))
         }
     }};
 }
@@ -235,8 +234,8 @@ where
     pub fn poll_read_ready(
         &self,
         cx: &mut Context<'_>,
-        mask: mio::Ready,
-    ) -> Poll<io::Result<mio::Ready>> {
+        mask: linux::Ready,
+    ) -> Poll<io::Result<linux::Ready>> {
         assert!(!mask.is_writable(), "cannot poll for write readiness");
         poll_ready!(
             self,
@@ -262,7 +261,7 @@ where
     ///
     /// * `ready` includes writable or HUP
     /// * called from outside of a task context.
-    pub fn clear_read_ready(&self, cx: &mut Context<'_>, ready: mio::Ready) -> io::Result<()> {
+    pub fn clear_read_ready(&self, cx: &mut Context<'_>, ready: linux::Ready) -> io::Result<()> {
         // Cannot clear write readiness
         assert!(!ready.is_writable(), "cannot clear write readiness");
         assert!(!platform::is_hup(ready), "cannot clear HUP readiness");
@@ -298,10 +297,10 @@ where
     ///
     /// * `ready` contains bits besides `writable` and `hup`.
     /// * called from outside of a task context.
-    pub fn poll_write_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<mio::Ready>> {
+    pub fn poll_write_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<linux::Ready>> {
         poll_ready!(
             self,
-            mio::Ready::writable(),
+            linux::Ready::writable(),
             write_readiness,
             take_write_ready,
             self.inner.registration.poll_write_ready(cx)
@@ -321,7 +320,7 @@ where
     ///
     /// This function will panic if called from outside of a task context.
     pub fn clear_write_ready(&self, cx: &mut Context<'_>) -> io::Result<()> {
-        let ready = mio::Ready::writable();
+        let ready = linux::Ready::writable();
 
         self.inner
             .write_readiness
@@ -347,12 +346,12 @@ where
         cx: &mut Context<'_>,
         buf: &mut [u8],
     ) -> Poll<io::Result<usize>> {
-        ready!(self.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.poll_read_ready(cx, linux::Ready::readable()))?;
 
         let r = (*self).get_mut().read(buf);
 
         if is_wouldblock(&r) {
-            self.clear_read_ready(cx, mio::Ready::readable())?;
+            self.clear_read_ready(cx, linux::Ready::readable())?;
             return Poll::Pending;
         }
 

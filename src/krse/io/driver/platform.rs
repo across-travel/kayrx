@@ -1,8 +1,8 @@
 pub(crate) use self::sys::*;
 
 mod sys {
-    use mio::unix::UnixReady;
-    use mio::Ready;
+    use crate::krse::io::driver::linux::unix::UnixReady;
+    use crate::krse::io::driver::linux::Ready;
 
     pub(crate) fn hup() -> Ready {
         UnixReady::hup().into()

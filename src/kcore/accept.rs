@@ -11,6 +11,7 @@ use crate::kcore::server::Server;
 use crate::kcore::socket::{SocketAddr, SocketListener, StdListener};
 use crate::kcore::worker::{Conn, WorkerClient};
 use crate::kcore::Token;
+use crate::krse::io::driver::linux;
 
 pub(crate) enum Command {
     Pause,
@@ -27,29 +28,29 @@ struct ServerSocketInfo {
 }
 
 #[derive(Clone)]
-pub(crate) struct AcceptNotify(mio::SetReadiness);
+pub(crate) struct AcceptNotify(linux::SetReadiness);
 
 impl AcceptNotify {
-    pub(crate) fn new(ready: mio::SetReadiness) -> Self {
+    pub(crate) fn new(ready: linux::SetReadiness) -> Self {
         AcceptNotify(ready)
     }
 
     pub(crate) fn notify(&self) {
-        let _ = self.0.set_readiness(mio::Ready::readable());
+        let _ = self.0.set_readiness(linux::Ready::readable());
     }
 }
 
 impl Default for AcceptNotify {
     fn default() -> Self {
-        AcceptNotify::new(mio::Registration::new2().1)
+        AcceptNotify::new(linux::Registration::new2().1)
     }
 }
 
 pub(crate) struct AcceptLoop {
-    cmd_reg: Option<mio::Registration>,
-    cmd_ready: mio::SetReadiness,
-    notify_reg: Option<mio::Registration>,
-    notify_ready: mio::SetReadiness,
+    cmd_reg: Option<linux::Registration>,
+    cmd_ready: linux::SetReadiness,
+    notify_reg: Option<linux::Registration>,
+    notify_ready: linux::SetReadiness,
     tx: sync_mpsc::Sender<Command>,
     rx: Option<sync_mpsc::Receiver<Command>>,
     srv: Option<Server>,
@@ -58,8 +59,8 @@ pub(crate) struct AcceptLoop {
 impl AcceptLoop {
     pub fn new(srv: Server) -> AcceptLoop {
         let (tx, rx) = sync_mpsc::channel();
-        let (cmd_reg, cmd_ready) = mio::Registration::new2();
-        let (notify_reg, notify_ready) = mio::Registration::new2();
+        let (cmd_reg, cmd_ready) = linux::Registration::new2();
+        let (notify_reg, notify_ready) = linux::Registration::new2();
 
         AcceptLoop {
             tx,
@@ -74,7 +75,7 @@ impl AcceptLoop {
 
     pub fn send(&self, msg: Command) {
         let _ = self.tx.send(msg);
-        let _ = self.cmd_ready.set_readiness(mio::Ready::readable());
+        let _ = self.cmd_ready.set_readiness(linux::Ready::readable());
     }
 
     pub fn get_notify(&self) -> AcceptNotify {
@@ -100,20 +101,20 @@ impl AcceptLoop {
 }
 
 struct Accept {
-    poll: mio::Poll,
+    poll: linux::Poll,
     rx: sync_mpsc::Receiver<Command>,
     sockets: Slab<ServerSocketInfo>,
     workers: Vec<WorkerClient>,
     srv: Server,
-    timer: (mio::Registration, mio::SetReadiness),
+    timer: (linux::Registration, linux::SetReadiness),
     next: usize,
     backpressure: bool,
 }
 
 const DELTA: usize = 100;
-const CMD: mio::Token = mio::Token(0);
-const TIMER: mio::Token = mio::Token(1);
-const NOTIFY: mio::Token = mio::Token(2);
+const CMD: linux::Token = linux::Token(0);
+const TIMER: linux::Token = linux::Token(1);
+const NOTIFY: linux::Token = linux::Token(2);
 
 /// This function defines errors that are per-connection. Which basically
 /// means that if we get this error from `accept()` system call it means
@@ -132,8 +133,8 @@ impl Accept {
     #![allow(clippy::too_many_arguments)]
     pub(crate) fn start(
         rx: sync_mpsc::Receiver<Command>,
-        cmd_reg: mio::Registration,
-        notify_reg: mio::Registration,
+        cmd_reg: linux::Registration,
+        notify_reg: linux::Registration,
         socks: Vec<(Token, StdListener)>,
         srv: Server,
         workers: Vec<WorkerClient>,
@@ -151,8 +152,8 @@ impl Accept {
                 if let Err(err) = accept.poll.register(
                     &cmd_reg,
                     CMD,
-                    mio::Ready::readable(),
-                    mio::PollOpt::edge(),
+                    linux::Ready::readable(),
+                    linux::PollOpt::edge(),
                 ) {
                     panic!("Can not register Registration: {}", err);
                 }
@@ -161,8 +162,8 @@ impl Accept {
                 if let Err(err) = accept.poll.register(
                     &notify_reg,
                     NOTIFY,
-                    mio::Ready::readable(),
-                    mio::PollOpt::edge(),
+                    linux::Ready::readable(),
+                    linux::PollOpt::edge(),
                 ) {
                     panic!("Can not register Registration: {}", err);
                 }
@@ -178,9 +179,9 @@ impl Accept {
         srv: Server,
     ) -> Accept {
         // Create a poll instance
-        let poll = match mio::Poll::new() {
+        let poll = match linux::Poll::new() {
             Ok(poll) => poll,
-            Err(err) => panic!("Can not create mio::Poll: {}", err),
+            Err(err) => panic!("Can not create linux::Poll: {}", err),
         };
 
         // Start accept
@@ -195,9 +196,9 @@ impl Accept {
             // Start listening for incoming connections
             if let Err(err) = poll.register(
                 &server,
-                mio::Token(token + DELTA),
-                mio::Ready::readable(),
-                mio::PollOpt::edge(),
+                linux::Token(token + DELTA),
+                linux::Ready::readable(),
+                linux::PollOpt::edge(),
             ) {
                 panic!("Can not register io: {}", err);
             }
@@ -211,9 +212,9 @@ impl Accept {
         }
 
         // Timer
-        let (tm, tmr) = mio::Registration::new2();
+        let (tm, tmr) = linux::Registration::new2();
         if let Err(err) =
-            poll.register(&tm, TIMER, mio::Ready::readable(), mio::PollOpt::edge())
+            poll.register(&tm, TIMER, linux::Ready::readable(), linux::PollOpt::edge())
         {
             panic!("Can not register Registration: {}", err);
         }
@@ -232,7 +233,7 @@ impl Accept {
 
     fn poll(&mut self) {
         // Create storage for events
-        let mut events = mio::Events::with_capacity(128);
+        let mut events = linux::Events::with_capacity(128);
 
         loop {
             if let Err(err) = self.poll.poll(&mut events, None) {
@@ -268,9 +269,9 @@ impl Accept {
                 if now > inst {
                     if let Err(err) = self.poll.register(
                         &info.sock,
-                        mio::Token(token + DELTA),
-                        mio::Ready::readable(),
-                        mio::PollOpt::edge(),
+                        linux::Token(token + DELTA),
+                        linux::Ready::readable(),
+                        linux::PollOpt::edge(),
                     ) {
                         error!("Can not register server socket {}", err);
                     } else {
@@ -300,9 +301,9 @@ impl Accept {
                         for (token, info) in self.sockets.iter() {
                             if let Err(err) = self.poll.register(
                                 &info.sock,
-                                mio::Token(token + DELTA),
-                                mio::Ready::readable(),
-                                mio::PollOpt::edge(),
+                                linux::Token(token + DELTA),
+                                linux::Ready::readable(),
+                                linux::PollOpt::edge(),
                             ) {
                                 error!("Can not resume socket accept process: {}", err);
                             } else {
@@ -345,9 +346,9 @@ impl Accept {
                 for (token, info) in self.sockets.iter() {
                     if let Err(err) = self.poll.register(
                         &info.sock,
-                        mio::Token(token + DELTA),
-                        mio::Ready::readable(),
-                        mio::PollOpt::edge(),
+                        linux::Token(token + DELTA),
+                        linux::Ready::readable(),
+                        linux::PollOpt::edge(),
                     ) {
                         error!("Can not resume socket accept process: {}", err);
                     } else {
@@ -441,7 +442,7 @@ impl Accept {
                         let r = self.timer.1.clone();
                         System::current().arbiter().send(Box::pin(async move {
                             delay_until(Instant::now() + Duration::from_millis(510)).await;
-                            let _ = r.set_readiness(mio::Ready::readable());
+                            let _ = r.set_readiness(linux::Ready::readable());
                         }));
                         return;
                     }

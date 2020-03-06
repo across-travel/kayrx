@@ -1,7 +1,7 @@
 use crate::krse::io::driver::{Direction, Handle, platform};
 use crate::krse::io::slab::Address;
 
-use mio::{self, Evented};
+use crate::krse::io::driver::linux::{self, event::Evented};
 use std::task::{Context, Poll};
 use std::io;
 
@@ -28,7 +28,7 @@ use std::io;
     ///
     /// ## Platform-specific events
     ///
-    /// `Registration` also allows receiving platform-specific `mio::Ready`
+    /// `Registration` also allows receiving platform-specific `linux::Ready`
     /// events. These events are included as part of the read readiness event
     /// stream. The write readiness event stream is only for `Ready::writable()`
     /// events.
@@ -122,12 +122,11 @@ impl Registration {
     ///   the fact that [`register`] was not called first.
     ///
     /// [`register`]: #method.register
-    /// [edge-triggered]: https://docs.rs/mio/0.6/mio/struct.Poll.html#edge-triggered-and-level-triggered
     ///
     /// # Panics
     ///
     /// This function will panic if called from outside of a task context.
-    pub fn poll_read_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<mio::Ready>> {
+    pub fn poll_read_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<linux::Ready>> {
         let v = self.poll_ready(Direction::Read, Some(cx))?;
         match v {
             Some(v) => Poll::Ready(Ok(v)),
@@ -142,7 +141,7 @@ impl Registration {
     /// it is safe to call this function from outside of a task context.
     ///
     /// [`poll_read_ready`]: #method.poll_read_ready
-    pub fn take_read_ready(&self) -> io::Result<Option<mio::Ready>> {
+    pub fn take_read_ready(&self) -> io::Result<Option<linux::Ready>> {
         self.poll_ready(Direction::Read, None)
     }
 
@@ -173,12 +172,11 @@ impl Registration {
     ///   the fact that [`register`] was not called first.
     ///
     /// [`register`]: #method.register
-    /// [edge-triggered]: https://docs.rs/mio/0.6/mio/struct.Poll.html#edge-triggered-and-level-triggered
     ///
     /// # Panics
     ///
     /// This function will panic if called from outside of a task context.
-    pub fn poll_write_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<mio::Ready>> {
+    pub fn poll_write_ready(&self, cx: &mut Context<'_>) -> Poll<io::Result<linux::Ready>> {
         let v = self.poll_ready(Direction::Write, Some(cx))?;
         match v {
             Some(v) => Poll::Ready(Ok(v)),
@@ -193,7 +191,7 @@ impl Registration {
     /// it is safe to call this function from outside of a task context.
     ///
     /// [`poll_write_ready`]: #method.poll_write_ready
-    pub fn take_write_ready(&self) -> io::Result<Option<mio::Ready>> {
+    pub fn take_write_ready(&self) -> io::Result<Option<linux::Ready>> {
         self.poll_ready(Direction::Write, None)
     }
 
@@ -205,7 +203,7 @@ impl Registration {
         &self,
         direction: Direction,
         cx: Option<&mut Context<'_>>,
-    ) -> io::Result<Option<mio::Ready>> {
+    ) -> io::Result<Option<linux::Ready>> {
         let inner = match self.handle.inner() {
             Some(inner) => inner,
             None => return Err(io::Error::new(io::ErrorKind::Other, "reactor gone")),
@@ -234,7 +232,7 @@ impl Registration {
             .set_readiness(self.address, |curr| curr & (!mask_no_hup))
             .unwrap_or_else(|_| panic!("address {:?} no longer valid!", self.address));
 
-        let mut ready = mask & mio::Ready::from_usize(curr_ready);
+        let mut ready = mask & linux::Ready::from_usize(curr_ready);
 
         if ready.is_empty() {
             if let Some(cx) = cx {
@@ -248,7 +246,7 @@ impl Registration {
                 let curr_ready = sched
                     .set_readiness(self.address, |curr| curr & (!mask_no_hup))
                     .unwrap_or_else(|_| panic!("address {:?} no longer valid!", self.address));
-                ready = mask & mio::Ready::from_usize(curr_ready);
+                ready = mask & linux::Ready::from_usize(curr_ready);
             }
         }
 

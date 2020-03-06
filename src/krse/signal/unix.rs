@@ -7,9 +7,9 @@ use crate::krse::io::{AsyncRead, PollEvented};
 use crate::krse::signal::registry::{globals, EventId, EventInfo, Globals, Init, Storage};
 use crate::krse::sync::mpsc::{channel, Receiver};
 use crate::krse::signal::hook;
+use crate::krse::io::driver::linux::net::UnixStream;
 
 use libc::c_int;
-use mio_uds::UnixStream;
 use std::io::{self, Error, ErrorKind, Write};
 use std::pin::Pin;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -96,21 +96,6 @@ impl SignalKind {
     /// By default, the process is terminated by this signal.
     pub fn hangup() -> Self {
         Self(libc::SIGHUP)
-    }
-
-    /// Represents the SIGINFO signal.
-    ///
-    /// On Unix systems this signal is sent to request a status update from the
-    /// process. By default, this signal is ignored.
-    #[cfg(any(
-        target_os = "dragonfly",
-        target_os = "freebsd",
-        target_os = "macos",
-        target_os = "netbsd",
-        target_os = "openbsd"
-    ))]
-    pub fn info() -> Self {
-        Self(libc::SIGINFO)
     }
 
     /// Represents the SIGINT signal.

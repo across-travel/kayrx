@@ -2,6 +2,7 @@ use crate::krse::future::poll_fn;
 use crate::krse::io::{AsyncRead, AsyncWrite, PollEvented};
 use crate::krse::net::unix::split::{split, ReadHalf, WriteHalf};
 use crate::krse::net::unix::ucred::{self, UCred};
+use crate::krse::io::driver::linux;
 
 use std::convert::TryFrom;
 use std::fmt;
@@ -29,7 +30,7 @@ macro_rules! ready {
     /// from a listener with `UnixListener::incoming`. Additionally, a pair of
     /// anonymous Unix sockets can be created with `UnixStream::pair`.
     pub struct UnixStream {
-        io: PollEvented<mio_uds::UnixStream>,
+        io: PollEvented<linux::net::UnixStream>,
     }
 
 impl UnixStream {
@@ -42,7 +43,7 @@ impl UnixStream {
     where
         P: AsRef<Path>,
     {
-        let stream = mio_uds::UnixStream::connect(path)?;
+        let stream = linux::net::UnixStream::connect(path)?;
         let stream = UnixStream::new(stream)?;
 
         poll_fn(|cx| stream.io.poll_write_ready(cx)).await?;
@@ -55,7 +56,7 @@ impl UnixStream {
     /// The returned stream will be associated with the given event loop
     /// specified by `handle` and is ready to perform I/O.
     pub fn from_std(stream: net::UnixStream) -> io::Result<UnixStream> {
-        let stream = mio_uds::UnixStream::from_stream(stream)?;
+        let stream = linux::net::UnixStream::from_stream(stream)?;
         let io = PollEvented::new(stream)?;
 
         Ok(UnixStream { io })
@@ -67,14 +68,14 @@ impl UnixStream {
     /// communicating back and forth between one another. Each socket will
     /// be associated with the default event loop's handle.
     pub fn pair() -> io::Result<(UnixStream, UnixStream)> {
-        let (a, b) = mio_uds::UnixStream::pair()?;
+        let (a, b) = linux::net::UnixStream::pair()?;
         let a = UnixStream::new(a)?;
         let b = UnixStream::new(b)?;
 
         Ok((a, b))
     }
 
-    pub(crate) fn new(stream: mio_uds::UnixStream) -> io::Result<UnixStream> {
+    pub(crate) fn new(stream: linux::net::UnixStream) -> io::Result<UnixStream> {
         let io = PollEvented::new(stream)?;
         Ok(UnixStream { io })
     }
@@ -118,10 +119,10 @@ impl UnixStream {
     }
 }
 
-impl TryFrom<UnixStream> for mio_uds::UnixStream {
+impl TryFrom<UnixStream> for linux::net::UnixStream {
     type Error = io::Error;
 
-    /// Consumes value, returning the mio I/O object.
+    /// Consumes value, returning the linux I/O object.
     ///
     /// See [`PollEvented::into_inner`] for more details about
     /// resource deregistration that happens during the call.
@@ -193,11 +194,11 @@ impl UnixStream {
         cx: &mut Context<'_>,
         buf: &mut [u8],
     ) -> Poll<io::Result<usize>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().read(buf) {
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             x => Poll::Ready(x),

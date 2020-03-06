@@ -2,6 +2,7 @@ use crate::krse::future::poll_fn;
 use crate::krse::io::PollEvented;
 use crate::krse::net::udp::split::{split, RecvHalf, SendHalf};
 use crate::krse::net::ToSocketAddrs;
+use crate::krse::io::driver::linux;
 
 use std::convert::TryFrom;
 use std::fmt;
@@ -20,7 +21,7 @@ macro_rules! ready {
 
     /// A UDP socket
     pub struct UdpSocket {
-        io: PollEvented<mio::net::UdpSocket>,
+        io: PollEvented<linux::net::UdpSocket>,
     }
 
 impl UdpSocket {
@@ -46,11 +47,11 @@ impl UdpSocket {
     }
 
     fn bind_addr(addr: SocketAddr) -> io::Result<UdpSocket> {
-        let sys = mio::net::UdpSocket::bind(&addr)?;
+        let sys = linux::net::UdpSocket::bind(&addr)?;
         UdpSocket::new(sys)
     }
 
-    fn new(socket: mio::net::UdpSocket) -> io::Result<UdpSocket> {
+    fn new(socket: linux::net::UdpSocket) -> io::Result<UdpSocket> {
         let io = PollEvented::new(socket)?;
         Ok(UdpSocket { io })
     }
@@ -65,7 +66,7 @@ impl UdpSocket {
     /// configure a socket before it's handed off, such as setting options like
     /// `reuse_address` or binding to multiple addresses.
     pub fn from_std(socket: net::UdpSocket) -> io::Result<UdpSocket> {
-        let io = mio::net::UdpSocket::from_socket(socket)?;
+        let io = linux::net::UdpSocket::from_socket(socket)?;
         let io = PollEvented::new(io)?;
         Ok(UdpSocket { io })
     }
@@ -159,11 +160,11 @@ impl UdpSocket {
 
     #[doc(hidden)]
     pub fn poll_recv(&self, cx: &mut Context<'_>, buf: &mut [u8]) -> Poll<io::Result<usize>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().recv(buf) {
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             x => Poll::Ready(x),
@@ -222,11 +223,11 @@ impl UdpSocket {
         cx: &mut Context<'_>,
         buf: &mut [u8],
     ) -> Poll<Result<(usize, SocketAddr), io::Error>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().recv_from(buf) {
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             x => Poll::Ready(x),
@@ -368,10 +369,10 @@ impl UdpSocket {
     }
 }
 
-impl TryFrom<UdpSocket> for mio::net::UdpSocket {
+impl TryFrom<UdpSocket> for linux::net::UdpSocket {
     type Error = io::Error;
 
-    /// Consumes value, returning the mio I/O object.
+    /// Consumes value, returning the linux I/O object.
     ///
     /// See [`PollEvented::into_inner`] for more details about
     /// resource deregistration that happens during the call.

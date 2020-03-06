@@ -2,6 +2,7 @@ use crate::krse::task::AtomicWaker;
 use crate::krse::sync::atomic::AtomicUsize;
 use crate::krse::io::slab::{Address, Entry, Generation};
 use crate::krse::io::Pack;
+use crate::krse::io::driver::linux;
 
 use std::sync::atomic::Ordering::{Acquire, AcqRel, SeqCst};
 
@@ -108,7 +109,7 @@ impl ScheduledIo {
             }
             // Mask out the generation bits so that the modifying function
             // doesn't see them.
-            let current_readiness = current & mio::Ready::all().as_usize();
+            let current_readiness = current & linux::Ready::all().as_usize();
             let new = f(current_readiness);
 
             debug_assert!(

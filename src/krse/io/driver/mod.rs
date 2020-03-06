@@ -1,13 +1,13 @@
 pub(crate) mod platform;
-
+pub(crate) mod linux;
 mod scheduled_io;
 pub(crate) use scheduled_io::ScheduledIo; // pub(crate) for tests
 
 use crate::krse::sync::atomic::AtomicUsize;
 use crate::krse::thread::{Park, Unpark};
 use crate::krse::io::slab::{Address, Slab};
+use self::linux::event::Evented;
 
-use mio::event::Evented;
 use std::cell::RefCell;
 use std::fmt;
 use std::io;
@@ -19,13 +19,13 @@ use std::time::Duration;
 
 /// I/O driver, backed by Mio
 pub(crate) struct Driver {
-    /// Reuse the `mio::Events` value across calls to poll.
-    events: mio::Events,
+    /// Reuse the `linux::Events` value across calls to poll.
+    events: linux::Events,
 
     /// State shared between the reactor and the handles.
     inner: Arc<Inner>,
 
-    _wakeup_registration: mio::Registration,
+    _wakeup_registration: linux::Registration,
 }
 
 /// A reference to an I/O driver
@@ -36,7 +36,7 @@ pub(crate) struct Handle {
 
 pub(super) struct Inner {
     /// The underlying system event queue.
-    io: mio::Poll,
+    io: linux::Poll,
 
     /// Dispatch slabs for I/O and futures events
     pub(super) io_dispatch: Slab<ScheduledIo>,
@@ -45,7 +45,7 @@ pub(super) struct Inner {
     n_sources: AtomicUsize,
 
     /// Used to wake up the reactor from a call to `turn`
-    wakeup: mio::SetReadiness,
+    wakeup: linux::SetReadiness,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -59,7 +59,7 @@ thread_local! {
     static CURRENT_REACTOR: RefCell<Option<Handle>> = RefCell::new(None)
 }
 
-const TOKEN_WAKEUP: mio::Token = mio::Token(Address::NULL);
+const TOKEN_WAKEUP: linux::Token = linux::Token(Address::NULL);
 
 fn _assert_kinds() {
     fn _assert<T: Send + Sync>() {}
@@ -107,18 +107,18 @@ impl Driver {
     /// Creates a new event loop, returning any error that happened during the
     /// creation.
     pub(crate) fn new() -> io::Result<Driver> {
-        let io = mio::Poll::new()?;
-        let wakeup_pair = mio::Registration::new2();
+        let io = linux::Poll::new()?;
+        let wakeup_pair = linux::Registration::new2();
 
         io.register(
             &wakeup_pair.0,
             TOKEN_WAKEUP,
-            mio::Ready::readable(),
-            mio::PollOpt::level(),
+            linux::Ready::readable(),
+            linux::PollOpt::level(),
         )?;
 
         Ok(Driver {
-            events: mio::Events::with_capacity(1024),
+            events: linux::Events::with_capacity(1024),
             _wakeup_registration: wakeup_pair.0,
             inner: Arc::new(Inner {
                 io,
@@ -157,7 +157,7 @@ impl Driver {
             if token == TOKEN_WAKEUP {
                 self.inner
                     .wakeup
-                    .set_readiness(mio::Ready::empty())
+                    .set_readiness(linux::Ready::empty())
                     .unwrap();
             } else {
                 self.dispatch(token, event.readiness());
@@ -167,7 +167,7 @@ impl Driver {
         Ok(())
     }
 
-    fn dispatch(&self, token: mio::Token, ready: mio::Ready) {
+    fn dispatch(&self, token: linux::Token, ready: linux::Ready) {
         let mut rd = None;
         let mut wr = None;
 
@@ -190,7 +190,7 @@ impl Driver {
             wr = io.writer.take_waker();
         }
 
-        if !(ready & (!mio::Ready::writable())).is_empty() {
+        if !(ready & (!linux::Ready::writable())).is_empty() {
             rd = io.reader.take_waker();
         }
 
@@ -255,7 +255,7 @@ impl Handle {
     /// return immediately.
     fn wakeup(&self) {
         if let Some(inner) = self.inner() {
-            inner.wakeup.set_readiness(mio::Ready::readable()).unwrap();
+            inner.wakeup.set_readiness(linux::Ready::readable()).unwrap();
         }
     }
 
@@ -294,9 +294,9 @@ impl Inner {
 
         self.io.register(
             source,
-            mio::Token(address.to_usize()),
-            mio::Ready::all(),
-            mio::PollOpt::edge(),
+            linux::Token(address.to_usize()),
+            linux::Ready::all(),
+            linux::PollOpt::edge(),
         )?;
 
         Ok(address)
@@ -324,8 +324,8 @@ impl Inner {
             .unwrap_or_else(|| panic!("token {:?} no longer valid!", token));
 
         let (waker, ready) = match dir {
-            Direction::Read => (&sched.reader, !mio::Ready::writable()),
-            Direction::Write => (&sched.writer, mio::Ready::writable()),
+            Direction::Read => (&sched.reader, !linux::Ready::writable()),
+            Direction::Write => (&sched.writer, linux::Ready::writable()),
         };
 
         waker.register(w);
@@ -337,13 +337,13 @@ impl Inner {
 }
 
 impl Direction {
-    pub(super) fn mask(self) -> mio::Ready {
+    pub(super) fn mask(self) -> linux::Ready {
         match self {
             Direction::Read => {
                 // Everything except writable is signaled through read.
-                mio::Ready::all() - mio::Ready::writable()
+                linux::Ready::all() - linux::Ready::writable()
             }
-            Direction::Write => mio::Ready::writable() | platform::hup(),
+            Direction::Write => linux::Ready::writable() | platform::hup(),
         }
     }
 }
@@ -359,25 +359,25 @@ mod tests {
     impl Evented for NotEvented {
         fn register(
             &self,
-            _: &mio::Poll,
-            _: mio::Token,
-            _: mio::Ready,
-            _: mio::PollOpt,
+            _: &linux::Poll,
+            _: linux::Token,
+            _: linux::Ready,
+            _: linux::PollOpt,
         ) -> io::Result<()> {
             Ok(())
         }
 
         fn reregister(
             &self,
-            _: &mio::Poll,
-            _: mio::Token,
-            _: mio::Ready,
-            _: mio::PollOpt,
+            _: &linux::Poll,
+            _: linux::Token,
+            _: linux::Ready,
+            _: linux::PollOpt,
         ) -> io::Result<()> {
             Ok(())
         }
 
-        fn deregister(&self, _: &mio::Poll) -> io::Result<()> {
+        fn deregister(&self, _: &linux::Poll) -> io::Result<()> {
             Ok(())
         }
     }

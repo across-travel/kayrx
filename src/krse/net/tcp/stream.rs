@@ -2,6 +2,7 @@ use crate::krse::future::poll_fn;
 use crate::krse::io::{AsyncRead, AsyncWrite, PollEvented};
 use crate::krse::net::tcp::split::{split, ReadHalf, WriteHalf};
 use crate::krse::net::ToSocketAddrs;
+use crate::krse::io::driver::linux;
 
 use bytes::Buf;
 use iovec::IoVec;
@@ -33,7 +34,7 @@ macro_rules! ready {
     /// [listener]: struct.TcpListener.html
     ///
     pub struct TcpStream {
-        io: PollEvented<mio::net::TcpStream>,
+        io: PollEvented<linux::net::TcpStream>,
     }
 
 impl TcpStream {
@@ -69,7 +70,7 @@ impl TcpStream {
 
     /// Establish a connection to the specified `addr`.
     async fn connect_addr(addr: SocketAddr) -> io::Result<TcpStream> {
-        let sys = mio::net::TcpStream::connect(&addr)?;
+        let sys = linux::net::TcpStream::connect(&addr)?;
         let stream = TcpStream::new(sys)?;
 
         // Once we've connected, wait for the stream to be writable as
@@ -87,7 +88,7 @@ impl TcpStream {
         Ok(stream)
     }
 
-    pub(crate) fn new(connected: mio::net::TcpStream) -> io::Result<TcpStream> {
+    pub(crate) fn new(connected: linux::net::TcpStream) -> io::Result<TcpStream> {
         let io = PollEvented::new(connected)?;
         Ok(TcpStream { io })
     }
@@ -98,7 +99,7 @@ impl TcpStream {
     /// to a TCP stream ready to be used with the provided event loop handle.
     ///
     pub fn from_std(stream: net::TcpStream) -> io::Result<TcpStream> {
-        let io = mio::net::TcpStream::from_stream(stream)?;
+        let io = linux::net::TcpStream::from_stream(stream)?;
         let io = PollEvented::new(io)?;
         Ok(TcpStream { io })
     }
@@ -108,7 +109,7 @@ impl TcpStream {
     // This should be removed in favor of some in-crate TcpSocket builder API.
     #[doc(hidden)]
     pub async fn connect_std(stream: net::TcpStream, addr: &SocketAddr) -> io::Result<TcpStream> {
-        let io = mio::net::TcpStream::connect_stream(stream, addr)?;
+        let io = linux::net::TcpStream::connect_stream(stream, addr)?;
         let io = PollEvented::new(io)?;
         let stream = TcpStream { io };
 
@@ -180,12 +181,12 @@ impl TcpStream {
     /// This function may encounter any standard I/O error except `WouldBlock`.
     ///
     pub fn poll_peek(&mut self, cx: &mut Context<'_>, buf: &mut [u8]) -> Poll<io::Result<usize>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().peek(buf) {
             Ok(ret) => Poll::Ready(Ok(ret)),
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             Err(e) => Poll::Ready(Err(e)),
@@ -525,11 +526,11 @@ impl TcpStream {
         cx: &mut Context<'_>,
         buf: &mut [u8],
     ) -> Poll<io::Result<usize>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().read(buf) {
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             x => Poll::Ready(x),
@@ -608,10 +609,10 @@ impl TcpStream {
     }
 }
 
-impl TryFrom<TcpStream> for mio::net::TcpStream {
+impl TryFrom<TcpStream> for linux::net::TcpStream {
     type Error = io::Error;
 
-    /// Consumes value, returning the mio I/O object.
+    /// Consumes value, returning the linux I/O object.
     ///
     /// See [`PollEvented::into_inner`] for more details about
     /// resource deregistration that happens during the call.

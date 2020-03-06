@@ -8,6 +8,7 @@ use std::fmt;
 use std::io;
 use std::net::{self, SocketAddr};
 use std::task::{Context, Poll};
+use crate::krse::io::driver::linux;
 
 macro_rules! ready {
     ($e:expr $(,)?) => {
@@ -19,7 +20,7 @@ macro_rules! ready {
 }
 
     pub struct TcpListener {
-        io: PollEvented<mio::net::TcpListener>,
+        io: PollEvented<linux::net::TcpListener>,
     }
 
 impl TcpListener {
@@ -59,7 +60,7 @@ impl TcpListener {
     }
 
     fn bind_addr(addr: SocketAddr) -> io::Result<TcpListener> {
-        let listener = mio::net::TcpListener::bind(&addr)?;
+        let listener = linux::net::TcpListener::bind(&addr)?;
         TcpListener::new(listener)
     }
 
@@ -82,7 +83,7 @@ impl TcpListener {
     ) -> Poll<io::Result<(TcpStream, SocketAddr)>> {
         let (io, addr) = ready!(self.poll_accept_std(cx))?;
 
-        let io = mio::net::TcpStream::from_stream(io)?;
+        let io = linux::net::TcpStream::from_stream(io)?;
         let io = TcpStream::new(io)?;
 
         Poll::Ready(Ok((io, addr)))
@@ -92,12 +93,12 @@ impl TcpListener {
         &mut self,
         cx: &mut Context<'_>,
     ) -> Poll<io::Result<(net::TcpStream, SocketAddr)>> {
-        ready!(self.io.poll_read_ready(cx, mio::Ready::readable()))?;
+        ready!(self.io.poll_read_ready(cx, linux::Ready::readable()))?;
 
         match self.io.get_ref().accept_std() {
             Ok(pair) => Poll::Ready(Ok(pair)),
             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                self.io.clear_read_ready(cx, mio::Ready::readable())?;
+                self.io.clear_read_ready(cx, linux::Ready::readable())?;
                 Poll::Pending
             }
             Err(e) => Poll::Ready(Err(e)),
@@ -130,12 +131,12 @@ impl TcpListener {
     ///   well (same for IPv6).
     ///
     pub fn from_std(listener: net::TcpListener) -> io::Result<TcpListener> {
-        let io = mio::net::TcpListener::from_std(listener)?;
+        let io = linux::net::TcpListener::from_std(listener)?;
         let io = PollEvented::new(io)?;
         Ok(TcpListener { io })
     }
 
-    fn new(listener: mio::net::TcpListener) -> io::Result<TcpListener> {
+    fn new(listener: linux::net::TcpListener) -> io::Result<TcpListener> {
         let io = PollEvented::new(listener)?;
         Ok(TcpListener { io })
     }
@@ -187,10 +188,10 @@ impl TcpListener {
     }
 }
 
-impl TryFrom<TcpListener> for mio::net::TcpListener {
+impl TryFrom<TcpListener> for linux::net::TcpListener {
     type Error = io::Error;
 
-    /// Consumes value, returning the mio I/O object.
+    /// Consumes value, returning the linux I/O object.
     ///
     /// See [`PollEvented::into_inner`] for more details about
     /// resource deregistration that happens during the call.

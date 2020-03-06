@@ -570,7 +570,6 @@ mod tests {
                 #[repr(C)]
                 struct SigInfo {
                     _fields: [c_int; 3],
-                    #[cfg(all(target_pointer_width = "64", target_os = "linux"))]
                     _pad: c_int,
                     pid: pid_t,
                 }

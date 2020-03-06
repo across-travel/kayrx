@@ -1,9 +1,8 @@
 use crate::krse::future::poll_fn;
 use crate::krse::io::PollEvented;
 use crate::krse::net::unix::{Incoming, UnixStream};
+use crate::krse::io::driver::linux::{self, Ready};
 
-use mio::Ready;
-use mio_uds;
 use std::convert::TryFrom;
 use std::fmt;
 use std::io;
@@ -23,7 +22,7 @@ macro_rules! ready {
 
     /// A Unix socket which can accept connections from other Unix sockets.
     pub struct UnixListener {
-        io: PollEvented<mio_uds::UnixListener>,
+        io: PollEvented<linux::net::UnixListener>,
     }
 
 impl UnixListener {
@@ -32,7 +31,7 @@ impl UnixListener {
     where
         P: AsRef<Path>,
     {
-        let listener = mio_uds::UnixListener::bind(path)?;
+        let listener = linux::net::UnixListener::bind(path)?;
         let io = PollEvented::new(listener)?;
         Ok(UnixListener { io })
     }
@@ -43,7 +42,7 @@ impl UnixListener {
     /// The returned listener will be associated with the given event loop
     /// specified by `handle` and is ready to perform I/O.
     pub fn from_std(listener: net::UnixListener) -> io::Result<UnixListener> {
-        let listener = mio_uds::UnixListener::from_listener(listener)?;
+        let listener = linux::net::UnixListener::from_listener(listener)?;
         let io = PollEvented::new(listener)?;
         Ok(UnixListener { io })
     }
@@ -69,7 +68,7 @@ impl UnixListener {
     ) -> Poll<io::Result<(UnixStream, SocketAddr)>> {
         let (io, addr) = ready!(self.poll_accept_std(cx))?;
 
-        let io = mio_uds::UnixStream::from_stream(io)?;
+        let io = linux::net::UnixStream::from_stream(io)?;
         Ok((UnixStream::new(io)?, addr)).into()
     }
 
@@ -112,10 +111,10 @@ impl UnixListener {
     }
 }
 
-impl TryFrom<UnixListener> for mio_uds::UnixListener {
+impl TryFrom<UnixListener> for linux::net::UnixListener {
     type Error = io::Error;
 
-    /// Consumes value, returning the mio I/O object.
+    /// Consumes value, returning the linux I/O object.
     ///
     /// See [`PollEvented::into_inner`] for more details about
     /// resource deregistration that happens during the call.

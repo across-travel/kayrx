@@ -2,16 +2,15 @@ use std::{fmt, io, net};
 
 use  crate::krse::io::{AsyncRead, AsyncWrite};
 use  crate::krse::net::TcpStream;
+use crate::krse::io::driver::linux::{self, event::Evented};
 
 pub(crate) enum StdListener {
     Tcp(net::TcpListener),
-    #[cfg(all(unix))]
     Uds(std::os::unix::net::UnixListener),
 }
 
 pub(crate) enum SocketAddr {
     Tcp(net::SocketAddr),
-    #[cfg(all(unix))]
     Uds(std::os::unix::net::SocketAddr),
 }
 
@@ -19,7 +18,6 @@ impl fmt::Display for SocketAddr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             SocketAddr::Tcp(ref addr) => write!(f, "{}", addr),
-            #[cfg(all(unix))]
             SocketAddr::Uds(ref addr) => write!(f, "{:?}", addr),
         }
     }
@@ -29,7 +27,6 @@ impl fmt::Debug for SocketAddr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             SocketAddr::Tcp(ref addr) => write!(f, "{:?}", addr),
-            #[cfg(all(unix))]
             SocketAddr::Uds(ref addr) => write!(f, "{:?}", addr),
         }
     }
@@ -39,7 +36,6 @@ impl fmt::Display for StdListener {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             StdListener::Tcp(ref lst) => write!(f, "{}", lst.local_addr().ok().unwrap()),
-            #[cfg(all(unix))]
             StdListener::Uds(ref lst) => write!(f, "{:?}", lst.local_addr().ok().unwrap()),
         }
     }
@@ -49,7 +45,6 @@ impl StdListener {
     pub(crate) fn local_addr(&self) -> SocketAddr {
         match self {
             StdListener::Tcp(lst) => SocketAddr::Tcp(lst.local_addr().unwrap()),
-            #[cfg(all(unix))]
             StdListener::Uds(lst) => SocketAddr::Uds(lst.local_addr().unwrap()),
         }
     }
@@ -57,13 +52,12 @@ impl StdListener {
     pub(crate) fn into_listener(self) -> SocketListener {
         match self {
             StdListener::Tcp(lst) => SocketListener::Tcp(
-                mio::net::TcpListener::from_std(lst)
-                    .expect("Can not create mio::net::TcpListener"),
+                linux::net::TcpListener::from_std(lst)
+                    .expect("Can not create linux::net::TcpListener"),
             ),
-            #[cfg(all(unix))]
             StdListener::Uds(lst) => SocketListener::Uds(
-                mio_uds::UnixListener::from_listener(lst)
-                    .expect("Can not create mio_uds::UnixListener"),
+                linux::net::UnixListener::from_listener(lst)
+                    .expect("Can not create linux::net::UnixListener"),
             ),
         }
     }
@@ -72,14 +66,12 @@ impl StdListener {
 #[derive(Debug)]
 pub enum StdStream {
     Tcp(std::net::TcpStream),
-    #[cfg(all(unix))]
     Uds(std::os::unix::net::UnixStream),
 }
 
 pub(crate) enum SocketListener {
-    Tcp(mio::net::TcpListener),
-    #[cfg(all(unix))]
-    Uds(mio_uds::UnixListener),
+    Tcp(linux::net::TcpListener),
+    Uds(linux::net::UnixListener),
 }
 
 impl SocketListener {
@@ -88,7 +80,6 @@ impl SocketListener {
             SocketListener::Tcp(ref lst) => lst
                 .accept_std()
                 .map(|(stream, addr)| Some((StdStream::Tcp(stream), SocketAddr::Tcp(addr)))),
-            #[cfg(all(unix))]
             SocketListener::Uds(ref lst) => lst.accept_std().map(|res| {
                 res.map(|(stream, addr)| (StdStream::Uds(stream), SocketAddr::Uds(addr)))
             }),
@@ -96,38 +87,35 @@ impl SocketListener {
     }
 }
 
-impl mio::Evented for SocketListener {
+impl Evented for SocketListener {
     fn register(
         &self,
-        poll: &mio::Poll,
-        token: mio::Token,
-        interest: mio::Ready,
-        opts: mio::PollOpt,
+        poll: &linux::Poll,
+        token: linux::Token,
+        interest: linux::Ready,
+        opts: linux::PollOpt,
     ) -> io::Result<()> {
         match *self {
             SocketListener::Tcp(ref lst) => lst.register(poll, token, interest, opts),
-            #[cfg(all(unix))]
             SocketListener::Uds(ref lst) => lst.register(poll, token, interest, opts),
         }
     }
 
     fn reregister(
         &self,
-        poll: &mio::Poll,
-        token: mio::Token,
-        interest: mio::Ready,
-        opts: mio::PollOpt,
+        poll: &linux::Poll,
+        token: linux::Token,
+        interest: linux::Ready,
+        opts: linux::PollOpt,
     ) -> io::Result<()> {
         match *self {
             SocketListener::Tcp(ref lst) => lst.reregister(poll, token, interest, opts),
-            #[cfg(all(unix))]
             SocketListener::Uds(ref lst) => lst.reregister(poll, token, interest, opts),
         }
     }
-    fn deregister(&self, poll: &mio::Poll) -> io::Result<()> {
+    fn deregister(&self, poll: &linux::Poll) -> io::Result<()> {
         match *self {
             SocketListener::Tcp(ref lst) => lst.deregister(poll),
-            #[cfg(all(unix))]
             SocketListener::Uds(ref lst) => {
                 let res = lst.deregister(poll);
 
@@ -151,7 +139,6 @@ impl FromStream for TcpStream {
     fn from_stdstream(sock: StdStream) -> io::Result<Self> {
         match sock {
             StdStream::Tcp(stream) => TcpStream::from_std(stream),
-            #[cfg(all(unix))]
             StdStream::Uds(_) => {
                 panic!("Should not happen, bug in server impl");
             }
@@ -159,7 +146,6 @@ impl FromStream for TcpStream {
     }
 }
 
-#[cfg(all(unix))]
 impl FromStream for  crate::krse::net::UnixStream {
     fn from_stdstream(sock: StdStream) -> io::Result<Self> {
         match sock {

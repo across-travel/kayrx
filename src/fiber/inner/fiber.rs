@@ -21,8 +21,6 @@ pub(crate) struct Fiber<S: 'static> {
     _p: PhantomData<S>,
 }
 
-unsafe impl<S: ScheduleSend + 'static> Send for Fiber<S> {}
-
 /// Fiber result sent back
 pub(crate) type Result<T> = std::result::Result<T, JoinError>;
 
@@ -49,6 +47,8 @@ pub(crate) trait Schedule: Sized + 'static {
 /// Schedulers that implement this trait may not schedule `!Send` futures. If
 /// trait is implemented, the corresponding `Fiber` type will implement `Send`.
 pub(crate) trait ScheduleSend: Schedule + Send + Sync {}
+
+unsafe impl<S: ScheduleSend + 'static> Send for Fiber<S> {}
 
 
 /// The fiber cell. Contains the components of the fiber.
