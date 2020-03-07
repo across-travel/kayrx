@@ -104,7 +104,6 @@ pub mod event;
 mod poll;
 mod sys;
 mod token;
-mod lazycell;
 pub mod net;
 
 pub use poll::{ Poll, Registration, SetReadiness,};
