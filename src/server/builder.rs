@@ -16,14 +16,14 @@ use num_cpus;
 
 use crate::timer::{delay_until, Instant};
 use crate::fiber::{spawn_fut, System};
-use crate::kcore::accept::{AcceptLoop, AcceptNotify, Command};
-use crate::kcore::config::{ConfiguredService, ServiceConfig};
-use crate::kcore::server::{Server, ServerCommand};
-use crate::kcore::service::{InternalServiceFactory, ServiceFactory, StreamNewService};
-use crate::kcore::signal::{Signal, Signals};
-use crate::kcore::socket::StdListener;
-use crate::kcore::worker::{self, Worker, WorkerAvailability, WorkerClient};
-use crate::kcore::Token;
+use crate::server::accept::{AcceptLoop, AcceptNotify, Command};
+use crate::server::config::{ConfiguredService, ServiceConfig};
+use crate::server::server::{Server, ServerCommand};
+use crate::server::service::{InternalServiceFactory, ServiceFactory, StreamNewService};
+use crate::server::signal::{Signal, Signals};
+use crate::server::socket::StdListener;
+use crate::server::worker::{self, Worker, WorkerAvailability, WorkerClient};
+use crate::server::Token;
 
 /// Server builder
 pub struct ServerBuilder {

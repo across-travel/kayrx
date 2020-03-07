@@ -7,8 +7,8 @@ use futures_channel::mpsc::UnboundedSender;
 use futures_channel::oneshot;
 use futures_util::FutureExt;
 
-use crate::kcore::builder::ServerBuilder;
-use crate::kcore::signal::Signal;
+use crate::server::builder::ServerBuilder;
+use crate::server::signal::Signal;
 
 #[derive(Debug)]
 pub(crate) enum ServerCommand {

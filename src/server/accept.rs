@@ -7,10 +7,10 @@ use slab::Slab;
 
 use crate::fiber::System;
 use crate::timer::{delay_until, Instant};
-use crate::kcore::server::Server;
-use crate::kcore::socket::{SocketAddr, SocketListener, StdListener};
-use crate::kcore::worker::{Conn, WorkerClient};
-use crate::kcore::Token;
+use crate::server::server::Server;
+use crate::server::socket::{SocketAddr, SocketListener, StdListener};
+use crate::server::worker::{Conn, WorkerClient};
+use crate::server::Token;
 use crate::krse::io::driver::linux;
 
 pub(crate) enum Command {

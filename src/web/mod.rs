@@ -50,7 +50,7 @@ pub mod dev {
     pub use crate::http::encoding::Decoder as Decompress;
     pub use crate::http::ResponseBuilder as HttpResponseBuilder;
     pub use crate::http::{ Extensions, Payload, PayloadStream, RequestHead, ResponseHead};
-    pub use crate::kcore::Server;
+    pub use crate::server::Server;
     pub use crate::service::{Service, Transform};
     use crate::http::{Response, ResponseBuilder};
 
