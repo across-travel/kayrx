@@ -1,8 +1,8 @@
-use crate::krse::io::driver::linux::{io, Ready, Poll, PollOpt, Token};
-use crate::krse::io::driver::linux::event::Evented;
-use crate::krse::io::driver::linux::unix::EventedFd;
-use crate::krse::io::driver::linux::sys::unix::uio::VecIo;
+use crate::krse::io::driver::linux::{Ready, Poll, PollOpt, Token};
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
+use crate::krse::io::driver::linux::sys::io::VecIo;
 use std::fmt;
+use std::io;
 use std::net::{self, Ipv4Addr, Ipv6Addr, SocketAddr};
 use std::os::unix::io::{RawFd, IntoRawFd, AsRawFd, FromRawFd};
 

@@ -4,8 +4,7 @@ use std::os::unix::prelude::*;
 use std::path::Path;
 
 use libc;
-use crate::krse::io::driver::linux::event::Evented;
-use crate::krse::io::driver::linux::unix::EventedFd;
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
 use crate::krse::io::driver::linux::{Poll, PollOpt, Ready, Token};
 
 use super::stream::UnixStream;

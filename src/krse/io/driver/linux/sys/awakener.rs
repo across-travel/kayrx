@@ -2,10 +2,10 @@ pub use self::pipe::Awakener;
 
 /// Default awakener backed by a pipe
 mod pipe {
-    use crate::krse::io::driver::linux::sys::unix;
-    use crate::krse::io::driver::linux::{io, Ready, Poll, PollOpt, Token};
+    use crate::krse::io::driver::linux::sys;
+    use crate::krse::io::driver::linux::{Ready, Poll, PollOpt, Token};
     use crate::krse::io::driver::linux::event::Evented;
-    use std::io::{Read, Write};
+    use std::io::{self, Read, Write};
 
     /*
      *
@@ -14,13 +14,13 @@ mod pipe {
      */
 
     pub struct Awakener {
-        reader: unix::Io,
-        writer: unix::Io,
+        reader: sys::Io,
+        writer: sys::Io,
     }
 
     impl Awakener {
         pub fn new() -> io::Result<Awakener> {
-            let (rd, wr) = unix::pipe()?;
+            let (rd, wr) = sys::pipe()?;
 
             Ok(Awakener {
                 reader: rd,
@@ -53,7 +53,7 @@ mod pipe {
             }
         }
 
-        fn reader(&self) -> &unix::Io {
+        fn reader(&self) -> &sys::Io {
             &self.reader
         }
     }

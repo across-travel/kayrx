@@ -100,8 +100,7 @@
 //!
 //! ```
 
-mod event_imp;
-mod io;
+pub mod event;
 mod poll;
 mod sys;
 mod token;
@@ -109,19 +108,8 @@ mod lazycell;
 pub mod net;
 
 pub use poll::{ Poll, Registration, SetReadiness,};
-pub use event_imp::{ PollOpt, Ready};
 pub use token::Token;
 
-pub use event::Events;
-pub mod event {
-    //! Readiness event types and utilities.
-    pub use super::poll::{Events, Iter};
-    pub use super::event_imp::{Event, Evented};
-}
+pub use self::event::{Events, EventedFd, PollOpt, Ready};
 
-pub mod unix {
-    //! Unix only extensions
-    pub use super::sys::EventedFd;
-    pub use super::sys::unix::UnixReady;
-}
-
+pub use self::sys::UnixReady;

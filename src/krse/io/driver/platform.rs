@@ -1,7 +1,7 @@
 pub(crate) use self::sys::*;
 
 mod sys {
-    use crate::krse::io::driver::linux::unix::UnixReady;
+    use crate::krse::io::driver::linux::UnixReady;
     use crate::krse::io::driver::linux::Ready;
 
     pub(crate) fn hup() -> Ready {

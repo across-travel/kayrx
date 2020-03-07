@@ -1,5 +1,5 @@
 use super::{sys, Token};
-use super::event_imp::{self as event, Ready, Event, Evented, PollOpt};
+use super::event::{self, Ready, Event, Evented, PollOpt};
 use std::{fmt, io, ptr, usize};
 use std::cell::UnsafeCell;
 use std::{mem, ops, isize};

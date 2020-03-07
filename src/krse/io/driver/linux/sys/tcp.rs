@@ -7,13 +7,11 @@ use std::time::Duration;
 use libc;
 use net2::TcpStreamExt;
 use iovec::IoVec;
+use std::io;
 
-use crate::krse::io::driver::linux::{io, Ready, Poll, PollOpt, Token};
-use crate::krse::io::driver::linux::event::Evented;
-
-use crate::krse::io::driver::linux::sys::unix::eventedfd::EventedFd;
-use crate::krse::io::driver::linux::sys::unix::io::set_nonblock;
-use crate::krse::io::driver::linux::sys::unix::uio::VecIo;
+use crate::krse::io::driver::linux::{Ready, Poll, PollOpt, Token};
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
+use crate::krse::io::driver::linux::sys::io::{VecIo, set_nonblock};
 
 pub struct TcpStream {
     inner: net::TcpStream,

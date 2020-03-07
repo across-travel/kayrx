@@ -14,8 +14,9 @@ use std::time::Duration;
 
 use net2::TcpBuilder;
 use iovec::IoVec;
+use std::io;
 
-use crate::krse::io::driver::linux::{io, sys, Ready, Poll, PollOpt, Token};
+use crate::krse::io::driver::linux::{sys, Ready, Poll, PollOpt, Token};
 use crate::krse::io::driver::linux::event::Evented;
 use crate::krse::io::driver::linux::poll::SelectorId;
 

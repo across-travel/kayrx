@@ -4,15 +4,16 @@ use std::os::unix::io::RawFd;
 use std::sync::atomic::{AtomicUsize, Ordering, ATOMIC_USIZE_INIT};
 use std::time::Duration;
 use std::{cmp, i32};
+use std::io;
 
 use libc::{self, c_int};
 use libc::{EPOLLERR, EPOLLHUP, EPOLLONESHOT};
 use libc::{EPOLLET, EPOLLOUT, EPOLLIN, EPOLLPRI};
 
-use crate::krse::io::driver::linux::{io, Ready, PollOpt, Token};
-use crate::krse::io::driver::linux::event_imp::Event;
-use crate::krse::io::driver::linux::sys::unix::{cvt, UnixReady};
-use crate::krse::io::driver::linux::sys::unix::io::set_cloexec;
+use crate::krse::io::driver::linux::{Ready, PollOpt, Token};
+use crate::krse::io::driver::linux::event::Event;
+use crate::krse::io::driver::linux::sys::{cvt, UnixReady};
+use crate::krse::io::driver::linux::sys::io::set_cloexec;
 
 /// Each Selector has a globally unique(ish) ID associated with it. This ID
 /// gets tracked by `TcpStream`, `TcpListener`, etc... when they are first

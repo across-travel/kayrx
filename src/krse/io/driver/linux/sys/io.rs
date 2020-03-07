@@ -1,13 +1,13 @@
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::{self, Read, Write};
 use std::os::unix::io::{IntoRawFd, AsRawFd, FromRawFd, RawFd};
-
 use libc;
+use std::cmp;
+use iovec::{unix, IoVec};
 
-use crate::krse::io::driver::linux::{io, Ready, Poll, PollOpt, Token};
-use crate::krse::io::driver::linux::event::Evented;
-use crate::krse::io::driver::linux::unix::EventedFd;
-use crate::krse::io::driver::linux::sys::unix::cvt;
+use crate::krse::io::driver::linux::{Ready, Poll, PollOpt, Token};
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
+use crate::krse::io::driver::linux::sys::cvt;
 
 pub fn set_nonblock(fd: libc::c_int) -> io::Result<()> {
     unsafe {
@@ -103,5 +103,45 @@ impl<'a> Write for &'a Io {
 
     fn flush(&mut self) -> io::Result<()> {
         (&self.fd).flush()
+    }
+}
+
+
+
+pub trait VecIo {
+    fn readv(&self, bufs: &mut [&mut IoVec]) -> io::Result<usize>;
+
+    fn writev(&self, bufs: &[&IoVec]) -> io::Result<usize>;
+}
+
+impl<T: AsRawFd> VecIo for T {
+    fn readv(&self, bufs: &mut [&mut IoVec]) -> io::Result<usize> {
+        unsafe {
+            let slice = unix::as_os_slice_mut(bufs);
+            let len = cmp::min(<libc::c_int>::max_value() as usize, slice.len());
+            let rc = libc::readv(self.as_raw_fd(),
+                                 slice.as_ptr(),
+                                 len as libc::c_int);
+            if rc < 0 {
+                Err(io::Error::last_os_error())
+            } else {
+                Ok(rc as usize)
+            }
+        }
+    }
+
+    fn writev(&self, bufs: &[&IoVec]) -> io::Result<usize> {
+        unsafe {
+            let slice = unix::as_os_slice(bufs);
+            let len = cmp::min(<libc::c_int>::max_value() as usize, slice.len());
+            let rc = libc::writev(self.as_raw_fd(),
+                                  slice.as_ptr(),
+                                  len as libc::c_int);
+            if rc < 0 {
+                Err(io::Error::last_os_error())
+            } else {
+                Ok(rc as usize)
+            }
+        }
     }
 }

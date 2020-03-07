@@ -1,4 +1,4 @@
-use crate::krse::io::driver::linux::event_imp::{Ready, ready_as_usize, ready_from_usize};
+use crate::krse::io::driver::linux::event::{Ready, ready_as_usize, ready_from_usize};
 
 use std::ops;
 use std::fmt;

@@ -9,8 +9,7 @@ use std::net::Shutdown;
 use iovec::IoVec;
 use iovec::unix;
 use libc;
-use crate::krse::io::driver::linux::event::Evented;
-use crate::krse::io::driver::linux::unix::EventedFd;
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
 use crate::krse::io::driver::linux::{Poll, Token, Ready, PollOpt};
 
 use super::cvt;

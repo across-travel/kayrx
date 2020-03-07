@@ -5,8 +5,7 @@ use std::os::unix::prelude::*;
 use std::path::Path;
 
 use libc;
-use crate::krse::io::driver::linux::event::Evented;
-use crate::krse::io::driver::linux::unix::EventedFd;
+use crate::krse::io::driver::linux::event::{Evented, EventedFd};
 use crate::krse::io::driver::linux::{Poll, Token, Ready, PollOpt};
 use super::cvt;
 use super::socket::{sockaddr_un, Socket};

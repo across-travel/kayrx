@@ -7,13 +7,14 @@
 //!
 /// [portability guidelines]: ../struct.Poll.html#portability
 
-use crate::krse::io::driver::linux::{io, sys, Ready, Poll, PollOpt, Token};
+use crate::krse::io::driver::linux::{sys, Ready, Poll, PollOpt, Token};
 use crate::krse::io::driver::linux::event::Evented;
 use crate::krse::io::driver::linux::poll::SelectorId;
 use std::fmt;
 use std::net::{self, Ipv4Addr, Ipv6Addr, SocketAddr};
 
 use iovec::IoVec;
+use std::io;
 
 /// A User Datagram Protocol socket.
 ///
