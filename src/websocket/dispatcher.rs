@@ -5,7 +5,7 @@ use std::task::{Context, Poll};
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::Framed2 as Framed;
 use crate::service::{IntoService, Service};
-use crate::util::framed;
+use crate::framed;
 
 use super::{Codec, Frame, Message};
 

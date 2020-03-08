@@ -5,19 +5,19 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 use std::time::{Duration, Instant};
-
-use crate::krse::io::{AsyncRead, AsyncWrite};
-use crate::timer::{delay_for, Delay};
-use crate::service::Service;
-use crate::util::{oneshot, task::LocalWaker};
 use bytes::Bytes;
 use futures_util::future::{poll_fn, FutureExt, LocalBoxFuture};
 use fxhash::FxHashMap;
-use crate::http::h2::client::{handshake, Connection, SendRequest};
 use http::uri::Authority;
 use indexmap::IndexSet;
 use slab::Slab;
 
+use crate::krse::io::{AsyncRead, AsyncWrite};
+use crate::timer::{delay_for, Delay};
+use crate::service::Service;
+use crate::http::h2::client::{handshake, Connection, SendRequest};
+use crate::krse::task::LocalWaker;
+use crate::krse::sync::local::oneshot;
 use super::connection::{ConnectionType, IoConnection};
 use super::error::ConnectError;
 use super::Connect;

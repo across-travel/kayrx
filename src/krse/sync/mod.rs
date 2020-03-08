@@ -16,7 +16,7 @@
 //!   only stores the **most recently** sent value.
 
     
-
+pub mod local;
 pub mod broadcast;
 pub mod mpsc;
 pub mod oneshot; 

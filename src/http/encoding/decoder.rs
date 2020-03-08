@@ -2,8 +2,6 @@ use std::future::Future;
 use std::io::{self, Write};
 use std::pin::Pin;
 use std::task::{Context, Poll};
-
-use crate::util::threadpool::{run, CpuFuture};
 use brotli2::write::BrotliDecoder;
 use bytes::Bytes;
 use flate2::write::{GzDecoder, ZlibDecoder};
@@ -12,6 +10,7 @@ use futures_core::{ready, Stream};
 use super::Writer;
 use crate::http::error::PayloadError;
 use crate::http::header::{ContentEncoding, HeaderMap, CONTENT_ENCODING};
+use crate::util::threadpool::{run, CpuFuture};
 
 const INPLACE: usize = 2049;
 

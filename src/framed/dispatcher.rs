@@ -5,7 +5,7 @@ use std::task::{Context, Poll};
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::{Decoder, Encoder, Framed2 as Framed};
 use crate::service::Service;
-use crate::util::mpsc;
+use crate::krse::sync::local::mpsc;
 use futures_core::Stream;
 use log::debug;
 

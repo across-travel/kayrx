@@ -4,7 +4,7 @@ use std::task::{Context, Poll};
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::{Decoder, Encoder, Framed2 as Framed};
-use crate::util::mpsc::Receiver;
+use crate::krse::sync::local::mpsc::Receiver;
 use futures_core::Stream;
 
 pub struct Connect<Io, Codec>

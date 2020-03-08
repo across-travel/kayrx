@@ -4,9 +4,9 @@ use bytes::{Buf, BufMut, BytesMut};
 use log::debug;
 use rand;
 
-use crate::http::ws::mask::apply_mask;
-use crate::http::ws::proto::{CloseCode, CloseReason, OpCode};
-use crate::http::ws::ProtocolError;
+use crate::websocket::mask::apply_mask;
+use crate::websocket::proto::{CloseCode, CloseReason, OpCode};
+use crate::websocket::ProtocolError;
 
 /// A struct representing a `WebSocket` frame.
 #[derive(Debug)]

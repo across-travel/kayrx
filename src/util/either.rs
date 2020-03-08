@@ -1,10 +1,10 @@
 //! Contains `Either` service and related types and functions.
 use std::pin::Pin;
 use std::task::{Context, Poll};
-
-use crate::service::{Service, ServiceFactory};
 use futures_core::Future;
 use futures_util::{future, ready};
+
+use crate::service::{Service, ServiceFactory};
 
 /// Combine two different service types into a single type.
 ///

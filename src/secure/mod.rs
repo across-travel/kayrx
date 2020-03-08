@@ -2,12 +2,11 @@
 
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use crate::util::counter::Counter;
-
 pub mod rustls;
-
 mod inner;
 pub use self::inner::*;
+
+use crate::krse::task::counter::Counter;
 
 /// Sets the maximum per-worker concurrent ssl connection establish process.
 ///

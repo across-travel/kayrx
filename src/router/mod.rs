@@ -9,7 +9,7 @@ pub use self::path::Path;
 pub use self::resource::ResourceDef;
 pub use self::router::{ResourceInfo, Router, RouterBuilder};
 
-use crate::util::bytestring;
+use crate::krse::string::bytestring;
 
 pub trait Resource<T: ResourcePath> {
     fn resource_path(&mut self) -> &mut Path<T>;

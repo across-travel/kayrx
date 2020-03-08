@@ -2,11 +2,10 @@ use std::convert::Infallible;
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-
-use crate::service::{IntoService, Service, Transform};
 use futures_util::future::{ok, Ready};
 
-use super::counter::{Counter, CounterGuard};
+use crate::krse::task::counter::{Counter, CounterGuard};
+use crate::service::{IntoService, Service, Transform};
 
 /// InFlight - new service for service that can limit number of in-flight
 /// async requests.

@@ -20,7 +20,7 @@ use serde_json::error::Error as JsonError;
 use serde_urlencoded::ser::Error as FormError;
 
 use crate::codec::{Decoder, Encoder};
-use crate::util::framed::DispatcherError as FramedDispatcherError;
+use crate::framed::DispatcherError as FramedDispatcherError;
 use crate::util::timeout::TimeoutError;
 use crate::http::body::Body;
 use crate::http::helpers::Writer;

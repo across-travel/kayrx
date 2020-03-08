@@ -4,12 +4,11 @@ use std::collections::VecDeque;
 use std::pin::Pin;
 use std::rc::{Rc, Weak};
 use std::task::{Context, Poll};
-
-use crate::util::task::LocalWaker;
 use bytes::Bytes;
 use futures_core::Stream;
 
 use crate::http::error::PayloadError;
+use crate::krse::task::LocalWaker;
 
 /// max buffer size 32k
 pub(crate) const MAX_BUFFER_SIZE: usize = 32_768;

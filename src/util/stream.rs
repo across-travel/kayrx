@@ -1,12 +1,12 @@
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-
-use crate::service::{IntoService, Service};
 use futures_core::Stream;
 use futures_util::FutureExt;
 
-use crate::util::mpsc;
+use crate::krse::sync::local::mpsc;
+use crate::service::{IntoService, Service};
+
 
 #[pin_project::pin_project]
 pub struct Dispatcher<S, T>

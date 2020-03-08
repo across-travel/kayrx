@@ -7,10 +7,10 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::{fmt, time};
+use futures_util::future::{ok, Ready};
 
 use crate::timer::{delay_for, Delay};
 use crate::service::{IntoService, Service, Transform};
-use futures_util::future::{ok, Ready};
 
 /// Applies a timeout to requests.
 #[derive(Debug)]

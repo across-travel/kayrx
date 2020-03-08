@@ -17,7 +17,6 @@ pub mod client;
 pub mod encoding;
 pub mod header;
 pub mod httpmessage;
-pub mod ws;
 pub mod error;
 pub mod h1;
 pub mod h2;

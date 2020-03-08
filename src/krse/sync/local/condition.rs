@@ -4,8 +4,8 @@ use std::task::{Context, Poll};
 
 use slab::Slab;
 
-use crate::util::cell::Cell;
-use crate::util::task::LocalWaker;
+use crate::krse::cell::Cell;
+use crate::krse::task::LocalWaker;
 
 /// Condition allows to notify multiple receivers at the same time
 pub struct Condition(Cell<Inner>);

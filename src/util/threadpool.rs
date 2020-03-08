@@ -1,5 +1,4 @@
 //! Thread pool for blocking operations
-
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};

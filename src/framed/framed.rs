@@ -3,16 +3,15 @@
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::{fmt, mem};
+use futures_core::{Future, Stream};
+use futures_util::FutureExt;
+use log::debug;
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::{Decoder, Encoder};
 use crate::codec::Framed2 as Framed;
 use crate::service::{IntoService, Service};
-use futures_core::{Future, Stream};
-use futures_util::FutureExt;
-use log::debug;
-
-use crate::util::mpsc;
+use crate::krse::sync::local::mpsc;
 
 type Request<U> = <U as Decoder>::Item;
 type Response<U> = <U as Encoder>::Item;

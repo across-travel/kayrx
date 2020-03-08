@@ -13,7 +13,7 @@ use crate::http::test::TestRequest as HttpTestRequest;
 use crate::http::{Extensions, HttpService, Request};
 #[cfg(feature = "cookie")]
 use coo_kie::Cookie;
-use crate::http::ws;
+use crate::websocket;
 use crate::router::{Path, ResourceDef, Url};
 use crate::{timer::delay_for, fiber::System};
 use crate::service::{
@@ -874,7 +874,7 @@ impl TestServer {
     pub async fn ws_at(
         &mut self,
         path: &str,
-    ) -> Result<Framed<impl AsyncRead + AsyncWrite, ws::Codec>, crate::web::client::error::WsClientError>
+    ) -> Result<Framed<impl AsyncRead + AsyncWrite, websocket::Codec>, crate::web::client::error::WsClientError>
     {
         let url = self.url(path);
         let connect = self.client.ws(url).connect();
@@ -884,7 +884,7 @@ impl TestServer {
     /// Connect to a websocket server
     pub async fn ws(
         &mut self,
-    ) -> Result<Framed<impl AsyncRead + AsyncWrite, ws::Codec>, crate::web::client::error::WsClientError>
+    ) -> Result<Framed<impl AsyncRead + AsyncWrite, websocket::Codec>, crate::web::client::error::WsClientError>
     {
         self.ws_at("/").await
     }

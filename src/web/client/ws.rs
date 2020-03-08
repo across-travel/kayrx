@@ -9,10 +9,9 @@ use crate::codec::Framed2 as Framed;
 #[cfg(feature = "cookie")]
 use coo_kie::{Cookie, CookieJar};
 use crate::http::{Payload, RequestHead};
-use crate::http::ws;
 use crate::timer::timeout;
 use percent_encoding::percent_encode;
-pub use crate::http::ws::{CloseCode, CloseReason, Codec, Frame, Message};
+pub use crate::websocket::{self, CloseCode, CloseReason, Codec, Frame, Message};
 
 use crate::web::client::connect::BoxedSocket;
 use crate::web::client::error::{InvalidUrl, SendRequestError, WsClientError};
@@ -357,7 +356,7 @@ impl WebsocketsRequest {
         }
 
         if let Some(hdr_key) = head.headers.get(&header::SEC_WEBSOCKET_ACCEPT) {
-            let encoded = ws::hash_key(key.as_ref());
+            let encoded = websocket::hash_key(key.as_ref());
             if hdr_key.as_bytes() != encoded.as_bytes() {
                 log::trace!(
                     "Invalid challenge response: expected: {} received: {:?}",
@@ -379,9 +378,9 @@ impl WebsocketsRequest {
             ClientResponse::new(head, Payload::None),
             framed.map_codec(|_| {
                 if server_mode {
-                    ws::Codec::new().max_size(max_size)
+                    websocket::Codec::new().max_size(max_size)
                 } else {
-                    ws::Codec::new().max_size(max_size).client_mode()
+                    websocket::Codec::new().max_size(max_size).client_mode()
                 }
             }),
         ))

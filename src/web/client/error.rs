@@ -4,8 +4,8 @@ pub use crate::http::client::{
 };
 pub use crate::http::error::PayloadError;
 pub use crate::http::HttpError;
-pub use crate::http::ws::HandshakeError as WsHandshakeError;
-pub use crate::http::ws::ProtocolError as WsProtocolError;
+pub use crate::websocket::HandshakeError as WsHandshakeError;
+pub use crate::websocket::ProtocolError as WsProtocolError;
 
 use crate::http::ResponseError;
 use serde_json::error::Error as JsonError;

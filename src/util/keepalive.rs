@@ -4,11 +4,10 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::time::Duration;
+use futures_util::future::{ok, Ready};
 
 use crate::timer::{delay_until, Delay, Instant};
 use crate::service::{Service, ServiceFactory};
-use futures_util::future::{ok, Ready};
-
 use super::time::{LowResTime, LowResTimeService};
 
 pub struct KeepAlive<R, E, F> {

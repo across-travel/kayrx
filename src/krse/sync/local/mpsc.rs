@@ -9,8 +9,8 @@ use std::task::{Context, Poll};
 use futures_core::Stream;
 use futures_sink::Sink;
 
-use crate::util::cell::Cell;
-use crate::util::task::LocalWaker;
+use crate::krse::cell::Cell;
+use crate::krse::task::LocalWaker;
 
 /// Creates a unbounded in-memory channel with buffered storage.
 pub fn channel<T>() -> (Sender<T>, Receiver<T>) {

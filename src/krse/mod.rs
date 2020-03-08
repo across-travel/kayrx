@@ -5,6 +5,7 @@ pub mod io;
 pub mod net;
 pub mod stream;
 pub mod signal;
+pub mod string;
 pub mod sync;
 
 pub(crate) mod alloc;

@@ -23,4 +23,5 @@ pub mod http;
 pub mod router;
 pub mod secure;
 pub mod web;
+pub mod websocket;
 pub mod util;

@@ -6,12 +6,12 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
-
-use crate::service::{IntoService, Service, Transform};
 use futures_util::future::{ok, Ready};
 
-use crate::util::oneshot;
-use crate::util::task::LocalWaker;
+use crate::krse::sync::local::oneshot;
+use crate::krse::task::LocalWaker;
+use crate::service::{IntoService, Service, Transform};
+
 
 struct Record<I, E> {
     rx: oneshot::Receiver<Result<I, E>>,
