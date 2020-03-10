@@ -55,7 +55,7 @@ unsafe impl<S: ScheduleSend + 'static> Send for Fiber<S> {}
 ///
 /// It is critical for `Header` to be the first field as the task structure will
 /// be referenced by both *mut Cell and *mut Header.
-#[repr(C)]
+
 pub(super) struct Cell<T: Future> {
     /// Hot task state data
     pub(super) header: Header,
@@ -75,7 +75,7 @@ pub(super) struct Core<T: Future> {
 }
 
 /// Crate public as this is also needed by the pool.
-#[repr(C)]
+
 pub(crate) struct Header {
     /// Fiber state
     pub(super) state: State,

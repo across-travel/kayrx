@@ -142,7 +142,7 @@ where
                 }
             }
             Err(err) => {
-                self.complete(executor, join_interest, Err(JoinError::panic2(err)));
+                self.complete(executor, join_interest, Err(JoinError::panic(err)));
                 false
             }
         }
@@ -192,7 +192,7 @@ where
         state: Snapshot,
     ) {
         if state.is_canceled() {
-            dst.write(Track::new(Err(JoinError::cancelled2())));
+            dst.write(Track::new(Err(JoinError::cancelled())));
         } else {
             self.core().read_output(dst);
         }

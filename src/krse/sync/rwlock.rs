@@ -1,5 +1,5 @@
 use crate::krse::future::poll_fn;
-use crate::krse::sync::semaphore_ll::{AcquireError, Permit, Semaphore};
+use crate::krse::sync::semaphore::{AcquireError, Permit, SemaphoreInner};
 use std::cell::UnsafeCell;
 use std::ops;
 use std::task::{Context, Poll};
@@ -62,7 +62,7 @@ const MAX_READS: usize = 32;
 #[derive(Debug)]
 pub struct RwLock<T> {
     //semaphore to coordinate read and write access to T
-    s: Semaphore,
+    s: SemaphoreInner,
 
     //inner data T
     c: UnsafeCell<T>,
@@ -107,7 +107,7 @@ impl<'a, T> ReleasingPermit<'a, T> {
     fn poll_acquire(
         &mut self,
         cx: &mut Context<'_>,
-        s: &Semaphore,
+        s: &SemaphoreInner,
     ) -> Poll<Result<(), AcquireError>> {
         self.permit.poll_acquire(cx, self.num_permits, s)
     }
@@ -140,7 +140,7 @@ impl<T> RwLock<T> {
     pub fn new(value: T) -> RwLock<T> {
         RwLock {
             c: UnsafeCell::new(value),
-            s: Semaphore::new(MAX_READS),
+            s: SemaphoreInner::new(MAX_READS),
         }
     }
 

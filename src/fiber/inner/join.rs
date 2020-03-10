@@ -6,6 +6,9 @@ use std::future::Future;
 use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
+use std::any::Any;
+use std::io;
+use std::sync::Mutex;
 
 pub struct JoinHandle<T> {
     raw: Option<RawFiber>,
@@ -83,5 +86,62 @@ where
 {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt.debug_struct("JoinHandle").finish()
+    }
+}
+
+
+pub struct JoinError {
+    repr: Repr,
+}
+
+enum Repr {
+    Cancelled,
+    Panic(Mutex<Box<dyn Any + Send + 'static>>),
+}
+
+impl JoinError {
+    pub(crate)  fn cancelled() -> JoinError {
+        JoinError {
+            repr: Repr::Cancelled,
+        }
+    }
+
+    pub(crate) fn panic(err: Box<dyn Any + Send + 'static>) -> JoinError {
+        JoinError {
+            repr: Repr::Panic(Mutex::new(err)),
+        }
+    }
+
+}
+
+impl fmt::Display for JoinError {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.repr {
+            Repr::Cancelled => write!(fmt, "cancelled"),
+            Repr::Panic(_) => write!(fmt, "panic"),
+        }
+    }
+}
+
+impl fmt::Debug for JoinError {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.repr {
+            Repr::Cancelled => write!(fmt, "JoinError::Cancelled"),
+            Repr::Panic(_) => write!(fmt, "JoinError::Panic(...)"),
+        }
+    }
+}
+
+impl std::error::Error for JoinError {}
+
+impl From<JoinError> for io::Error {
+    fn from(src: JoinError) -> io::Error {
+        io::Error::new(
+            io::ErrorKind::Other,
+            match src.repr {
+                Repr::Cancelled => "task was cancelled",
+                Repr::Panic(_) => "task panicked",
+            },
+        )
     }
 }

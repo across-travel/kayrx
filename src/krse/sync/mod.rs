@@ -23,18 +23,12 @@ pub mod oneshot;
 pub mod watch;
 pub(crate) mod atomic;
 
-pub use barrier::{Barrier, BarrierWaitResult};
-pub use mutex::{Mutex, MutexGuard};
-pub use semaphore::{Semaphore, SemaphorePermit};
-
 mod barrier;
 mod mutex;
 mod semaphore;
 mod rwlock;
 
+pub use barrier::{Barrier, BarrierWaitResult};
+pub use mutex::{Mutex, MutexGuard};
+pub use semaphore::{Semaphore, SemaphorePermit};
 pub use rwlock::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-
-pub(crate) mod semaphore_ll;
-  
-    
-

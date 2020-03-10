@@ -318,8 +318,6 @@ use std::time::{Duration, Instant};
 /// both from the system selector and the internal readiness queue.
 ///
 /// [epoll]: http://man7.org/linux/man-pages/man7/epoll.7.html
-/// [kqueue]: https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2
-/// [IOCP]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa365198(v=vs.85).aspx
 /// [`signalfd`]: http://man7.org/linux/man-pages/man2/signalfd.2.html
 /// [`EventedFd`]: unix/struct.EventedFd.html
 /// [`SetReadiness`]: struct.SetReadiness.html

@@ -383,7 +383,7 @@ impl<T, S> Drop for Chan<T, S> {
     }
 }
 
-use crate::krse::sync::semaphore_ll::TryAcquireError;
+use crate::krse::sync::semaphore::TryAcquireError;
 
 impl From<TryAcquireError> for TrySendError {
     fn from(src: TryAcquireError) -> TrySendError {
@@ -399,9 +399,9 @@ impl From<TryAcquireError> for TrySendError {
 
 // ===== impl Semaphore for (::Semaphore, capacity) =====
 
-use crate::krse::sync::semaphore_ll::Permit;
+use crate::krse::sync::semaphore::Permit;
 
-impl Semaphore for (crate::krse::sync::semaphore_ll::Semaphore, usize) {
+impl Semaphore for (crate::krse::sync::semaphore::SemaphoreInner, usize) {
     type Permit = Permit;
 
     fn new_permit() -> Permit {

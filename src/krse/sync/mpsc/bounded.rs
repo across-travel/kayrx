@@ -1,6 +1,6 @@
 use crate::krse::sync::mpsc::chan;
 use crate::krse::sync::mpsc::error::{ClosedError, SendError, TryRecvError, TrySendError};
-use crate::krse::sync::semaphore_ll as semaphore;
+use crate::krse::sync::semaphore;
 
 use std::fmt;
 use std::task::{Context, Poll};
@@ -83,7 +83,7 @@ impl<T> fmt::Debug for Receiver<T> {
 /// ```
 pub fn channel<T>(buffer: usize) -> (Sender<T>, Receiver<T>) {
     assert!(buffer > 0, "mpsc bounded channel requires buffer > 0");
-    let semaphore = (semaphore::Semaphore::new(buffer), buffer);
+    let semaphore = (semaphore::SemaphoreInner::new(buffer), buffer);
     let (tx, rx) = chan::channel(semaphore);
 
     let tx = Sender::new(tx);
@@ -94,7 +94,7 @@ pub fn channel<T>(buffer: usize) -> (Sender<T>, Receiver<T>) {
 
 /// Channel semaphore is a tuple of the semaphore implementation and a `usize`
 /// representing the channel bound.
-type Semaphore = (semaphore::Semaphore, usize);
+type Semaphore = (semaphore::SemaphoreInner, usize);
 
 impl<T> Receiver<T> {
     pub(crate) fn new(chan: chan::Rx<T, Semaphore>) -> Receiver<T> {

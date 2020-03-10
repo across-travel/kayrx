@@ -34,7 +34,7 @@
 //! [`MutexGuard`]: struct.MutexGuard.html
 
 use crate::krse::future::poll_fn;
-use crate::krse::sync::semaphore_ll as semaphore;
+use crate::krse::sync::semaphore;
 
 use std::cell::UnsafeCell;
 use std::error::Error;
@@ -49,7 +49,7 @@ use std::ops::{Deref, DerefMut};
 #[derive(Debug)]
 pub struct Mutex<T> {
     c: UnsafeCell<T>,
-    s: semaphore::Semaphore,
+    s: semaphore::SemaphoreInner,
 }
 
 /// A handle to a held `Mutex`.
@@ -99,7 +99,7 @@ impl<T> Mutex<T> {
     pub fn new(t: T) -> Self {
         Self {
             c: UnsafeCell::new(t),
-            s: semaphore::Semaphore::new(1),
+            s: semaphore::SemaphoreInner::new(1),
         }
     }
 
