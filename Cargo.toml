@@ -1,6 +1,6 @@
 [package]
 name = "kayrx"
-version = "0.8.1"
+version = "0.8.2"
 authors = ["Nikolay Kim <fafhrd91@gmail.com>",  "Tokio Contributors <team@tokio.rs>", "krircc <krircc@qq.com>"]
 documentation = "https://docs.rs/kayrx/"
 repository = "https://github.com/kriry/kayrx"

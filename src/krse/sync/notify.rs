@@ -42,11 +42,12 @@ use std::task::{Context, Poll, Waker};
 /// use kayrx::krse::sync::Notify;
 /// use std::sync::Arc;
 ///
-/// fn main() {
+/// #[kayrx::main]
+/// async fn main() {
 ///     let notify = Arc::new(Notify::new());
 ///     let notify2 = notify.clone();
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::spawn_fut(async move {
 ///         notify2.notified().await;
 ///         println!("received notification");
 ///     });
@@ -182,11 +183,12 @@ impl Notify {
     /// use kayrx::krse::sync::Notify;
     /// use std::sync::Arc;
     ///
-    /// fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let notify = Arc::new(Notify::new());
     ///     let notify2 = notify.clone();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::spawn_fut(async move {
     ///         notify2.notified().await;
     ///         println!("received notification");
     ///     });
@@ -229,11 +231,12 @@ impl Notify {
     /// use kayrx::krse::sync::Notify;
     /// use std::sync::Arc;
     ///
-    /// fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let notify = Arc::new(Notify::new());
     ///     let notify2 = notify.clone();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::spawn_fut(async move {
     ///         notify2.notified().await;
     ///         println!("received notification");
     ///     });
