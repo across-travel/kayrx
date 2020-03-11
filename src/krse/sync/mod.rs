@@ -25,9 +25,11 @@ pub(crate) mod atomic;
 
 mod barrier;
 mod mutex;
-mod semaphore;
+mod notify;
 mod rwlock;
+mod semaphore;
 
+pub use notify::Notify;
 pub use barrier::{Barrier, BarrierWaitResult};
 pub use mutex::{Mutex, MutexGuard};
 pub use semaphore::{Semaphore, SemaphorePermit};
