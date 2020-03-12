@@ -265,7 +265,7 @@ impl DateService {
 
             // periodic date update
             let s = self.clone();
-            crate::fiber::spawn_fut(delay_for(Duration::from_millis(500)).then(move |_| {
+            crate::fiber::spawn(delay_for(Duration::from_millis(500)).then(move |_| {
                 s.0.reset();
                 future::ready(())
             }));

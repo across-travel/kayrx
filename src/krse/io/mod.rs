@@ -139,7 +139,7 @@ pub use std::io::{Error, ErrorKind, Result};
 /// Types in this module can be mocked out in tests.
 mod sys {
     // TODO: don't rename
-    pub(crate) use crate::fiber::spawn_blocking as run;
+    pub(crate) use crate::fiber::run;
     pub(crate) use crate::fiber::inner::JoinHandle as Blocking;
 }
 

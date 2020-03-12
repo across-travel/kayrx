@@ -140,7 +140,7 @@ impl sealed::ToSocketAddrsPriv for (Ipv6Addr, u16) {
         type Future = sealed::MaybeReady;
 
         fn to_socket_addrs(&self) -> Self::Future {
-            use crate::fiber::spawn_blocking;
+            use crate::fiber::run;
             use sealed::MaybeReady;
 
             // First check if the input parses as a socket address
@@ -153,7 +153,7 @@ impl sealed::ToSocketAddrsPriv for (Ipv6Addr, u16) {
             // Run DNS lookup on the blocking pool
             let s = self.to_owned();
 
-            MaybeReady::Blocking(spawn_blocking(move || {
+            MaybeReady::Blocking(run(move || {
                 std::net::ToSocketAddrs::to_socket_addrs(&s)
             }))
         }
@@ -168,7 +168,7 @@ impl sealed::ToSocketAddrsPriv for (Ipv6Addr, u16) {
         type Future = sealed::MaybeReady;
 
         fn to_socket_addrs(&self) -> Self::Future {
-            use crate::fiber::spawn_blocking;
+            use crate::fiber::run;
             use sealed::MaybeReady;
 
             let (host, port) = *self;
@@ -190,7 +190,7 @@ impl sealed::ToSocketAddrsPriv for (Ipv6Addr, u16) {
 
             let host = host.to_owned();
 
-            MaybeReady::Blocking(spawn_blocking(move || {
+            MaybeReady::Blocking(run(move || {
                 std::net::ToSocketAddrs::to_socket_addrs(&(&host[..], port))
             }))
         }

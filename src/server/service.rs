@@ -8,7 +8,7 @@ use futures_util::{FutureExt, TryFutureExt};
 use log::error;
 
 use super::Token;
-use crate::fiber::spawn_fut;
+use crate::fiber::spawn;
 use crate::service::{self as kayrx, Service, ServiceFactory as ActixServiceFactory};
 use crate::server::socket::{FromStream, StdStream};
 use crate::krse::task::counter::CounterGuard;
@@ -81,7 +81,7 @@ where
 
                 if let Ok(stream) = stream {
                     let f = self.service.call(stream);
-                    spawn_fut(async move {
+                    spawn(async move {
                         let _ = f.await;
                         drop(guard);
                     });

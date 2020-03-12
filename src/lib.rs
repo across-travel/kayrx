@@ -25,3 +25,5 @@ pub mod secure;
 pub mod web;
 pub mod websocket;
 pub mod util;
+
+pub use self::fiber::{spawn, take, run};

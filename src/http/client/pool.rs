@@ -99,7 +99,7 @@ where
 
     fn call(&mut self, req: Connect) -> Self::Future {
         // start support future
-        crate::fiber::spawn_fut(ConnectorPoolSupport {
+        crate::fiber::spawn(ConnectorPoolSupport {
             connector: self.0.clone(),
             inner: self.1.clone(),
         });
@@ -138,7 +138,7 @@ where
                         ))
                     } else {
                         let (snd, connection) = handshake(io).await?;
-                        crate::fiber::spawn_fut(connection.map(|_| ()));
+                        crate::fiber::spawn(connection.map(|_| ()));
                         Ok(IoConnection::new(
                             ConnectionType::H2(snd),
                             Instant::now(),
@@ -327,7 +327,7 @@ where
                 {
                     if let Some(timeout) = self.disconnect_timeout {
                         if let ConnectionType::H1(io) = conn.io {
-                            crate::fiber::spawn_fut(CloseConnection::new(io, timeout))
+                            crate::fiber::spawn(CloseConnection::new(io, timeout))
                         }
                     }
                 } else {
@@ -339,7 +339,7 @@ where
                             Poll::Ready(Ok(n)) if n > 0 => {
                                 if let Some(timeout) = self.disconnect_timeout {
                                     if let ConnectionType::H1(io) = io {
-                                        crate::fiber::spawn_fut(CloseConnection::new(
+                                        crate::fiber::spawn(CloseConnection::new(
                                             io, timeout,
                                         ))
                                     }
@@ -373,7 +373,7 @@ where
         self.acquired -= 1;
         if let Some(timeout) = self.disconnect_timeout {
             if let ConnectionType::H1(io) = io {
-                crate::fiber::spawn_fut(CloseConnection::new(io, timeout))
+                crate::fiber::spawn(CloseConnection::new(io, timeout))
             }
         }
         self.check_availibility();
@@ -515,7 +515,7 @@ where
         inner: Rc<RefCell<Inner<Io>>>,
         fut: F,
     ) {
-        crate::fiber::spawn_fut(OpenWaitingConnection {
+        crate::fiber::spawn(OpenWaitingConnection {
             key,
             fut,
             h2: None,
@@ -551,7 +551,7 @@ where
         if let Some(ref mut h2) = this.h2 {
             return match Pin::new(h2).poll(cx) {
                 Poll::Ready(Ok((snd, connection))) => {
-                    crate::fiber::spawn_fut(connection.map(|_| ()));
+                    crate::fiber::spawn(connection.map(|_| ()));
                     let rx = this.rx.take().unwrap();
                     let _ = rx.send(Ok(IoConnection::new(
                         ConnectionType::H2(snd),

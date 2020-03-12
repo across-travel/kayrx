@@ -198,7 +198,7 @@ where
                     };
 
                     let tx = self.tx.clone();
-                    crate::fiber::spawn_fut(self.service.call(item).map(move |item| {
+                    crate::fiber::spawn(self.service.call(item).map(move |item| {
                         let _ = tx.send(item.map(Message::Item));
                     }));
                 }

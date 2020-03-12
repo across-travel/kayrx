@@ -193,7 +193,7 @@ impl Worker {
                     }));
                 }
 
-                fiber::spawn_fut(async move {
+                fiber::spawn(async move {
                     let res = join_all(fut).await;
                     let res: Result<Vec<_>, _> = res.into_iter().collect();
                     match res {
@@ -228,7 +228,7 @@ impl Worker {
             self.services.iter_mut().for_each(|srv| {
                 if srv.status == WorkerServiceStatus::Available {
                     srv.status = WorkerServiceStatus::Stopped;
-                    fiber::spawn_fut(
+                    fiber::spawn(
                         srv.service
                             .call((None, ServerMessage::ForceShutdown))
                             .map(|_| ()),
@@ -240,7 +240,7 @@ impl Worker {
             self.services.iter_mut().for_each(move |srv| {
                 if srv.status == WorkerServiceStatus::Available {
                     srv.status = WorkerServiceStatus::Stopping;
-                    fiber::spawn_fut(
+                    fiber::spawn(
                         srv.service
                             .call((None, ServerMessage::Shutdown(timeout)))
                             .map(|_| ()),

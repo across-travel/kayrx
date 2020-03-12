@@ -15,7 +15,7 @@ use net2::TcpBuilder;
 use num_cpus;
 
 use crate::timer::{delay_until, Instant};
-use crate::fiber::{spawn_fut, System};
+use crate::fiber::{spawn, System};
 use crate::server::accept::{AcceptLoop, AcceptNotify, Command};
 use crate::server::config::{ConfiguredService, ServiceConfig};
 use crate::server::server::{Server, ServerCommand};
@@ -288,7 +288,7 @@ impl ServerBuilder {
 
             // start http server actor
             let server = self.server.clone();
-            spawn_fut(self);
+            spawn(self);
             server
         }
     }
@@ -357,7 +357,7 @@ impl ServerBuilder {
 
                 // stop workers
                 if !self.workers.is_empty() && graceful {
-                    spawn_fut(
+                    spawn(
                         self.workers
                             .iter()
                             .map(move |worker| worker.1.stop(graceful))
@@ -371,7 +371,7 @@ impl ServerBuilder {
                                     let _ = tx.send(());
                                 }
                                 if exit {
-                                    spawn_fut(
+                                    spawn(
                                         async {
                                             delay_until(
                                                 Instant::now() + Duration::from_millis(300),
@@ -388,7 +388,7 @@ impl ServerBuilder {
                 } else {
                     // we need to stop system if server was spawned
                     if self.exit {
-                        spawn_fut(
+                        spawn(
                             delay_until(Instant::now() + Duration::from_millis(300)).then(
                                 |_| {
                                     System::current().stop();

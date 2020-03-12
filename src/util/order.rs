@@ -174,7 +174,7 @@ where
 
         let waker = self.waker.clone();
         let fut = self.service.call(request);
-        crate::fiber::spawn_fut(async move {
+        crate::fiber::spawn(async move {
             let res = fut.await;
             waker.wake();
             let _ = tx1.send(res);
@@ -250,7 +250,7 @@ mod tests {
                 let res2 = srv.call(rx2);
                 let res3 = srv.call(rx3);
 
-                crate::fiber::spawn_fut(async move {
+                crate::fiber::spawn(async move {
                     let _ = poll_fn(|cx| {
                         let _ = srv.poll_ready(cx);
                         Poll::<()>::Pending

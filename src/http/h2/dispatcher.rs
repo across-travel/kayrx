@@ -135,7 +135,7 @@ where
                         on_connect.set(&mut req.extensions_mut());
                     }
 
-                    crate::fiber::spawn_fut(ServiceResponse::<
+                    crate::fiber::spawn(ServiceResponse::<
                         S::Future,
                         S::Response,
                         S::Error,

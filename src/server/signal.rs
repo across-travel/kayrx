@@ -29,7 +29,7 @@ pub(crate) struct Signals {
 
 impl Signals {
     pub(crate) fn start(srv: Server) -> io::Result<()> {
-        fiber::spawn_fut(lazy(|_| {
+        fiber::spawn(lazy(|_| {
                 use crate::krse::signal::unix;
 
                 let mut streams = Vec::new();
@@ -52,7 +52,7 @@ impl Signals {
                     }
                 }
 
-                fiber::spawn_fut(Signals { srv, streams })
+                fiber::spawn(Signals { srv, streams })
         }));
 
         Ok(())

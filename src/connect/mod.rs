@@ -35,7 +35,7 @@ pub use self::service::{ConnectService, ConnectServiceFactory, TcpConnectService
 
 pub fn start_resolver(cfg: ResolverConfig, opts: ResolverOpts) -> AsyncResolver {
     let (resolver, bg) = AsyncResolver::new(cfg, opts);
-    crate::fiber::spawn_fut(bg);
+    crate::fiber::spawn(bg);
     resolver
 }
 
@@ -54,7 +54,7 @@ pub(crate) fn get_default_resolver() -> AsyncResolver {
         };
 
         let (resolver, bg) = AsyncResolver::new(cfg, opts);
-        crate::fiber::spawn_fut(bg);
+        crate::fiber::spawn(bg);
 
         Arbiter::set_item(DefaultResolver(resolver.clone()));
         resolver

@@ -81,7 +81,6 @@ where
 mod sys {
     pub(crate) use std::fs::File;
 
-    // TODO: don't rename
-    pub(crate) use crate::fiber::spawn_blocking as run;
+    pub(crate) use crate::fiber::run;
     pub(crate) use crate::fiber::JoinHandle as Blocking;
 }

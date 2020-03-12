@@ -36,7 +36,7 @@ use std::future::Future;
 /// # Panics
 ///
 /// This function panics if  system is not running.
-pub fn spawn_fut<F>(f: F)
+pub fn spawn<F>(f: F)
 where
     F: futures_core::Future<Output = ()> + 'static,
 {
@@ -47,7 +47,7 @@ where
     Arbiter::spawn(f);
 }
 
-pub fn spawn<T>(task: T) -> JoinHandle<T::Output>
+pub fn take<T>(task: T) -> JoinHandle<T::Output>
 where
     T: Future + Send + 'static,
     T::Output: Send + 'static,
@@ -56,7 +56,7 @@ where
 }
 
 
-pub fn spawn_blocking<F, R>(f: F) -> JoinHandle<R>
+pub fn run<F, R>(f: F) -> JoinHandle<R>
 where
     F: FnOnce() -> R + Send + 'static,
     R: Send + 'static,

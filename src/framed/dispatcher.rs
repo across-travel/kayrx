@@ -111,7 +111,7 @@ where
 
                     let tx = self.rx.sender();
                     let fut = self.service.call(item);
-                    crate::fiber::spawn_fut(async move {
+                    crate::fiber::spawn(async move {
                         let item = fut.await;
                         let item = match item {
                             Ok(Some(item)) => Ok(item),

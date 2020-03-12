@@ -78,7 +78,7 @@ impl LowResTimeService {
                 b.resolution
             };
 
-            crate::fiber::spawn_fut(delay_for(interval).then(move |_| {
+            crate::fiber::spawn(delay_for(interval).then(move |_| {
                 inner.get_mut().current.take();
                 ready(())
             }));
@@ -143,7 +143,7 @@ impl SystemTimeService {
                 b.resolution
             };
 
-            crate::fiber::spawn_fut(delay_for(interval).then(move |_| {
+            crate::fiber::spawn(delay_for(interval).then(move |_| {
                 inner.get_mut().current.take();
                 ready(())
             }));
