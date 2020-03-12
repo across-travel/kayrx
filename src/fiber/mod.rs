@@ -16,13 +16,15 @@ mod io;
 mod timer;
 
 pub use self::arbiter::Arbiter;
-pub use self::builder::{Builder, BuilderInner, SystemRunner};
-pub use self::runtime::{Runtime, RuntimeInner};
+pub use self::builder::{Builder, SystemRunner};
+pub use self::runtime::Runtime;
 pub use self::system::System;
-pub use self::local::spawn_local;
-pub use self::handle::Handle;
 
-pub(crate)use inner::JoinHandle;
+pub(crate) use handle::Handle;
+pub(crate) use local::spawn_local;
+pub(crate) use inner::JoinHandle;
+pub(crate) use builder::BuilderInner;
+pub(crate) use runtime::RuntimeInner;
 use scheduler::BasicScheduler;
 use block_pool::BlockingPool;
 use enter::enter;

@@ -20,7 +20,7 @@ use crate::web::dev::{BodySize, MessageBody, ResponseBody};
 use crate::web::error::{Error, Result};
 use crate::http::{HeaderName, StatusCode};
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::web::HttpResponse;
+use crate::http::Response as HttpResponse;
 
 /// `Middleware` for logging request and response info to the terminal.
 ///

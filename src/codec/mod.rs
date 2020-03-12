@@ -15,13 +15,13 @@ mod bytes_codec;
 mod lines_codec;
 pub mod length_delimited;
 
-pub use self::bytes_codec::BytesCodec;
-pub use self::decoder::Decoder;
-pub use self::encoder::Encoder;
-pub use self::framed::{Framed, FramedParts};
-pub use self::framed2::{Framed as Framed2, FramedParts as FramedParts2};
-pub use self::framed_read::FramedRead;
-pub use self::framed_write::FramedWrite;
-pub use self::length_delimited::{LengthDelimitedCodec, LengthDelimitedCodecError};
-pub use self::lines_codec::{LinesCodec, LinesCodecError};
+pub use bytes_codec::BytesCodec;
+pub use decoder::Decoder;
+pub use encoder::Encoder;
+pub use framed::{Framed, FramedParts};
+pub use framed2::{Framed as Framed2, FramedParts as FramedParts2};
+pub use framed_read::FramedRead;
+pub use framed_write::FramedWrite;
+pub use length_delimited::{LengthDelimitedCodec, LengthDelimitedCodecError};
+pub use lines_codec::{LinesCodec, LinesCodecError};
 

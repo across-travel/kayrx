@@ -1,8 +1,13 @@
  
 //! Essentials helper functions and types for application registration.
-pub use crate::http::Response as HttpResponse;
 pub use bytes::{Bytes, BytesMut};
 pub use futures_channel::oneshot::Canceled;
+
+pub use crate::web::config::ServiceConfig;
+pub use crate::web::data::Data;
+pub use crate::web::request::HttpRequest;
+pub use crate::web::types::*;
+pub use crate::http::Response as HttpResponse;
 
 use crate::web::error::BlockingError;
 use crate::web::extract::FromRequest;
@@ -12,14 +17,9 @@ use crate::web::responder::Responder;
 use crate::web::route::Route;
 use crate::web::scope::Scope;
 use crate::web::service::WebService;
-
-pub use crate::web::config::ServiceConfig;
-pub use crate::web::data::Data;
-pub use crate::web::request::HttpRequest;
-pub use crate::web::types::*;
-
 use crate::http::Method;
 use crate::router::IntoPattern;
+
 use futures_core::Future;
 
 /// Create resource for a specific path.

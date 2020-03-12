@@ -1,4 +1,4 @@
-use crate::web::{HttpResponse, ResponseError};
+use crate::http::{Response as HttpResponse, ResponseError};
 use crate::http::StatusCode;
 use derive_more::Display;
 

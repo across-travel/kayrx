@@ -1,14 +1,12 @@
 //! `Middleware` to normalize request's URI
 use std::task::{Context, Poll};
-
-use crate::http::{PathAndQuery, Uri};
-use crate::service::{Service, Transform};
 use bytes::Bytes;
 use futures_util::future::{ok, Ready};
 use regex::Regex;
 
+use crate::http::{PathAndQuery, Uri, Error};
+use crate::service::{Service, Transform};
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::web::Error;
 
 #[derive(Default, Clone, Copy)]
 /// `Middleware` to normalize request's URI in place

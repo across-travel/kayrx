@@ -47,8 +47,7 @@ use crate::service::{Service, Transform};
 use crate::web::dev::{RequestHead, ServiceRequest, ServiceResponse};
 use crate::web::error::{Error, ResponseError, Result};
 use crate::http::header::{self, HeaderName, HeaderValue};
-use crate::http::{self, HttpError, Method, StatusCode, Uri};
-use crate::web::HttpResponse;
+use crate::http::{self, HttpError, Response as HttpResponse,  Method, StatusCode, Uri};
 use derive_more::Display;
 use futures_util::future::{ok, Either, FutureExt, LocalBoxFuture, Ready};
 

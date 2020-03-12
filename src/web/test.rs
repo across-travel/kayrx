@@ -30,15 +30,14 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_json;
 
-pub use crate::http::test::TestBuffer;
-
 use crate::web::config::AppConfig;
 use crate::web::data::Data;
 use crate::web::dev::{Body, MessageBody, Payload, Server};
 use crate::web::request::HttpRequestPool;
 use crate::web::rmap::ResourceMap;
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::web::{Error, HttpRequest, HttpResponse};
+use crate::http::{Error, Response as HttpResponse};
+use crate::web::HttpRequest;
 
 /// Create service that always responds with `HttpResponse::Ok()`
 pub fn ok_service(

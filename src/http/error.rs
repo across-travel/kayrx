@@ -5,11 +5,6 @@ use std::io::Write;
 use std::str::Utf8Error;
 use std::string::FromUtf8Error;
 use std::{fmt, io, result};
-
-pub use http::Error as HttpError;
-pub use crate::util::threadpool::BlockingError;
-pub use futures_channel::oneshot::Canceled;
-
 use bytes::BytesMut;
 use derive_more::{Display, From};
 use http::uri::InvalidUri;
@@ -18,6 +13,10 @@ use httparse;
 use serde::de::value::Error as DeError;
 use serde_json::error::Error as JsonError;
 use serde_urlencoded::ser::Error as FormError;
+
+pub use http::Error as HttpError;
+pub use futures_channel::oneshot::Canceled;
+pub use crate::util::threadpool::BlockingError;
 
 use crate::codec::{Decoder, Encoder};
 use crate::framed::DispatcherError as FramedDispatcherError;

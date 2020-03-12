@@ -13,10 +13,10 @@ use mime_guess::from_path;
 use crate::http::body::SizedStream;
 use crate::web::dev::BodyEncoding;
 use crate::http::header::{
-    self, Charset, ContentDisposition, DispositionParam, DispositionType, ExtendedValue,
+    self, Charset, ContentDisposition, ContentEncoding, DispositionParam, DispositionType, ExtendedValue,
 };
-use crate::http::{ContentEncoding, StatusCode};
-use crate::web::{Error, HttpMessage, HttpRequest, HttpResponse, Responder};
+use crate::http::{Error, StatusCode, Response as HttpResponse, HttpMessage};
+use crate::web::{HttpRequest, Responder};
 use futures_util::future::{ready, Ready};
 
 use super::range::HttpRange;

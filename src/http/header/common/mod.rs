@@ -8,7 +8,7 @@
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
 pub use self::accept_charset::AcceptCharset;
-//pub use self::accept_encoding::AcceptEncoding;
+// pub use self::accept_encoding::AcceptEncoding;
 pub use self::accept_language::AcceptLanguage;
 pub use self::accept::Accept;
 pub use self::allow::Allow;
@@ -26,7 +26,7 @@ pub use self::if_none_match::IfNoneMatch;
 pub use self::if_range::IfRange;
 pub use self::if_unmodified_since::IfUnmodifiedSince;
 pub use self::last_modified::LastModified;
-//pub use self::range::{Range, ByteRangeSpec};
+// pub use self::range::{Range, ByteRangeSpec};
 
 #[doc(hidden)]
 #[macro_export]
@@ -332,7 +332,7 @@ macro_rules! header {
 
 
 mod accept_charset;
-//mod accept_encoding;
+// mod accept_encoding;
 mod accept_language;
 mod accept;
 mod allow;
@@ -350,3 +350,4 @@ mod if_none_match;
 mod if_range;
 mod if_unmodified_since;
 mod last_modified;
+// mod range;

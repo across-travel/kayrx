@@ -2,7 +2,6 @@
 //!
 //! ## Package feature
 //!
-//! * `openssl` - enables ssl support via `openssl` crate
 //! * `rustls` - enables ssl support via `rustls` crate
 
 

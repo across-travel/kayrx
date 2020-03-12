@@ -1,7 +1,6 @@
 //! Error and Result module
 use crate::web::error::{ParseError, PayloadError};
-use crate::http::StatusCode;
-use crate::web::ResponseError;
+use crate::http::{StatusCode, ResponseError};
 use derive_more::{Display, From};
 
 /// A set of errors that can occur during parsing multipart streams

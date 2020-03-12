@@ -1,11 +1,10 @@
 //! Error and Result module
-pub use crate::http::error::*;
 use derive_more::{Display, From};
 use serde_json::error::Error as JsonError;
 use url::ParseError as UrlParseError;
 
-use crate::http::StatusCode;
-use crate::web::HttpResponse;
+use crate::http::{StatusCode, Response as HttpResponse};
+pub use crate::http::error::*;
 
 /// Errors which can occur when attempting to generate resource uri.
 #[derive(Debug, PartialEq, Display, From)]

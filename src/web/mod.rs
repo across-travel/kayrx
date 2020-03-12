@@ -2,14 +2,9 @@ mod app;
 mod app_service;
 mod config;
 mod data;
-pub mod error;
 mod extract;
-pub mod file;
-pub mod guard;
 mod handler;
 mod info;
-pub mod middleware;
-pub mod multipart;
 mod request;
 mod resource;
 mod responder;
@@ -18,33 +13,31 @@ mod route;
 mod scope;
 mod server;
 mod service;
-pub mod test;
 mod types;
+
+pub mod error;
+pub mod file;
+pub mod guard;
+pub mod middleware;
+pub mod multipart;
+pub mod test;
 pub mod web;
 pub mod client;
 
-pub use crate::http::Response as HttpResponse;
-pub use crate::http::{body, Error, HttpMessage, ResponseError, Result};
-
-pub use crate::web::app::App;
-pub use crate::web::extract::FromRequest;
-pub use crate::web::request::HttpRequest;
-pub use crate::web::resource::Resource;
-pub use crate::web::responder::{Either, Responder};
-pub use crate::web::route::Route;
-pub use crate::web::scope::Scope;
-pub use crate::web::server::HttpServer;
+pub use self::app::App;
+pub use self::extract::FromRequest;
+pub use self::request::HttpRequest;
+pub use self::resource::Resource;
+pub use self::responder::{Either, Responder};
+pub use self::route::Route;
+pub use self::scope::Scope;
+pub use self::server::HttpServer;
 
 pub mod dev {
     //! The `kayrx` prelude for library developers
     //!
     //! The purpose of this module is to alleviate imports of many common kayrx
     //! traits by adding a glob import to the top of kayrx heavy modules:
-    //!
-    //! ```
-    //! # #![allow(unused_imports)]
-    //! use kayrx::web::dev::*;
-    //! ```
 
     pub use crate::http::body::{Body, BodySize, MessageBody, ResponseBody, SizedStream};
     pub use crate::http::encoding::Decoder as Decompress;
@@ -54,16 +47,16 @@ pub mod dev {
     pub use crate::service::{Service, Transform};
     use crate::http::{Response, ResponseBuilder};
 
-    pub use crate::web::config::{AppConfig, AppService};
+    pub use super::config::{AppConfig, AppService};
     pub use crate::router::{Path, ResourceDef, ResourcePath, Url};
     #[doc(hidden)]
-    pub use crate::web::handler::Factory;
-    pub use crate::web::info::ConnectionInfo;
-    pub use crate::web::rmap::ResourceMap;
-    pub use crate::web::service::{HttpServiceFactory, ServiceRequest, ServiceResponse, WebService};
-    pub use crate::web::types::form::UrlEncoded;
-    pub use crate::web::types::json::JsonBody;
-    pub use crate::web::types::readlines::Readlines;
+    pub use super::handler::Factory;
+    pub use super::info::ConnectionInfo;
+    pub use super::rmap::ResourceMap;
+    pub use super::service::{HttpServiceFactory, ServiceRequest, ServiceResponse, WebService};
+    pub use super::types::form::UrlEncoded;
+    pub use super::types::json::JsonBody;
+    pub use super::types::readlines::Readlines;
 
     use crate::http::header::ContentEncoding;
     

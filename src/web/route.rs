@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 
-use crate::http::{Method, Error};
+use crate::http::{Method, Error, Response as HttpResponse};
 use crate::service::{Service, ServiceFactory};
 use futures_util::future::{ready, FutureExt, LocalBoxFuture};
 
@@ -12,7 +12,6 @@ use crate::web::guard::{self, Guard};
 use crate::web::handler::{Extract, Factory, Handler};
 use crate::web::responder::Responder;
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::web::HttpResponse;
 
 type BoxedRouteService<Req, Res> = Box<
     dyn Service<

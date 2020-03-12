@@ -5,7 +5,7 @@ use std::sync::Arc;
 use std::task::{self, Context, Poll};
 
 mod and_then;
-pub mod and_then_apply_fn;
+mod and_then_apply_fn;
 mod apply;
 mod apply_cfg;
 pub mod boxed;

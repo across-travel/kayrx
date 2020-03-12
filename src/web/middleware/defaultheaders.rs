@@ -7,9 +7,8 @@ use crate::service::{Service, Transform};
 use futures_util::future::{ok, FutureExt, LocalBoxFuture, Ready};
 
 use crate::http::header::{HeaderName, HeaderValue, CONTENT_TYPE};
-use crate::http::{Error as HttpError, HeaderMap};
+use crate::http::{Error, HeaderMap};
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::web::Error;
 
 /// `Middleware` for setting default response headers.
 ///
@@ -60,9 +59,9 @@ impl DefaultHeaders {
     pub fn header<K, V>(mut self, key: K, value: V) -> Self
     where
         HeaderName: TryFrom<K>,
-        <HeaderName as TryFrom<K>>::Error: Into<HttpError>,
+        <HeaderName as TryFrom<K>>::Error: Into<Error>,
         HeaderValue: TryFrom<V>,
-        <HeaderValue as TryFrom<V>>::Error: Into<HttpError>,
+        <HeaderValue as TryFrom<V>>::Error: Into<Error>,
     {
         #[allow(clippy::match_wild_err_arm)]
         match HeaderName::try_from(key) {

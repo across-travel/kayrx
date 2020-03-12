@@ -9,7 +9,7 @@ use futures_core::Stream;
 
 use crate::web::dev::Payload;
 use crate::web::error::{PayloadError, ReadlinesError};
-use crate::web::HttpMessage;
+use crate::http::HttpMessage;
 
 /// Stream to read request line by line.
 pub struct Readlines<T: HttpMessage> {
