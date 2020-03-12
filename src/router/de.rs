@@ -477,8 +477,7 @@ impl<'de> de::VariantAccess<'de> for UnitVariant {
 
 #[cfg(test)]
 mod tests {
-    use serde::de;
-    use serde_derive::Deserialize;
+    use serde::{de, Deserialize};
 
     use super::*;
     use crate::router::path::Path;

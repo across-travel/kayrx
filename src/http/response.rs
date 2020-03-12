@@ -918,7 +918,7 @@ mod tests {
 
         let resp = Response::Ok()
             .cookie(
-                crate::http::Cookie::build("name", "value")
+                coo_kie::Cookie::build("name", "value")
                     .domain("www.rust-lang.org")
                     .path("/test")
                     .http_only(true)
@@ -945,14 +945,14 @@ mod tests {
     #[test]
     fn test_update_response_cookies() {
         let mut r = Response::Ok()
-            .cookie(crate::http::Cookie::new("original", "val100"))
+            .cookie(coo_kie::Cookie::new("original", "val100"))
             .finish();
 
-        r.add_cookie(&crate::http::Cookie::new("cookie2", "val200"))
+        r.add_cookie(&coo_kie::Cookie::new("cookie2", "val200"))
             .unwrap();
-        r.add_cookie(&crate::http::Cookie::new("cookie2", "val250"))
+        r.add_cookie(&coo_kie::Cookie::new("cookie2", "val250"))
             .unwrap();
-        r.add_cookie(&crate::http::Cookie::new("cookie3", "val300"))
+        r.add_cookie(&coo_kie::Cookie::new("cookie3", "val300"))
             .unwrap();
 
         assert_eq!(r.cookies().count(), 4);
@@ -1117,7 +1117,7 @@ mod tests {
         assert_eq!(resp.status(), StatusCode::OK);
 
         #[cfg(feature = "cookie")]
-        resp.add_cookie(&crate::http::Cookie::new("cookie1", "val100"))
+        resp.add_cookie(&coo_kie::Cookie::new("cookie1", "val100"))
             .unwrap();
 
         let mut builder: ResponseBuilder = resp.into();
@@ -1125,7 +1125,9 @@ mod tests {
         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
 
         #[cfg(feature = "cookie")]
-        let cookie = resp.cookies().next().unwrap();
-        assert_eq!((cookie.name(), cookie.value()), ("cookie1", "val100"));
+        {
+            let cookie = resp.cookies().next().unwrap();
+            assert_eq!((cookie.name(), cookie.value()), ("cookie1", "val100"));
+        }
     }
 }

@@ -19,7 +19,9 @@ members = [
 ]
 
 [package.metadata.docs.rs]
-features =  "cookie"
+all-features = true
+[package.metadata.playground]
+all-features = true
 
 [features]
 default = []
@@ -82,7 +84,6 @@ coo-kie = { version = "0.13.3", package = "cookie", optional = true }
 
 [dev-dependencies]
 futures = "0.3"
-futures-util = "0.3.1"
 kayrx-macro = "0.3.0"
 
 

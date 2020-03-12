@@ -349,12 +349,14 @@ mod tests {
         assert!(dbg.contains("HttpRequest"));
     }
 
+    #[cfg(feature = "cookie")]
     #[test]
     fn test_no_request_cookies() {
         let req = TestRequest::default().to_http_request();
         assert!(req.cookies().unwrap().is_empty());
     }
 
+    #[cfg(feature = "cookie")]
     #[test]
     fn test_request_cookies() {
         let req = TestRequest::default()

@@ -5,8 +5,6 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 use std::{fmt, ops};
-
-use crate::http::{Error, HttpMessage, Payload, Response};
 use bytes::BytesMut;
 use encoding_rs::{Encoding, UTF_8};
 use futures_util::future::{err, ok, FutureExt, LocalBoxFuture, Ready};
@@ -14,6 +12,7 @@ use futures_util::StreamExt;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
+use crate::http::{Error, HttpMessage, Payload, Response};
 use crate::web::dev::Decompress;
 use crate::web::error::UrlencodedError;
 use crate::web::extract::FromRequest;

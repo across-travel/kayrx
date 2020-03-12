@@ -226,7 +226,7 @@ impl Default for QueryConfig {
 mod tests {
     use crate::http::StatusCode;
     use derive_more::Display;
-    use serde_derive::Deserialize;
+    use serde::Deserialize;
 
     use super::*;
     use crate::web::error::InternalError;

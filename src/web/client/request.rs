@@ -32,11 +32,11 @@ const HTTPS_ENCODING: &str = "br, gzip, deflate";
 /// builder-like pattern.
 ///
 /// ```rust
-/// use kayrx::System;
-///
+///use kayrx::http::client::Client;
+/// 
 /// #[kayrx::main]
 /// async fn main() {
-///    let response = awc::Client::new()
+///    let response = Client::new()
 ///         .get("http://www.rust-lang.org") // <- Create request builder
 ///         .header("User-Agent", "Actix-web")
 ///         .send()                          // <- Send http request
@@ -154,17 +154,18 @@ impl ClientRequest {
 
     /// Set a header.	
     ///	
-    /// ```rust	
-    /// fn main() {	
-    /// # kayrx::System::new("test").block_on(futures::future::lazy(|_| {	
-    ///     let req = awc::Client::new()	
+    /// ```rust
+    /// use kayrx::{http, http::Client};
+    ///
+    /// #[kayrx::main]
+    /// async fn main() {
+    ///     let req = Client::new()	
     ///         .get("http://www.rust-lang.org")	
-    ///         .set(awc::http::header::Date::now())	
-    ///         .set(awc::http::header::ContentType(mime::TEXT_HTML));	
-    /// #   Ok::<_, ()>(())	
-    /// # }));	
-    /// }	
-    /// ```	
+    ///         .set(http::header::Date::now())	
+    ///         .set(http::header::ContentType(mime::TEXT_HTML));	
+    /// }
+    /// ```
+    
     pub fn set<H: Header>(mut self, hdr: H) -> Self {	
         match hdr.try_into() {	
             Ok(value) => {	
@@ -181,16 +182,14 @@ impl ClientRequest {
     /// To override header use `set_header()` method.
     ///
     /// ```rust
-    /// use awc::{http, Client};
+    /// use kayrx::{http, http::Client};
     ///
-    /// fn main() {
-    /// # kayrx::System::new("test").block_on(async {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let req = Client::new()
     ///         .get("http://www.rust-lang.org")
     ///         .header("X-TEST", "value")
     ///         .header(http::header::CONTENT_TYPE, "application/json");
-    /// #   Ok::<_, ()>(())
-    /// # });
     /// }
     /// ```
     pub fn header<K, V>(mut self, key: K, value: V) -> Self
@@ -309,11 +308,13 @@ impl ClientRequest {
     /// Set a cookie
     ///
     /// ```rust
+    /// use kayrx::http::{self, client::Client};
+    /// 
     /// #[kayrx::main]
     /// async fn main() {
-    ///     let resp = awc::Client::new().get("https://www.rust-lang.org")
+    ///     let resp = Client::new().get("https://www.rust-lang.org")
     ///         .cookie(
-    ///             awc::http::Cookie::build("name", "value")
+    ///             http::Cookie::build("name", "value")
     ///                 .domain("www.rust-lang.org")
     ///                 .path("/")
     ///                 .secure(true)
@@ -608,8 +609,8 @@ mod tests {
             .version(Version::HTTP_2)
             .set(header::Date(SystemTime::now().into()))
             .content_type("plain/text")
-            .if_true(true, |req| req.header(header::SERVER, "awc"))
-            .if_true(false, |req| req.header(header::EXPECT, "awc"))
+            .if_true(true, |req| req.header(header::SERVER, "Client"))
+            .if_true(false, |req| req.header(header::EXPECT, "Client"))
             .if_some(Some("server"), |val, req| {
                 req.header(header::USER_AGENT, val)
             })

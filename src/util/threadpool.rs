@@ -114,7 +114,7 @@ impl<I, E: fmt::Debug> Future for CpuFuture<I, E> {
 /// Every thread sends one message over the channel, which then is collected with the `take()`.
 ///
 /// ```
-/// use threadpool::ThreadPool;
+/// use kayrx::util::threadpool::ThreadPool;
 /// use std::sync::mpsc::channel;
 ///
 /// let n_workers = 4;
@@ -140,7 +140,7 @@ impl<I, E: fmt::Debug> Future for CpuFuture<I, E> {
 /// (https://doc.rust-lang.org/reference/behavior-not-considered-unsafe.html).
 ///
 /// ```
-/// use threadpool::ThreadPool;
+/// use kayrx::util::threadpool::ThreadPool;
 /// use std::sync::{Arc, Barrier};
 /// use std::sync::atomic::{AtomicUsize, Ordering};
 ///
@@ -234,8 +234,8 @@ impl<'a> Drop for Sentinel<'a> {
 /// Build a [`ThreadPool`] that uses a maximum of eight threads simultaneously and each thread has
 /// a 8 MB stack size:
 ///
-/// ```
-/// let pool = threadpool::Builder::new()
+/// ```rust
+/// let pool = kayrx::util::threadpool::Builder::new()
 ///     .num_threads(8)
 ///     .thread_stack_size(8_000_000)
 ///     .build();
@@ -254,7 +254,9 @@ impl Builder {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
+    /// use kayrx::util::threadpool;
+    /// 
     /// let builder = threadpool::Builder::new();
     /// ```
     pub fn new() -> Builder {
@@ -278,8 +280,9 @@ impl Builder {
     ///
     /// No more than eight threads will be alive simultaneously for this pool:
     ///
-    /// ```
+    /// ```rust
     /// use std::thread;
+    /// use kayrx::util::threadpool;
     ///
     /// let pool = threadpool::Builder::new()
     ///     .num_threads(8)
@@ -306,8 +309,9 @@ impl Builder {
     ///
     /// Each thread spawned by this pool will have the name "foo":
     ///
-    /// ```
+    /// ```rust
     /// use std::thread;
+    /// use kayrx::util::threadpool;
     ///
     /// let pool = threadpool::Builder::new()
     ///     .thread_name("foo".into())
@@ -335,7 +339,9 @@ impl Builder {
     ///
     /// Each thread spawned by this pool will have a 4 MB stack:
     ///
-    /// ```
+    /// ```rust
+    /// use kayrx::util::threadpool;
+    /// 
     /// let pool = threadpool::Builder::new()
     ///     .thread_stack_size(4_000_000)
     ///     .build();
@@ -358,7 +364,9 @@ impl Builder {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```rust
+    /// use kayrx::util::threadpool;
+    /// 
     /// let pool = threadpool::Builder::new()
     ///     .num_threads(8)
     ///     .thread_stack_size(4_000_000)
@@ -445,7 +453,7 @@ impl ThreadPool {
     /// Create a new thread pool capable of executing four jobs concurrently:
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     ///
     /// let pool = ThreadPool::new(4);
     /// ```
@@ -464,7 +472,7 @@ impl ThreadPool {
     ///
     /// ```rust
     /// use std::thread;
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     ///
     /// let pool = ThreadPool::with_name("worker".into(), 2);
     /// for _ in 0..2 {
@@ -499,8 +507,9 @@ impl ThreadPool {
     ///
     /// Execute four jobs on a thread pool that can run two jobs concurrently:
     ///
-    /// ```
-    /// use threadpool::ThreadPool;
+     /// ```rust
+    /// use kayrx::util::threadpool::ThreadPool;
+    /// 
     ///
     /// let pool = ThreadPool::new(2);
     /// pool.execute(|| println!("hello"));
@@ -524,7 +533,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     /// use std::time::Duration;
     /// use std::thread::sleep;
     ///
@@ -547,7 +556,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     /// use std::time::Duration;
     /// use std::thread::sleep;
     ///
@@ -570,7 +579,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     ///
     /// let mut pool = ThreadPool::new(4);
     /// assert_eq!(4, pool.max_count());
@@ -587,7 +596,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     ///
     /// let pool = ThreadPool::new(4);
     /// for n in 0..10 {
@@ -623,7 +632,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     /// use std::time::Duration;
     /// use std::thread::sleep;
     ///
@@ -679,7 +688,7 @@ impl ThreadPool {
     /// # Examples
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     /// use std::sync::Arc;
     /// use std::sync::atomic::{AtomicUsize, Ordering};
     ///
@@ -727,7 +736,7 @@ impl Clone for ThreadPool {
     /// We could for example submit jobs from multiple threads concurrently.
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     /// use std::thread;
     /// use std::sync::mpsc::channel;
     ///
@@ -789,7 +798,7 @@ impl PartialEq for ThreadPool {
     /// Check if you are working with the same pool
     ///
     /// ```
-    /// use threadpool::ThreadPool;
+    /// use kayrx::util::threadpool::ThreadPool;
     ///
     /// let a = ThreadPool::new(2);
     /// let b = ThreadPool::new(2);

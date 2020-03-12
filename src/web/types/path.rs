@@ -252,7 +252,7 @@ impl Default for PathConfig {
 mod tests {
     use crate::router::ResourceDef;
     use derive_more::Display;
-    use serde_derive::Deserialize;
+    use serde::Deserialize;
 
     use super::*;
     use crate::web::test::TestRequest;

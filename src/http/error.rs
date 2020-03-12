@@ -13,9 +13,9 @@ use httparse;
 use serde::de::value::Error as DeError;
 use serde_json::error::Error as JsonError;
 use serde_urlencoded::ser::Error as FormError;
+use futures_channel::oneshot::Canceled;
 
 pub use http::Error as HttpError;
-pub use futures_channel::oneshot::Canceled;
 pub use crate::util::threadpool::BlockingError;
 
 use crate::codec::{Decoder, Encoder};

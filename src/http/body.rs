@@ -436,6 +436,7 @@ where
 mod tests {
     use super::*;
     use futures_util::future::poll_fn;
+    use serde_json::json;
 
     impl Body {
         pub(crate) fn get_ref(&self) -> &[u8] {
@@ -579,7 +580,6 @@ mod tests {
 
     #[kayrx::test]
     async fn test_serde_json() {
-        use serde_json::json;
         assert_eq!(
             Body::from(serde_json::Value::String("test".into())).size(),
             BodySize::Sized(6)

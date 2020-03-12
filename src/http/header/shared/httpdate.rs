@@ -124,17 +124,17 @@ mod tests {
 
         assert_eq!(
             "Sun, 07 Nov 1994 08:48:37 GMT".parse::<HttpDate>().unwrap(),
-            NOV_07
+            nov_07
         );
         assert_eq!(
             "Sunday, 07-Nov-94 08:48:37 GMT"
                 .parse::<HttpDate>()
                 .unwrap(),
-            NOV_07
+            nov_07
         );
         assert_eq!(
             "Sun Nov  7 08:48:37 1994".parse::<HttpDate>().unwrap(),
-            NOV_07
+            nov_07
         );
         assert!("this-is-no-date".parse::<HttpDate>().is_err());
     }

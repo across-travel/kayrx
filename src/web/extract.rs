@@ -268,7 +268,7 @@ tuple_from_req!(TupleFromRequest10, (0, A), (1, B), (2, C), (3, D), (4, E), (5, 
 mod tests {
     use crate::http::header;
     use bytes::Bytes;
-    use serde_derive::Deserialize;
+    use serde::Deserialize;
 
     use super::*;
     use crate::web::test::TestRequest;

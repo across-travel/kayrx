@@ -6,33 +6,34 @@ mod config;
 mod extensions;
 mod helpers;
 mod httpcodes;
-pub(crate) mod message;
 mod payload;
 mod request;
-pub(crate) mod response;
 mod service;
+pub(crate) mod message;
+pub(crate) mod response;
+
 
 pub mod body;
 pub mod client;
 pub mod encoding;
+pub mod error;
 pub mod header;
 pub mod httpmessage;
-pub mod error;
 pub mod h1;
 pub mod h2;
 pub mod test;
 
-pub use builder::HttpServiceBuilder;
-pub use config::{KeepAlive, ServiceConfig};
-pub use error::{Error, ResponseError, Result};
-pub use extensions::Extensions;
-pub use httpmessage::HttpMessage;
-pub use message::{Message, RequestHead, RequestHeadType, ResponseHead};
-pub use payload::{Payload, PayloadStream};
-pub use request::Request;
-pub use response::{Response, ResponseBuilder};
-pub use service::HttpService;
-pub use test::TestBuffer;
+pub use self::builder::HttpServiceBuilder;
+pub use self::config::{KeepAlive, ServiceConfig};
+pub use self::error::{Error, ResponseError, Result};
+pub use self::extensions::Extensions;
+pub use self::httpmessage::HttpMessage;
+pub use self::message::{Message, RequestHead, RequestHeadType, ResponseHead};
+pub use self::payload::{Payload, PayloadStream};
+pub use self::request::Request;
+pub use self::response::{Response, ResponseBuilder};
+pub use self::service::HttpService;
+pub use self::test::TestBuffer;
 
 /// Various HTTP related types
 

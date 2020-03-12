@@ -400,7 +400,7 @@ where
 #[cfg(test)]
 mod tests {
     use bytes::Bytes;
-    use serde_derive::{Deserialize, Serialize};
+    use serde::{Deserialize, Serialize};
 
     use super::*;
     use crate::web::error::InternalError;

@@ -344,7 +344,7 @@ mod tests {
 
     use crate::timer::delay_for;
     use bytes::Bytes;
-    use serde_derive::Serialize;
+    use serde::Serialize;
 
     use crate::http::{Method, StatusCode};
     use crate::web::test::{call_service, init_service, read_body, TestRequest};

@@ -93,35 +93,35 @@ impl Drop for Waiter {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use futures_util::future::lazy;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use futures_util::future::lazy;
 
-    #[kayrx::test]
-    async fn test_condition() {
-        let mut cond = Condition::new();
-        let mut waiter = cond.wait();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
-            Poll::Pending
-        );
-        cond.notify();
-        assert_eq!(waiter.await, ());
+//     #[kayrx::test]
+//     async fn test_condition() {
+//         let mut cond = Condition::new();
+//         let mut waiter = cond.wait();
+//         assert_eq!(
+//             lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
+//             Poll::Pending
+//         );
+//         cond.notify();
+//         assert_eq!(waiter.await, ());
 
-        let mut waiter = cond.wait();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
-            Poll::Pending
-        );
-        let mut waiter2 = waiter.clone();
-        assert_eq!(
-            lazy(|cx| Pin::new(&mut waiter2).poll(cx)).await,
-            Poll::Pending
-        );
+//         let mut waiter = cond.wait();
+//         assert_eq!(
+//             lazy(|cx| Pin::new(&mut waiter).poll(cx)).await,
+//             Poll::Pending
+//         );
+//         let mut waiter2 = waiter.clone();
+//         assert_eq!(
+//             lazy(|cx| Pin::new(&mut waiter2).poll(cx)).await,
+//             Poll::Pending
+//         );
 
-        drop(cond);
-        assert_eq!(waiter.await, ());
-        assert_eq!(waiter2.await, ());
-    }
-}
+//         drop(cond);
+//         assert_eq!(waiter.await, ());
+//         assert_eq!(waiter2.await, ());
+//     }
+// }
