@@ -42,7 +42,7 @@ impl ResponseError for MultipartError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::web::HttpResponse;
+    use crate::http::Response as HttpResponse;
 
     #[test]
     fn test_multipart_error() {

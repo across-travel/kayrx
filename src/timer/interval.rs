@@ -28,11 +28,12 @@ macro_rules! ready {
 ///
 /// # Examples
 ///
-/// ```
+/// ```rust
 /// use kayrx::timer::{self, Duration};
 ///
+/// #[kayrx::main]
 /// async fn main() {
-///     let mut interval = time::interval(Duration::from_millis(10));
+///     let mut interval = timer::interval(Duration::from_millis(10));
 ///
 ///     interval.tick().await;
 ///     interval.tick().await;
@@ -62,6 +63,7 @@ pub fn interval(period: Duration) -> Interval {
 /// ```
 /// use kayrx::timer::{interval_at, Duration, Instant};
 ///
+/// #[kayrx::main]
 /// async fn main() {
 ///     let start = Instant::now() + Duration::from_millis(50);
 ///     let mut interval = interval_at(start, Duration::from_millis(10));
@@ -116,11 +118,11 @@ impl Interval {
     ///
     /// ```
     /// use kayrx::timer;
-    ///
     /// use std::time::Duration;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
-    ///     let mut interval = time::interval(Duration::from_millis(10));
+    ///     let mut interval = timer::interval(Duration::from_millis(10));
     ///
     ///     interval.tick().await;
     ///     interval.tick().await;

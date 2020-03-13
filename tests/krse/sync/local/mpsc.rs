@@ -1,6 +1,9 @@
 use kayrx::krse::sync::local::mpsc::*;
 use futures::future::lazy;
-use futures::{Stream, StreamExt};
+use futures::StreamExt;
+use std::task::Poll;
+use std::pin::Pin;
+use futures::Stream;
 
 #[kayrx::test]
 async fn test_mpsc() {

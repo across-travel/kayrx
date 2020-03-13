@@ -1,5 +1,8 @@
 use kayrx::krse::sync::local::oneshot::*;
 use futures::future::lazy;
+use std::task::Poll;
+use std::pin::Pin;
+use std::future::Future;
 
 #[kayrx::test]
 async fn test_oneshot() {

@@ -31,7 +31,7 @@
 //!
 //! use std::time::Duration;
 //!
-//!
+//!#[kayrx::main]
 //! async fn main() {
 //!     delay_for(Duration::from_millis(100)).await;
 //!     println!("100 ms have elapsed");

@@ -45,10 +45,8 @@ pub mod dev {
     pub use crate::http::{ Extensions, Payload, PayloadStream, RequestHead, ResponseHead};
     pub use crate::server::Server;
     pub use crate::service::{Service, Transform};
-    use crate::http::{Response, ResponseBuilder};
-
-    pub use super::config::{AppConfig, AppService};
     pub use crate::router::{Path, ResourceDef, ResourcePath, Url};
+    pub use super::config::{AppConfig, AppService};
     #[doc(hidden)]
     pub use super::handler::Factory;
     pub use super::info::ConnectionInfo;
@@ -59,6 +57,7 @@ pub mod dev {
     pub use super::types::readlines::Readlines;
 
     use crate::http::header::ContentEncoding;
+    use crate::http::{Response, ResponseBuilder};
     
 
     pub(crate) fn insert_slash(mut patterns: Vec<String>) -> Vec<String> {

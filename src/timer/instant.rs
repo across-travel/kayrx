@@ -52,6 +52,7 @@ impl Instant {
     /// ```
     /// use kayrx::timer::{Duration, Instant, delay_for};
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let now = Instant::now();
     ///     delay_for(Duration::new(1, 0)).await;
@@ -72,6 +73,7 @@ impl Instant {
     /// ```
     /// use kayrx::timer::{Duration, Instant, delay_for};
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let now = Instant::now();
     ///     delay_for(Duration::new(1, 0)).await;
@@ -97,6 +99,7 @@ impl Instant {
     /// ```
     /// use kayrx::timer::{Duration, Instant, delay_for};
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let instant = Instant::now();
     ///     let three_secs = Duration::from_secs(3);

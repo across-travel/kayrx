@@ -29,8 +29,8 @@ mod notify;
 mod rwlock;
 mod semaphore;
 
-pub use notify::Notify;
 pub use barrier::{Barrier, BarrierWaitResult};
 pub use mutex::{Mutex, MutexGuard};
-pub use semaphore::{Semaphore, SemaphorePermit};
+pub use notify::Notify;
 pub use rwlock::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+pub use semaphore::{Semaphore, SemaphorePermit};

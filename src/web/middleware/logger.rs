@@ -279,7 +279,7 @@ impl<B: MessageBody> MessageBody for StreamLog<B> {
 /// `FormatText`s concatenated into one line.
 #[derive(Clone)]
 #[doc(hidden)]
-struct Format(Vec<FormatText>);
+pub struct Format(pub Vec<FormatText>);
 
 impl Default for Format {
     /// Return the default formatting style for the `Logger`:
@@ -362,7 +362,7 @@ pub enum FormatText {
 }
 
 impl FormatText {
-    fn render(
+    pub fn render(
         &self,
         fmt: &mut Formatter<'_>,
         size: usize,
@@ -393,7 +393,7 @@ impl FormatText {
         }
     }
 
-    fn render_response<B>(&mut self, res: &HttpResponse<B>) {
+    pub fn render_response<B>(&mut self, res: &HttpResponse<B>) {
         match *self {
             FormatText::ResponseStatus => {
                 *self = FormatText::Str(format!("{}", res.status().as_u16()))
@@ -414,7 +414,7 @@ impl FormatText {
         }
     }
 
-    fn render_request(&mut self, now: OffsetDateTime, req: &ServiceRequest) {
+    pub fn render_request(&mut self, now: OffsetDateTime, req: &ServiceRequest) {
         match *self {
             FormatText::RequestLine => {
                 *self = if req.query_string().is_empty() {
@@ -463,7 +463,7 @@ impl FormatText {
     }
 }
 
-pub(crate) struct FormatDisplay<'a>(
+pub struct FormatDisplay<'a>(
     &'a dyn Fn(&mut Formatter<'_>) -> Result<(), fmt::Error>,
 );
 
@@ -473,122 +473,122 @@ impl<'a> fmt::Display for FormatDisplay<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::service::{IntoService, Service, Transform};
-    use futures::future::ok;
+// #[cfg(test)]
+// mod tests {
+//     use crate::service::{IntoService, Service, Transform};
+//     use futures::future::ok;
 
-    use super::*;
-    use crate::http::{header, StatusCode};
-    use crate::web::test::TestRequest;
+//     use super::*;
+//     use crate::http::{header, StatusCode};
+//     use crate::web::test::TestRequest;
 
-    #[kayrx::test]
-    async fn test_logger() {
-        let srv = |req: ServiceRequest| {
-            ok(req.into_response(
-                HttpResponse::build(StatusCode::OK)
-                    .header("X-Test", "ttt")
-                    .finish(),
-            ))
-        };
-        let logger = Logger::new("%% %{User-Agent}i %{X-Test}o %{HOME}e %D test");
+//     #[kayrx::test]
+//     async fn test_logger() {
+//         let srv = |req: ServiceRequest| {
+//             ok(req.into_response(
+//                 HttpResponse::build(StatusCode::OK)
+//                     .header("X-Test", "ttt")
+//                     .finish(),
+//             ))
+//         };
+//         let logger = Logger::new("%% %{User-Agent}i %{X-Test}o %{HOME}e %D test");
 
-        let mut srv = logger.new_transform(srv.into_service()).await.unwrap();
+//         let mut srv = logger.new_transform(srv.into_service()).await.unwrap();
 
-        let req = TestRequest::with_header(
-            header::USER_AGENT,
-            header::HeaderValue::from_static("ACTIX-WEB"),
-        )
-        .to_srv_request();
-        let _res = srv.call(req).await;
-    }
+//         let req = TestRequest::with_header(
+//             header::USER_AGENT,
+//             header::HeaderValue::from_static("ACTIX-WEB"),
+//         )
+//         .to_srv_request();
+//         let _res = srv.call(req).await;
+//     }
 
-    #[kayrx::test]
-    async fn test_url_path() {
-        let mut format = Format::new("%T %U");
-        let req = TestRequest::with_header(
-            header::USER_AGENT,
-            header::HeaderValue::from_static("ACTIX-WEB"),
-        )
-        .uri("/test/route/yeah")
-        .to_srv_request();
+//     #[kayrx::test]
+//     async fn test_url_path() {
+//         let mut format = Format::new("%T %U");
+//         let req = TestRequest::with_header(
+//             header::USER_AGENT,
+//             header::HeaderValue::from_static("ACTIX-WEB"),
+//         )
+//         .uri("/test/route/yeah")
+//         .to_srv_request();
 
-        let now = OffsetDateTime::now();
-        for unit in &mut format.0 {
-            unit.render_request(now, &req);
-        }
+//         let now = OffsetDateTime::now();
+//         for unit in &mut format.0 {
+//             unit.render_request(now, &req);
+//         }
 
-        let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
-        for unit in &mut format.0 {
-            unit.render_response(&resp);
-        }
+//         let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
+//         for unit in &mut format.0 {
+//             unit.render_response(&resp);
+//         }
 
-        let render = |fmt: &mut Formatter<'_>| {
-            for unit in &format.0 {
-                unit.render(fmt, 1024, now)?;
-            }
-            Ok(())
-        };
-        let s = format!("{}", FormatDisplay(&render));
-        println!("{}", s);
-        assert!(s.contains("/test/route/yeah"));
-    }
+//         let render = |fmt: &mut Formatter<'_>| {
+//             for unit in &format.0 {
+//                 unit.render(fmt, 1024, now)?;
+//             }
+//             Ok(())
+//         };
+//         let s = format!("{}", FormatDisplay(&render));
+//         println!("{}", s);
+//         assert!(s.contains("/test/route/yeah"));
+//     }
 
-    #[kayrx::test]
-    async fn test_default_format() {
-        let mut format = Format::default();
+//     #[kayrx::test]
+//     async fn test_default_format() {
+//         let mut format = Format::default();
 
-        let req = TestRequest::with_header(
-            header::USER_AGENT,
-            header::HeaderValue::from_static("ACTIX-WEB"),
-        )
-        .to_srv_request();
+//         let req = TestRequest::with_header(
+//             header::USER_AGENT,
+//             header::HeaderValue::from_static("ACTIX-WEB"),
+//         )
+//         .to_srv_request();
 
-        let now = OffsetDateTime::now();
-        for unit in &mut format.0 {
-            unit.render_request(now, &req);
-        }
+//         let now = OffsetDateTime::now();
+//         for unit in &mut format.0 {
+//             unit.render_request(now, &req);
+//         }
 
-        let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
-        for unit in &mut format.0 {
-            unit.render_response(&resp);
-        }
+//         let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
+//         for unit in &mut format.0 {
+//             unit.render_response(&resp);
+//         }
 
-        let entry_time = OffsetDateTime::now();
-        let render = |fmt: &mut Formatter<'_>| {
-            for unit in &format.0 {
-                unit.render(fmt, 1024, entry_time)?;
-            }
-            Ok(())
-        };
-        let s = format!("{}", FormatDisplay(&render));
-        assert!(s.contains("GET / HTTP/1.1"));
-        assert!(s.contains("200 1024"));
-        assert!(s.contains("ACTIX-WEB"));
-    }
+//         let entry_time = OffsetDateTime::now();
+//         let render = |fmt: &mut Formatter<'_>| {
+//             for unit in &format.0 {
+//                 unit.render(fmt, 1024, entry_time)?;
+//             }
+//             Ok(())
+//         };
+//         let s = format!("{}", FormatDisplay(&render));
+//         assert!(s.contains("GET / HTTP/1.1"));
+//         assert!(s.contains("200 1024"));
+//         assert!(s.contains("ACTIX-WEB"));
+//     }
 
-    #[kayrx::test]
-    async fn test_request_time_format() {
-        let mut format = Format::new("%t");
-        let req = TestRequest::default().to_srv_request();
+//     #[kayrx::test]
+//     async fn test_request_time_format() {
+//         let mut format = Format::new("%t");
+//         let req = TestRequest::default().to_srv_request();
 
-        let now = OffsetDateTime::now();
-        for unit in &mut format.0 {
-            unit.render_request(now, &req);
-        }
+//         let now = OffsetDateTime::now();
+//         for unit in &mut format.0 {
+//             unit.render_request(now, &req);
+//         }
 
-        let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
-        for unit in &mut format.0 {
-            unit.render_response(&resp);
-        }
+//         let resp = HttpResponse::build(StatusCode::OK).force_close().finish();
+//         for unit in &mut format.0 {
+//             unit.render_response(&resp);
+//         }
 
-        let render = |fmt: &mut Formatter<'_>| {
-            for unit in &format.0 {
-                unit.render(fmt, 1024, now)?;
-            }
-            Ok(())
-        };
-        let s = format!("{}", FormatDisplay(&render));
-        assert!(s.contains(&format!("{}", now.format("%Y-%m-%dT%H:%M:%S"))));
-    }
-}
+//         let render = |fmt: &mut Formatter<'_>| {
+//             for unit in &format.0 {
+//                 unit.render(fmt, 1024, now)?;
+//             }
+//             Ok(())
+//         };
+//         let s = format!("{}", FormatDisplay(&render));
+//         assert!(s.contains(&format!("{}", now.format("%Y-%m-%dT%H:%M:%S"))));
+//     }
+// }

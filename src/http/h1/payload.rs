@@ -222,22 +222,22 @@ impl Inner {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use futures_util::future::poll_fn;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use futures_util::future::poll_fn;
 
-    #[kayrx::test]
-    async fn test_unread_data() {
-        let (_, mut payload) = Payload::create(false);
+//     #[kayrx::test]
+//     async fn test_unread_data() {
+//         let (_, mut payload) = Payload::create(false);
 
-        payload.unread_data(Bytes::from("data"));
-        assert!(!payload.is_empty());
-        assert_eq!(payload.len(), 4);
+//         payload.unread_data(Bytes::from("data"));
+//         assert!(!payload.is_empty());
+//         assert_eq!(payload.len(), 4);
 
-        assert_eq!(
-            Bytes::from("data"),
-            poll_fn(|cx| payload.readany(cx)).await.unwrap().unwrap()
-        );
-    }
-}
+//         assert_eq!(
+//             Bytes::from("data"),
+//             poll_fn(|cx| payload.readany(cx)).await.unwrap().unwrap()
+//         );
+//     }
+// }

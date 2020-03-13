@@ -82,8 +82,9 @@ macro_rules! ready {
 /// use std::collections::HashMap;
 /// use std::task::{Context, Poll};
 /// use std::time::Duration;
-/// # type CacheKey = String;
-/// # type Value = String;
+/// 
+/// type CacheKey = String;
+/// type Value = String;
 ///
 /// struct Cache {
 ///     entries: HashMap<CacheKey, (Value, delay_queue::Key)>,
@@ -220,7 +221,8 @@ impl<T> DelayQueue<T> {
     /// # Examples
     ///
     /// ```rust
-    /// # use kayrx::timer::DelayQueue;
+    /// use kayrx::timer::DelayQueue;
+    /// 
     /// let delay_queue: DelayQueue<u32> = DelayQueue::new();
     /// ```
     pub fn new() -> DelayQueue<T> {
@@ -236,10 +238,11 @@ impl<T> DelayQueue<T> {
     /// # Examples
     ///
     /// ```rust
-    /// # use kayrx::timer::DelayQueue;
-    /// # use std::time::Duration;
+    /// use kayrx::timer::DelayQueue;
+    /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::with_capacity(10);
     ///
     ///     // These insertions are done without further allocation
@@ -249,7 +252,7 @@ impl<T> DelayQueue<T> {
     ///
     ///     // This will make the queue allocate additional storage
     ///     delay_queue.insert(11, Duration::from_secs(11));
-    /// # }
+    /// }
     /// ```
     pub fn with_capacity(capacity: usize) -> DelayQueue<T> {
         DelayQueue {
@@ -292,7 +295,8 @@ impl<T> DelayQueue<T> {
     /// ```rust
     /// use kayrx::timer::{DelayQueue, Duration, Instant};
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     let key = delay_queue.insert_at(
     ///         "foo", Instant::now() + Duration::from_secs(5));
@@ -300,7 +304,7 @@ impl<T> DelayQueue<T> {
     ///     // Remove the entry
     ///     let item = delay_queue.remove(&key);
     ///     assert_eq!(*item.get_ref(), "foo");
-    /// # }
+    /// }
     /// ```
     ///
     /// [`poll`]: #method.poll
@@ -395,14 +399,15 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     let key = delay_queue.insert("foo", Duration::from_secs(5));
     ///
     ///     // Remove the entry
     ///     let item = delay_queue.remove(&key);
     ///     assert_eq!(*item.get_ref(), "foo");
-    /// # }
+    /// }
     /// ```
     ///
     /// [`poll`]: #method.poll
@@ -447,14 +452,15 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     let key = delay_queue.insert("foo", Duration::from_secs(5));
     ///
     ///     // Remove the entry
     ///     let item = delay_queue.remove(&key);
     ///     assert_eq!(*item.get_ref(), "foo");
-    /// # }
+    /// }
     /// ```
     pub fn remove(&mut self, key: &Key) -> Expired<T> {
         use crate::timer::wheel::Stack;
@@ -496,7 +502,8 @@ impl<T> DelayQueue<T> {
     /// ```rust
     /// use kayrx::timer::{DelayQueue, Duration, Instant};
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     let key = delay_queue.insert("foo", Duration::from_secs(5));
     ///
@@ -505,7 +512,7 @@ impl<T> DelayQueue<T> {
     ///     delay_queue.reset_at(&key, Instant::now() + Duration::from_secs(10));
     ///
     ///     // "foo"is now scheduled to be returned in 10 seconds
-    /// # }
+    /// }
     /// ```
     pub fn reset_at(&mut self, key: &Key, when: Instant) {
         self.wheel.remove(&key.index, &mut self.slab);
@@ -552,7 +559,8 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     let key = delay_queue.insert("foo", Duration::from_secs(5));
     ///
@@ -561,7 +569,7 @@ impl<T> DelayQueue<T> {
     ///     delay_queue.reset(&key, Duration::from_secs(10));
     ///
     ///     // "foo"is now scheduled to be returned in 10 seconds
-    /// # }
+    /// }
     /// ```
     pub fn reset(&mut self, key: &Key, timeout: Duration) {
         self.reset_at(key, Instant::now() + timeout);
@@ -581,7 +589,8 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///
     ///     delay_queue.insert("foo", Duration::from_secs(5));
@@ -591,7 +600,7 @@ impl<T> DelayQueue<T> {
     ///     delay_queue.clear();
     ///
     ///     assert!(delay_queue.is_empty());
-    /// # }
+    /// }
     /// ```
     pub fn clear(&mut self) {
         self.slab.clear();
@@ -622,12 +631,13 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue: DelayQueue<i32> = DelayQueue::with_capacity(10);
     ///     assert_eq!(delay_queue.len(), 0);
     ///     delay_queue.insert(3, Duration::from_secs(5));
     ///     assert_eq!(delay_queue.len(), 1);
-    /// # }
+    /// }
     /// ```
     pub fn len(&self) -> usize {
         self.slab.len()
@@ -656,14 +666,15 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///
     ///     delay_queue.insert("hello", Duration::from_secs(10));
     ///     delay_queue.reserve(10);
     ///
     ///     assert!(delay_queue.capacity() >= 11);
-    /// # }
+    /// }
     /// ```
     pub fn reserve(&mut self, additional: usize) {
         self.slab.reserve(additional);
@@ -680,13 +691,14 @@ impl<T> DelayQueue<T> {
     /// use kayrx::timer::DelayQueue;
     /// use std::time::Duration;
     ///
-    /// # async fn main() {
+    /// #[kayrx::main]
+    /// async fn main() {
     ///     let mut delay_queue = DelayQueue::new();
     ///     assert!(delay_queue.is_empty());
     ///
     ///     delay_queue.insert("hello", Duration::from_secs(5));
     ///     assert!(!delay_queue.is_empty());
-    /// # }
+    /// }
     /// ```
     pub fn is_empty(&self) -> bool {
         self.slab.is_empty()
