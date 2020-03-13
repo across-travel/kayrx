@@ -5,7 +5,7 @@ use std::rc::Rc;
 use std::time::Duration;
 
 use crate::http::client::{Connect, ConnectError, Connection, Connector};
-use crate::http::{header, HttpError, HeaderMap, HeaderName};
+use crate::http::{header, error::HttpError, HeaderMap, HeaderName};
 use crate::service::Service;
 
 use crate::web::client::connect::ConnectorWrapper;

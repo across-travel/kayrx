@@ -65,16 +65,17 @@
 //! ```
 //! use kayrx::krse::sync::broadcast;
 //!
+//! #[kayrx::main]
 //! async fn main() {
 //!     let (tx, mut rx1) = broadcast::channel(16);
 //!     let mut rx2 = tx.subscribe();
 //!
-//!     kayrx::fiber::spawn(async move {
+//!     kayrx::fiber::take(async move {
 //!         assert_eq!(rx1.recv().await.unwrap(), 10);
 //!         assert_eq!(rx1.recv().await.unwrap(), 20);
 //!     });
 //!
-//!     kayrx::fiber::spawn(async move {
+//!     kayrx::fiber::take(async move {
 //!         assert_eq!(rx2.recv().await.unwrap(), 10);
 //!         assert_eq!(rx2.recv().await.unwrap(), 20);
 //!     });
@@ -89,6 +90,7 @@
 //! ```
 //! use kayrx::krse::sync::broadcast;
 //!
+//! #[kayrx::main]
 //! async fn main() {
 //!     let (tx, mut rx) = broadcast::channel(2);
 //!
@@ -126,16 +128,17 @@ use std::usize;
 /// ```
 /// use kayrx::krse::sync::broadcast;
 ///
+/// #[kayrx::main]
 /// async fn main() {
 ///     let (tx, mut rx1) = broadcast::channel(16);
 ///     let mut rx2 = tx.subscribe();
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx1.recv().await.unwrap(), 10);
 ///         assert_eq!(rx1.recv().await.unwrap(), 20);
 ///     });
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx2.recv().await.unwrap(), 10);
 ///         assert_eq!(rx2.recv().await.unwrap(), 20);
 ///     });
@@ -160,16 +163,17 @@ pub struct Sender<T> {
 /// ```
 /// use kayrx::krse::sync::broadcast;
 ///
+/// #[kayrx::main]
 /// async fn main() {
 ///     let (tx, mut rx1) = broadcast::channel(16);
 ///     let mut rx2 = tx.subscribe();
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx1.recv().await.unwrap(), 10);
 ///         assert_eq!(rx1.recv().await.unwrap(), 20);
 ///     });
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx2.recv().await.unwrap(), 10);
 ///         assert_eq!(rx2.recv().await.unwrap(), 20);
 ///     });
@@ -341,16 +345,17 @@ const MAX_RECEIVERS: usize = usize::MAX >> 1;
 /// ```
 /// use kayrx::krse::sync::broadcast;
 ///
+/// #[kayrx::main]
 /// async fn main() {
 ///     let (tx, mut rx1) = broadcast::channel(16);
 ///     let mut rx2 = tx.subscribe();
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx1.recv().await.unwrap(), 10);
 ///         assert_eq!(rx1.recv().await.unwrap(), 20);
 ///     });
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         assert_eq!(rx2.recv().await.unwrap(), 10);
 ///         assert_eq!(rx2.recv().await.unwrap(), 20);
 ///     });
@@ -446,16 +451,17 @@ impl<T> Sender<T> {
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, mut rx1) = broadcast::channel(16);
     ///     let mut rx2 = tx.subscribe();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         assert_eq!(rx1.recv().await.unwrap(), 10);
     ///         assert_eq!(rx1.recv().await.unwrap(), 20);
     ///     });
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         assert_eq!(rx2.recv().await.unwrap(), 10);
     ///         assert_eq!(rx2.recv().await.unwrap(), 20);
     ///     });
@@ -477,6 +483,7 @@ impl<T> Sender<T> {
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, _rx) = broadcast::channel(16);
     ///
@@ -539,6 +546,7 @@ impl<T> Sender<T> {
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, _rx1) = broadcast::channel(16);
     ///
@@ -724,6 +732,7 @@ where
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, mut rx) = broadcast::channel(16);
     ///
@@ -778,16 +787,17 @@ where
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, mut rx1) = broadcast::channel(16);
     ///     let mut rx2 = tx.subscribe();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         assert_eq!(rx1.recv().await.unwrap(), 10);
     ///         assert_eq!(rx1.recv().await.unwrap(), 20);
     ///     });
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         assert_eq!(rx2.recv().await.unwrap(), 10);
     ///         assert_eq!(rx2.recv().await.unwrap(), 20);
     ///     });
@@ -802,6 +812,7 @@ where
     /// ```
     /// use kayrx::krse::sync::broadcast;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, mut rx) = broadcast::channel(2);
     ///

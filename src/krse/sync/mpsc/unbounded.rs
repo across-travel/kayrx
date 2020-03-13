@@ -89,10 +89,11 @@ impl<T> UnboundedReceiver<T> {
     /// ```
     /// use kayrx::krse::sync::mpsc;
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (tx, mut rx) = mpsc::unbounded_channel();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         tx.send("hello").unwrap();
     ///     });
     ///

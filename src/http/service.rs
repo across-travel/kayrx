@@ -2,17 +2,16 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::{fmt, net, rc};
+use bytes::Bytes;
+use futures_core::{ready, Future};
+use futures_util::future::ok;
+use pin_project::{pin_project, project};
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::Framed2 as Framed;
 use crate::krse::net::TcpStream;
 use crate::service::{pipeline_factory, IntoServiceFactory, Service, ServiceFactory};
-use bytes::Bytes;
-use futures_core::{ready, Future};
-use futures_util::future::ok;
 use crate::http::h2::server::{self, Handshake};
-use pin_project::{pin_project, project};
-
 use crate::http::body::MessageBody;
 use crate::http::builder::HttpServiceBuilder;
 use crate::http::cloneable::CloneableService;
@@ -194,7 +193,7 @@ where
 
 mod rustls {
     use super::*;
-    use crate::secure::rustls::{Acceptor, ServerConfig, Session, TlsStream};
+    use crate::secure::tls::{Acceptor, ServerConfig, Session, TlsStream};
     use crate::secure::SslError;
     use std::io;
 

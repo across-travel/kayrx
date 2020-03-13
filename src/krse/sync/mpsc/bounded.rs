@@ -67,7 +67,7 @@ impl<T> fmt::Debug for Receiver<T> {
 /// async fn main() {
 ///     let (mut tx, mut rx) = mpsc::channel(100);
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         for i in 0..10 {
 ///             if let Err(_) = tx.send(i).await {
 ///                 println!("receiver dropped");
@@ -115,7 +115,7 @@ impl<T> Receiver<T> {
     /// async fn main() {
     ///     let (mut tx, mut rx) = mpsc::channel(100);
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         tx.send("hello").await.unwrap();
     ///     });
     ///
@@ -229,13 +229,13 @@ impl<T> Sender<T> {
     ///     let (mut tx1, mut rx) = mpsc::channel(1);
     ///     let mut tx2 = tx1.clone();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         tx1.send(1).await.unwrap();
     ///         tx1.send(2).await.unwrap();
     ///         // task waits until the receiver receives a value.
     ///     });
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         // This will return an error and send
     ///         // no message if the buffer is full
     ///         let _ = tx2.try_send(3);
@@ -291,7 +291,7 @@ impl<T> Sender<T> {
     /// async fn main() {
     ///     let (mut tx, mut rx) = mpsc::channel(1);
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         for i in 0..10 {
     ///             if let Err(_) = tx.send(i).await {
     ///                 println!("receiver dropped");

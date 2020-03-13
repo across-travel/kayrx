@@ -9,7 +9,7 @@ use std::task::{Context, Poll};
 use crate::http::body::MessageBody;
 use crate::http::encoding::Encoder;
 use crate::http::header::{ContentEncoding, ACCEPT_ENCODING};
-use crate::http::Error;
+use crate::http::error::Error;
 use crate::service::{Service, Transform};
 use futures_util::future::{ok, Ready};
 use pin_project::pin_project;

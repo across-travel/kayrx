@@ -12,7 +12,7 @@ use futures_util::StreamExt;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-use crate::http::{Error, HttpMessage, Payload, Response};
+use crate::http::{error::Error, HttpMessage, Payload, Response};
 use crate::web::dev::Decompress;
 use crate::web::error::UrlencodedError;
 use crate::web::extract::FromRequest;

@@ -9,8 +9,8 @@ use serde::Serialize;
 
 use crate::http::body::Body;
 use crate::http::header::IntoHeaderValue;
-use crate::http::{HttpError, HeaderMap, HeaderName, Method, Uri};
-use crate::http::{Error, RequestHead};
+use crate::http::{RequestHead, HeaderMap, HeaderName, Method, Uri};
+use crate::http::error::{Error, HttpError};
 
 use crate::web::client::sender::{RequestSender, SendClientRequest};
 use crate::web::client::ClientConfig;

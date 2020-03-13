@@ -3,8 +3,8 @@ use std::io;
 use crate::connect::resolver::ResolveError;
 use derive_more::{Display, From};
 
-use crate::http::error::{Error, ParseError, ResponseError};
-use crate::http::{ HttpError, StatusCode};
+use crate::http::error::{Error, HttpError,  ParseError, ResponseError};
+use crate::http::StatusCode;
 
 /// A set of errors that can occur while connecting to an HTTP host
 #[derive(Debug, Display, From)]

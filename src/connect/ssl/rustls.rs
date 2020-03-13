@@ -4,16 +4,15 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::sync::Arc;
 use std::task::{Context, Poll};
+use futures_util::future::{ok, Ready};
+use webpki::DNSNameRef;
 
-pub use rust_tls::Session;
-pub use crate::secure::{client::TlsStream, rust_tls::ClientConfig};
+pub use rust_tls::{Session, ClientConfig};
+pub use crate::secure::{client::TlsStream};
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::service::{Service, ServiceFactory};
-use futures_util::future::{ok, Ready};
 use crate::secure::{Connect, TlsConnector};
-use webpki::DNSNameRef;
-
 use crate::connect::{Address, Connection};
 
 /// Rustls connector factory

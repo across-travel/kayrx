@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 
-use crate::http::{Method, Error, Response as HttpResponse};
+use crate::http::{Method, error::Error, Response as HttpResponse};
 use crate::service::{Service, ServiceFactory};
 use futures_util::future::{ready, FutureExt, LocalBoxFuture};
 

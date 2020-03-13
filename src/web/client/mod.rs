@@ -24,7 +24,7 @@ use std::time::Duration;
 
 pub use crate::http::client::Connector;
 
-use crate::http::{HttpError, HeaderMap, Method, Uri};
+use crate::http::{error::HttpError, HeaderMap, Method, Uri};
 use crate::http::RequestHead;
 
 mod builder;

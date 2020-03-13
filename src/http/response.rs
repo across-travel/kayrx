@@ -17,7 +17,8 @@ use coo_kie::{Cookie, CookieJar};
 use crate::http::body::{Body, BodyStream, MessageBody, ResponseBody};
 use crate::http::extensions::Extensions;
 use crate::http::header::{self, Header,  HeaderName, HeaderValue, IntoHeaderValue};
-use crate::http::{Error, HttpError, HeaderMap, StatusCode};
+use crate::http::{HeaderMap, StatusCode};
+use crate::http::error::{Error, HttpError};
 use crate::http::message::{BoxedResponseHead, ConnectionType, ResponseHead};
 
 /// An HTTP Response

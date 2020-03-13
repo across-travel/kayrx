@@ -1,7 +1,7 @@
 //! Multipart payload support
 use crate::web::{dev::Payload, FromRequest, HttpRequest};
 use futures_util::future::{ok, Ready};
-use crate::http::Error;
+use crate::http::error::Error;
 
 use super::server::Multipart;
 

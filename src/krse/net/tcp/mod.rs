@@ -1,13 +1,11 @@
 //! TCP utility types
 
-pub mod listener;
-pub use listener::TcpListener;
-
+mod listener;
+mod stream;
 mod incoming;
-pub use incoming::Incoming;
-
 mod split;
-pub use split::{ReadHalf, WriteHalf};
 
-pub mod stream;
+pub use listener::TcpListener;
+pub use incoming::Incoming;
+pub use split::{ReadHalf, WriteHalf};
 pub use stream::TcpStream;

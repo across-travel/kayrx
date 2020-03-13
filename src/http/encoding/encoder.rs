@@ -13,7 +13,7 @@ use futures_core::ready;
 use crate::http::body::{Body, BodySize, MessageBody, ResponseBody};
 use crate::http::header::{ContentEncoding, CONTENT_ENCODING};
 use crate::http::{HeaderValue, StatusCode};
-use crate::http::{Error, ResponseHead};
+use crate::http::{error::Error, ResponseHead};
 
 use super::Writer;
 

@@ -47,7 +47,7 @@ use std::task::{Context, Poll, Waker};
 ///     let notify = Arc::new(Notify::new());
 ///     let notify2 = notify.clone();
 ///
-///     kayrx::fiber::spawn_fut(async move {
+///     kayrx::fiber::take(async move {
 ///         notify2.notified().await;
 ///         println!("received notification");
 ///     });
@@ -188,7 +188,7 @@ impl Notify {
     ///     let notify = Arc::new(Notify::new());
     ///     let notify2 = notify.clone();
     ///
-    ///     kayrx::fiber::spawn_fut(async move {
+    ///     kayrx::fiber::take(async move {
     ///         notify2.notified().await;
     ///         println!("received notification");
     ///     });
@@ -236,7 +236,7 @@ impl Notify {
     ///     let notify = Arc::new(Notify::new());
     ///     let notify2 = notify.clone();
     ///
-    ///     kayrx::fiber::spawn_fut(async move {
+    ///     kayrx::fiber::take(async move {
     ///         notify2.notified().await;
     ///         println!("received notification");
     ///     });

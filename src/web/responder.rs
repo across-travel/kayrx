@@ -6,9 +6,9 @@ use std::task::{Context, Poll};
 
 use crate::http::error::InternalError;
 use crate::http::{
-    header::IntoHeaderValue, HttpError, HeaderMap, HeaderName, StatusCode,
+    header::IntoHeaderValue, Response, ResponseBuilder, HeaderMap, HeaderName, StatusCode,
 };
-use crate::http::{Error, Response, ResponseBuilder};
+use crate::http::error::{Error, HttpError};
 use bytes::{Bytes, BytesMut};
 use futures_util::future::{err, ok, Either as EitherFuture, Ready};
 use futures_util::ready;

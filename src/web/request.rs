@@ -3,7 +3,7 @@ use std::rc::Rc;
 use std::{fmt, net};
 
 use crate::http::{HeaderMap, Method, Uri, Version};
-use crate::http::{Error, Extensions, HttpMessage, Message, Payload, RequestHead};
+use crate::http::{error::Error, Extensions, HttpMessage, Message, Payload, RequestHead};
 use crate::router::{Path, Url};
 use futures_util::future::{ok, Ready};
 

@@ -4,7 +4,8 @@ use serde_json::error::Error as JsonError;
 use url::ParseError as UrlParseError;
 
 use crate::http::{StatusCode, Response as HttpResponse};
-pub use crate::http::error::*;
+
+pub(crate) use crate::http::error::*;
 
 /// Errors which can occur when attempting to generate resource uri.
 #[derive(Debug, PartialEq, Display, From)]

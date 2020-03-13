@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-use crate::http::{Error, Response};
+use crate::http::{error::Error, Response};
 use crate::service::{Service, ServiceFactory};
 use futures_util::future::{ok, Ready};
 use futures_util::ready;

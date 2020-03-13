@@ -14,10 +14,10 @@ use crate::http::body::Body;
 use coo_kie::{Cookie, CookieJar};
 use crate::http::header::{self, Header, IntoHeaderValue};
 use crate::http::{
-    uri, ConnectionType, HttpError, HeaderMap, HeaderName, HeaderValue, Method,
+    uri, ConnectionType, RequestHead, HeaderMap, HeaderName, HeaderValue, Method,
     Uri, Version,
 };
-use crate::http::{Error, RequestHead};
+use crate::http::error::{Error, HttpError};
 
 use crate::web::client::error::{FreezeRequestError, InvalidUrl};
 use crate::web::client::frozen::FrozenClientRequest;

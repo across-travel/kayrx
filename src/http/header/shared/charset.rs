@@ -104,7 +104,7 @@ impl Display for Charset {
 }
 
 impl FromStr for Charset {
-    type Err = crate::http::Error;
+    type Err = crate::http::error::Error;
 
     fn from_str(s: &str) -> crate::http::Result<Charset> {
         Ok(match s.to_ascii_uppercase().as_ref() {

@@ -1,5 +1,3 @@
-#![cfg(not(loom))]
-
 //! TCP/UDP/Unix bindings for `kayrx`.
 //!
 //! This module contains the TCP/UDP/Unix networking types, similar to the standard
@@ -28,11 +26,11 @@ pub mod udp;
 pub mod unix;
 
 
-pub use addr::ToSocketAddrs;
-pub use tcp::listener::TcpListener;
-pub use tcp::stream::TcpStream;
-pub use udp::socket::UdpSocket;
-pub use unix::datagram::UnixDatagram;
-pub use unix::listener::UnixListener;
-pub use unix::stream::UnixStream;
+pub use self::addr::ToSocketAddrs;
+pub use self::tcp::TcpListener;
+pub use self::tcp::TcpStream;
+pub use self::udp::UdpSocket;
+pub use self::unix::UnixDatagram;
+pub use self::unix::UnixListener;
+pub use self::unix::UnixStream;
 

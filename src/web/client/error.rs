@@ -3,7 +3,7 @@ pub use crate::http::client::{
     ConnectError, FreezeRequestError, InvalidUrl, SendRequestError,
 };
 pub use crate::http::error::PayloadError;
-pub use crate::http::HttpError;
+pub use crate::http::error::HttpError;
 pub use crate::websocket::HandshakeError as WsHandshakeError;
 pub use crate::websocket::ProtocolError as WsProtocolError;
 

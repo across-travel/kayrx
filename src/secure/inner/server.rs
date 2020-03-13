@@ -1,6 +1,11 @@
-use super::*;
-use rust_tls::Session;
+use std::io;
+use std::task::{ Context, Poll };
+use std::pin::Pin;
+
+use super::{Stream, TlsState};
+use crate::secure::rustls::{Session, ServerSession};
 use crate::secure::inner::common::IoSession;
+use crate::krse::io::{ AsyncRead, AsyncWrite };
 
 /// A wrapper around an underlying raw stream which implements the TLS or SSL
 /// protocol.

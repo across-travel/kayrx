@@ -3,6 +3,9 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::{net, rc};
+use bytes::Bytes;
+use futures_util::future::ok;
+use log::error;
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::krse::net::TcpStream;
@@ -10,11 +13,7 @@ use crate::service::{
     fn_factory, fn_service, pipeline_factory, IntoServiceFactory, Service,
     ServiceFactory,
 };
-use bytes::Bytes;
-use futures_util::future::ok;
 use crate::http::h2::server::{self, Handshake};
-use log::error;
-
 use crate::http::body::MessageBody;
 use crate::http::cloneable::CloneableService;
 use crate::http::config::ServiceConfig;
@@ -96,7 +95,7 @@ where
 
 mod rustls {
     use super::*;
-    use crate::secure::rustls::{Acceptor, ServerConfig, TlsStream};
+    use crate::secure::tls::{Acceptor, ServerConfig, TlsStream};
     use crate::secure::SslError;
     use std::io;
 

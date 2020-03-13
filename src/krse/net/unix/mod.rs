@@ -1,18 +1,15 @@
 //! Unix domain socket utility types
 
-pub(crate) mod datagram;
-
+mod datagram;
+mod listener;
+mod stream;
 mod incoming;
-pub use incoming::Incoming;
-
-pub(crate) mod listener;
-pub(crate) use listener::UnixListener;
-
 mod split;
-pub use split::{ReadHalf, WriteHalf};
-
-pub(crate) mod stream;
-pub(crate) use stream::UnixStream;
-
 mod ucred;
-pub use ucred::UCred;
+
+pub use self::incoming::Incoming;
+pub use self::split::{ReadHalf, WriteHalf};
+pub use self::ucred::UCred;
+pub use self::datagram::UnixDatagram;
+pub use self::listener::UnixListener;
+pub use self::stream::UnixStream;

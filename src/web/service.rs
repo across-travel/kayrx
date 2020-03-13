@@ -5,7 +5,7 @@ use std::{fmt, net};
 use crate::http::body::{Body, MessageBody, ResponseBody};
 use crate::http::{HeaderMap, Method, StatusCode, Uri, Version};
 use crate::http::{
-    Error, Extensions, HttpMessage, Payload, PayloadStream, RequestHead, Response,
+    error::Error, Extensions, HttpMessage, Payload, PayloadStream, RequestHead, Response,
     ResponseHead,
 };
 use crate::router::{IntoPattern, Path, Resource, ResourceDef, Url};

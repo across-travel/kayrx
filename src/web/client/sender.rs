@@ -13,8 +13,8 @@ use serde_json;
 
 use crate::http::body::{Body, BodyStream};
 use crate::http::header::{self, IntoHeaderValue};
-use crate::http::{HttpError, HeaderMap, HeaderName};
-use crate::http::{Error, RequestHead};
+use crate::http::{RequestHead, HeaderMap, HeaderName};
+use crate::http::error::{Error, HttpError};
 
 use crate::http::encoding::Decoder;
 use crate::http::header::ContentEncoding;

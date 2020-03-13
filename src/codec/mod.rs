@@ -13,7 +13,7 @@ mod framed_read;
 mod framed_write;
 mod bytes_codec;
 mod lines_codec;
-pub mod length_delimited;
+pub(crate) mod length_delimited;
 
 pub use self::bytes_codec::BytesCodec;
 pub use self::decoder::Decoder;

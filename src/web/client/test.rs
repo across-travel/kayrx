@@ -5,7 +5,7 @@ use std::fmt::Write as FmtWrite;
 #[cfg(feature = "cookie")]
 use coo_kie::{Cookie, CookieJar};
 use crate::http::header::{self, Header, HeaderValue, IntoHeaderValue};
-use crate::http::{HttpError, HeaderName, StatusCode, Version};
+use crate::http::{error::HttpError, HeaderName, StatusCode, Version};
 use crate::http::{h1, Payload, ResponseHead};
 use bytes::Bytes;
 use percent_encoding::{percent_encode, AsciiSet, CONTROLS};

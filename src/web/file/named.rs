@@ -15,7 +15,7 @@ use crate::web::dev::BodyEncoding;
 use crate::http::header::{
     self, Charset, ContentDisposition, ContentEncoding, DispositionParam, DispositionType, ExtendedValue,
 };
-use crate::http::{Error, StatusCode, Response as HttpResponse, HttpMessage};
+use crate::http::{error::Error, StatusCode, Response as HttpResponse, HttpMessage};
 use crate::web::{HttpRequest, Responder};
 use futures_util::future::{ready, Ready};
 

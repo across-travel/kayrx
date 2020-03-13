@@ -1,6 +1,6 @@
-mod common;
 pub mod client;
 pub mod server;
+mod common;
 
 use std::io;
 use std::pin::Pin;
@@ -8,13 +8,11 @@ use std::sync::Arc;
 use std::future::Future;
 use std::task::{ Context, Poll };
 use futures_core::future::FusedFuture;
-use crate::krse::io::{ AsyncRead, AsyncWrite };
 use webpki::DNSNameRef;
-use rust_tls::{ ClientConfig, ClientSession, ServerConfig, ServerSession, Session };
 use self::common::{ Stream, TlsState, MidHandshake };
+use crate::secure::rustls::{ ClientConfig, ClientSession, ServerConfig, ServerSession, Session };
+use crate::krse::io::{ AsyncRead, AsyncWrite };
 
-pub use rust_tls;
-pub use webpki;
 
 /// A wrapper around a `rustls::ClientConfig`, providing an async `connect` method.
 #[derive(Clone)]

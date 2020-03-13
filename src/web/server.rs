@@ -1,19 +1,15 @@
 use std::marker::PhantomData;
 use std::sync::{Arc, Mutex};
 use std::{fmt, io, net};
-
-use crate::http::{body::MessageBody, Error, HttpService, KeepAlive, Request, Response};
-use crate::server::{Server, ServerBuilder};
-use crate::service::{map_config, IntoServiceFactory, Service, ServiceFactory};
-
 use net2::TcpBuilder;
-
-use crate::http::Protocol;
-use crate::service::pipeline_factory;
 use futures_util::future::ok;
 
-use crate::secure::rustls::ServerConfig as RustlsServerConfig;
-
+use crate::http::{body::MessageBody, error::Error, HttpService, KeepAlive, Request, Response};
+use crate::server::{Server, ServerBuilder};
+use crate::service::{map_config, IntoServiceFactory, Service, ServiceFactory};
+use crate::http::Protocol;
+use crate::service::pipeline_factory;
+use crate::secure::tls::ServerConfig as RustlsServerConfig;
 use crate::web::config::AppConfig;
 
 struct Socket {

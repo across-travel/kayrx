@@ -47,7 +47,7 @@ use crate::service::{Service, Transform};
 use crate::web::dev::{RequestHead, ServiceRequest, ServiceResponse};
 use crate::web::error::{Error, ResponseError, Result};
 use crate::http::header::{self, HeaderName, HeaderValue};
-use crate::http::{self, HttpError, Response as HttpResponse,  Method, StatusCode, Uri};
+use crate::http::{self, error::HttpError, Response as HttpResponse,  Method, StatusCode, Uri};
 use derive_more::Display;
 use futures_util::future::{ok, Either, FutureExt, LocalBoxFuture, Ready};
 
@@ -169,7 +169,7 @@ impl<T> AllOrSome<T> {
 pub struct Cors {
     cors: Option<Inner>,
     methods: bool,
-    error: Option<http::HttpError>,
+    error: Option<http::error::HttpError>,
     expose_hdrs: HashSet<HeaderName>,
 }
 
@@ -513,7 +513,7 @@ impl Cors {
 
 fn cors<'a>(
     parts: &'a mut Option<Inner>,
-    err: &Option<http::HttpError>,
+    err: &Option<http::error::HttpError>,
 ) -> Option<&'a mut Inner> {
     if err.is_some() {
         return None;

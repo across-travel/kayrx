@@ -22,7 +22,7 @@
 //! # async fn dox() -> Result<(), Box<dyn std::error::Error>> {
 //!     let (tx, mut rx) = watch::channel("hello");
 //!
-//!     kayrx::fiber::spawn(async move {
+//!     kayrx::fiber::take(async move {
 //!         while let Some(value) = rx.recv().await {
 //!             println!("received = {:?}", value);
 //!         }
@@ -175,7 +175,7 @@ const CLOSED: usize = 1;
 /// # async fn dox() -> Result<(), Box<dyn std::error::Error>> {
 ///     let (tx, mut rx) = watch::channel("hello");
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         while let Some(value) = rx.recv().await {
 ///             println!("received = {:?}", value);
 ///         }

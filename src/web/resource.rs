@@ -5,7 +5,7 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 
-use crate::http::{Error, Extensions, Response};
+use crate::http::{error::Error, Extensions, Response};
 use crate::router::IntoPattern;
 use crate::service::boxed::{self, BoxService, BoxServiceFactory};
 use crate::service::{

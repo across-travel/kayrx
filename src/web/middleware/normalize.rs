@@ -4,7 +4,7 @@ use bytes::Bytes;
 use futures_util::future::{ok, Ready};
 use regex::Regex;
 
-use crate::http::{PathAndQuery, Uri, Error};
+use crate::http::{PathAndQuery, Uri, error::Error};
 use crate::service::{Service, Transform};
 use crate::web::service::{ServiceRequest, ServiceResponse};
 

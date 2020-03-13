@@ -19,7 +19,7 @@ use crate::http::header::{
     self, HeaderName, HeaderValue, IntoHeaderValue, AUTHORIZATION,
 };
 use crate::http::{
-    ConnectionType, HttpError, Method, StatusCode, Uri, Version,
+    ConnectionType, error::HttpError, Method, StatusCode, Uri, Version,
 };
 use crate::web::client::response::ClientResponse;
 use crate::web::client::ClientConfig;

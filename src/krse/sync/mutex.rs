@@ -11,11 +11,12 @@
 //! use kayrx::krse::sync::Mutex;
 //! use std::sync::Arc;
 //!
+//! #[kayrx::main]
 //! async fn main() {
 //!     let data1 = Arc::new(Mutex::new(0));
 //!     let data2 = Arc::clone(&data1);
 //!
-//!     kayrx::fiber::spawn(async move {
+//!     kayrx::fiber::take(async move {
 //!         let mut lock = data2.lock().await;
 //!         *lock += 1;
 //!     });

@@ -4,14 +4,13 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll};
 use std::{fmt, net};
+use futures_core::ready;
+use futures_util::future::{ok, Ready};
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::codec::Framed2 as Framed;
 use crate::krse::net::TcpStream;
 use crate::service::{pipeline_factory, IntoServiceFactory, Service, ServiceFactory};
-use futures_core::ready;
-use futures_util::future::{ok, Ready};
-
 use crate::http::body::MessageBody;
 use crate::http::cloneable::CloneableService;
 use crate::http::config::ServiceConfig;
@@ -19,7 +18,6 @@ use crate::http::error::{DispatchError, Error, ParseError};
 use crate::http::helpers::DataFactory;
 use crate::http::request::Request;
 use crate::http::response::Response;
-
 use super::codec::Codec;
 use super::dispatcher::Dispatcher;
 use super::{ExpectHandler, Message, UpgradeHandler};
@@ -96,7 +94,7 @@ where
 
 mod rustls {
     use super::*;
-    use crate::secure::rustls::{Acceptor, ServerConfig, TlsStream};
+    use crate::secure::tls::{Acceptor, ServerConfig, TlsStream};
     use crate::secure::SslError;
     use std::{fmt, io};
 

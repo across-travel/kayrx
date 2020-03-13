@@ -1,7 +1,7 @@
 //! UDP utility types.
 
-pub(crate) mod socket;
-pub(crate) use socket::UdpSocket;
-
+mod socket;
 mod split;
+
 pub use split::{RecvHalf, SendHalf, ReuniteError};
+pub use socket::UdpSocket;

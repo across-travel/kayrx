@@ -118,7 +118,7 @@ struct State(usize);
 /// async fn main() {
 ///     let (tx, rx) = oneshot::channel();
 ///
-///     kayrx::fiber::spawn(async move {
+///     kayrx::fiber::take(async move {
 ///         if let Err(_) = tx.send(3) {
 ///             println!("the receiver dropped");
 ///         }
@@ -173,7 +173,7 @@ impl<T> Sender<T> {
     /// async fn main() {
     ///     let (tx, rx) = oneshot::channel();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         if let Err(_) = tx.send(3) {
     ///             println!("the receiver dropped");
     ///         }
@@ -270,7 +270,7 @@ impl<T> Sender<T> {
     /// async fn main() {
     ///     let (mut tx, rx) = oneshot::channel::<()>();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         drop(rx);
     ///     });
     ///
@@ -292,10 +292,11 @@ impl<T> Sender<T> {
     /// # "hello".to_string()
     /// }
     ///
+    /// #[kayrx::main]
     /// async fn main() {
     ///     let (mut tx, rx) = oneshot::channel();
     ///
-    ///     kayrx::fiber::spawn(async move {
+    ///     kayrx::fiber::take(async move {
     ///         select! {
     ///             _ = tx.closed().fuse() => {
     ///                 // The receiver dropped, no need to do any further work

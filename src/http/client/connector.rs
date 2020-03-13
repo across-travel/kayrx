@@ -1,6 +1,8 @@
 use std::fmt;
 use std::marker::PhantomData;
 use std::time::Duration;
+use http::Uri;
+use std::sync::Arc;
 
 use crate::krse::io::{AsyncRead, AsyncWrite};
 use crate::connect::{
@@ -9,16 +11,12 @@ use crate::connect::{
 use crate::krse::net::TcpStream;
 use crate::service::{apply_fn, Service};
 use crate::util::timeout::{TimeoutError, TimeoutService};
-use http::Uri;
-
 use super::connection::Connection;
 use super::error::ConnectError;
 use super::pool::{ConnectionPool, Protocol};
 use super::Connect;
-
-
 use crate::connect::ssl::rustls::ClientConfig;
-use std::sync::Arc;
+
 
 enum SslConnector {
     Rustls(Arc<ClientConfig>),
@@ -69,7 +67,7 @@ impl Connector<(), ()> {
                 config.set_protocols(&protos);
                 config
                     .root_store
-                    .add_server_trust_anchors(&crate::secure::rustls::TLS_SERVER_ROOTS);
+                    .add_server_trust_anchors(&crate::secure::tls::TLS_SERVER_ROOTS);
                 SslConnector::Rustls(Arc::new(config))
             }
            

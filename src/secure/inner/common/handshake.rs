@@ -3,8 +3,9 @@ use std::pin::Pin;
 use std::future::Future;
 use std::task::{ Context, Poll };
 use futures_core::future::FusedFuture;
+
+use crate::secure::rustls::Session;
 use crate::krse::io::{ AsyncRead, AsyncWrite };
-use rust_tls::Session;
 use crate::secure::inner::common::{ TlsState, Stream };
 
 

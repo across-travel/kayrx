@@ -16,8 +16,8 @@ use serde_urlencoded::ser::Error as FormError;
 use futures_channel::oneshot::Canceled;
 
 pub use http::Error as HttpError;
-pub use crate::util::threadpool::BlockingError;
 
+pub(crate) use crate::util::threadpool::BlockingError;
 use crate::codec::{Decoder, Encoder};
 use crate::framed::DispatcherError as FramedDispatcherError;
 use crate::util::timeout::TimeoutError;

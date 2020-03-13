@@ -1,11 +1,13 @@
 //! SSL Services
 
-use std::sync::atomic::{AtomicUsize, Ordering};
+pub mod tls;
 
-pub mod rustls;
 mod inner;
+
 pub use self::inner::*;
 
+use std::sync::atomic::{AtomicUsize, Ordering};
+use rust_tls as rustls;
 use crate::krse::task::counter::Counter;
 
 /// Sets the maximum per-worker concurrent ssl connection establish process.

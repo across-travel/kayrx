@@ -7,7 +7,7 @@ use crate::service::{Service, Transform};
 use futures_util::future::{ok, FutureExt, LocalBoxFuture, Ready};
 
 use crate::http::header::{HeaderName, HeaderValue, CONTENT_TYPE};
-use crate::http::{Error, HeaderMap};
+use crate::http::{error::Error, HeaderMap};
 use crate::web::service::{ServiceRequest, ServiceResponse};
 
 /// `Middleware` for setting default response headers.

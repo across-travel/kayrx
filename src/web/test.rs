@@ -4,23 +4,6 @@ use std::net::SocketAddr;
 use std::rc::Rc;
 use std::sync::mpsc;
 use std::{fmt, net, thread, time};
-
-use crate::krse::io::{AsyncRead, AsyncWrite};
-use crate::codec::Framed2 as Framed;
-use crate::http::header::{ContentType, Header, HeaderName, IntoHeaderValue};	
-use crate::http::{HttpError, Method, StatusCode, Uri, Version};
-use crate::http::test::TestRequest as HttpTestRequest;
-use crate::http::{Extensions, HttpService, Request};
-#[cfg(feature = "cookie")]
-use coo_kie::Cookie;
-use crate::websocket;
-use crate::router::{Path, ResourceDef, Url};
-use crate::{timer::delay_for, fiber::System};
-use crate::service::{
-    map_config, IntoService, IntoServiceFactory, Service, ServiceFactory,
-};
-use crate::web::client::error::PayloadError;
-use crate::web::client::{Client, ClientRequest, ClientResponse, Connector};
 use bytes::{Bytes, BytesMut};
 use futures_util::future::ok;
 use futures_util::StreamExt;
@@ -29,14 +12,30 @@ use net2::TcpBuilder;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_json;
+#[cfg(feature = "cookie")]
+use coo_kie::Cookie;
 
+use crate::krse::io::{AsyncRead, AsyncWrite};
+use crate::codec::Framed2 as Framed;
+use crate::http::header::{ContentType, Header, HeaderName, IntoHeaderValue};	
+use crate::http::{error::HttpError, Method, StatusCode, Uri, Version};
+use crate::http::test::TestRequest as HttpTestRequest;
+use crate::http::{Extensions, HttpService, Request};
+use crate::websocket;
+use crate::router::{Path, ResourceDef, Url};
+use crate::{timer::delay_for, fiber::System};
+use crate::service::{
+    map_config, IntoService, IntoServiceFactory, Service, ServiceFactory,
+};
+use crate::web::client::error::PayloadError;
+use crate::web::client::{Client, ClientRequest, ClientResponse, Connector};
 use crate::web::config::AppConfig;
 use crate::web::data::Data;
 use crate::web::dev::{Body, MessageBody, Payload, Server};
 use crate::web::request::HttpRequestPool;
 use crate::web::rmap::ResourceMap;
 use crate::web::service::{ServiceRequest, ServiceResponse};
-use crate::http::{Error, Response as HttpResponse};
+use crate::http::{error::Error, Response as HttpResponse};
 use crate::web::HttpRequest;
 
 /// Create service that always responds with `HttpResponse::Ok()`
