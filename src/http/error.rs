@@ -26,7 +26,7 @@ use crate::http::helpers::Writer;
 use crate::http::response::{Response, ResponseBuilder};
 
 #[cfg(feature = "cookie")]
-pub use coo_kie::ParseError as CookieParseError;
+pub use coo_kie::{self, ParseError as CookieParseError};
 
 /// A specialized [`Result`](https://doc.rust-lang.org/std/result/enum.Result.html)
 /// for kayrx operations
@@ -389,7 +389,7 @@ impl ResponseError for PayloadError {
 
 #[cfg(feature = "cookie")]
 /// Return `BadRequest` for `cookie::ParseError`
-impl ResponseError for crate::http::cookie::ParseError {
+impl ResponseError for coo_kie::ParseError {
     fn status_code(&self) -> StatusCode {
         StatusCode::BAD_REQUEST
     }
