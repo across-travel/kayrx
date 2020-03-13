@@ -1,8 +1,6 @@
 //! Source of time abstraction.
 //!
-//! By default, `std::time::Instant::now()` is used. However, when the
-//! `test-util` feature flag is enabled, the values returned for `now()` are
-//! configurable.
+//! By default, `std::time::Instant::now()` is used. 
 
 use crate::timer::Instant;
 
@@ -168,7 +166,7 @@ pub mod clock_util {
         }
 
         // TODO: delete this. Some tests rely on this
-        #[cfg(all(test))]
+        #[cfg(test)]
         /// Return a new `Clock` instance that uses the current execution context's
         /// source of time.
         pub(crate) fn new_frozen() -> Clock {
@@ -191,7 +189,7 @@ pub mod clock_util {
         }
 
         // TODO: delete this as well
-        #[cfg(all(test))]
+        #[cfg(test)]
         pub(crate) fn advanced(&self) -> Duration {
             self.inner.frozen.lock().unwrap().unwrap()
         }

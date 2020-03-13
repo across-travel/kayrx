@@ -439,38 +439,3 @@ impl ServiceFactory for AppEntry {
         self.factory.borrow_mut().as_mut().unwrap().new_service(())
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use std::sync::atomic::{AtomicBool, Ordering};
-//     use std::sync::Arc;
-
-//     use crate::web::test::{init_service, TestRequest};
-//     use crate::web::{web, App, HttpResponse};
-//     use crate::service::Service;
-
-//     struct DropData(Arc<AtomicBool>);
-
-//     impl Drop for DropData {
-//         fn drop(&mut self) {
-//             self.0.store(true, Ordering::Relaxed);
-//         }
-//     }
-
-//     #[kayrx::test]
-//     async fn test_drop_data() {
-//         let data = Arc::new(AtomicBool::new(false));
-
-//         {
-//             let mut app = init_service(
-//                 App::new()
-//                     .data(DropData(data.clone()))
-//                     .service(web::resource("/test").to(|| HttpResponse::Ok())),
-//             )
-//             .await;
-//             let req = TestRequest::with_uri("/test").to_request();
-//             let _ = app.call(req).await.unwrap();
-//         }
-//         assert!(data.load(Ordering::Relaxed));
-//     }
-// }

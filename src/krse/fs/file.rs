@@ -45,8 +45,7 @@ macro_rules! ready {
 /// Create a new file and asynchronously write bytes to it:
 ///
 /// ```no_run
-/// use tokio::fs::File;
-/// use tokio::prelude::*;
+/// use kayrx::krse::fs::fs::File;
 ///
 /// # async fn dox() -> std::io::Result<()> {
 /// let mut file = File::create("foo.txt").await?;
@@ -58,8 +57,7 @@ macro_rules! ready {
 /// Read the contents of a file into a buffer
 ///
 /// ```no_run
-/// use tokio::fs::File;
-/// use tokio::prelude::*;
+/// use kayrx::krse::fs::fs::File;
 ///
 /// # async fn dox() -> std::io::Result<()> {
 /// let mut file = File::open("foo.txt").await?;
@@ -110,8 +108,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::fs::File;
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut file = File::open("foo.txt").await?;
@@ -149,8 +146,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::fs::File;
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut file = File::create("foo.txt").await?;
@@ -164,7 +160,7 @@ impl File {
         Ok(File::from_std(std_file))
     }
 
-    /// Convert a [`std::fs::File`][std] to a [`tokio_fs::File`][file].
+    /// Convert a [`std::fs::File`][std] to a [`kayrx::krse::fs::File`][file].
     ///
     /// [std]: https://doc.rust-lang.org/std/fs/struct.File.html
     /// [file]: struct.File.html
@@ -175,7 +171,7 @@ impl File {
     /// // This line could block. It is not recommended to do this on the Tokio
     /// // runtime.
     /// let std_file = std::fs::File::open("foo.txt").unwrap();
-    /// let file = tokio::fs::File::from_std(std_file);
+    /// let file = kayrx::krse::fs::fs::File::from_std(std_file);
     /// ```
     pub fn from_std(std: sys::File) -> File {
         File {
@@ -190,8 +186,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::File
     ///
     /// use std::io::SeekFrom;
     ///
@@ -250,8 +245,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut file = File::create("foo.txt").await?;
@@ -279,8 +273,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut file = File::create("foo.txt").await?;
@@ -311,8 +304,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
-    /// use tokio::prelude::*;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut file = File::create("foo.txt").await?;
@@ -367,7 +359,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let file = File::open("foo.txt").await?;
@@ -389,7 +381,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let file = File::open("foo.txt").await?;
@@ -411,11 +403,11 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
-    /// let tokio_file = File::open("foo.txt").await?;
-    /// let std_file = tokio_file.into_std().await;
+    /// let kayrx_file = File::open("foo.txt").await?;
+    /// let std_file = kayrx_file.into_std().await;
     /// # Ok(())
     /// # }
     /// ```
@@ -434,11 +426,11 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
-    /// let tokio_file = File::open("foo.txt").await?;
-    /// let std_file = tokio_file.try_into_std().unwrap();
+    /// let kayrx_file = File::open("foo.txt").await?;
+    /// let std_file = kayrx_file.try_into_std().unwrap();
     /// # Ok(())
     /// # }
     /// ```
@@ -471,7 +463,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let file = File::open("foo.txt").await?;
@@ -729,7 +721,7 @@ impl From<sys::File> for File {
 
 impl fmt::Debug for File {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt.debug_struct("tokio::fs::File")
+        fmt.debug_struct("kayrx::krse::fs::File")
             .field("std", &self.std)
             .finish()
     }

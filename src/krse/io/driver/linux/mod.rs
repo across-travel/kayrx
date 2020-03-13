@@ -8,36 +8,18 @@
 //! # Features
 //!
 //! * Non-blocking TCP, UDP
-//! * I/O event notification queue backed by epoll, kqueue, and IOCP
+//! * I/O event notification queue backed by epoll
 //! * Zero allocations at runtime
 //! * Platform specific extensions
 //!
-//! # Non-goals
+//! Supported platforms: Linux
 //!
-//! The following are specifically omitted from Mio and are left to the user or higher-level libraries.
-//!
-//! * File operations
-//! * Thread pools / multi-threaded event loop
-//! * Timers
-//!
-//! # Platforms
-//!
-//! Currently supported platforms:
-//!
-//! * Linux
-//! * OS X
-//! * Windows
-//! * FreeBSD
-//! * NetBSD
-//! * Android
-//! * iOS
-//!
-//! mio can handle interfacing with each of the event notification systems of the aforementioned platforms. The details of
+//! handle interfacing with each of the event notification systems of the aforementioned platforms. The details of
 //! their implementation are further discussed in [`Poll`].
 //!
 //! # Usage
 //!
-//! Using mio starts by creating a [`Poll`], which reads events from the OS and
+//! Creating a [`Poll`], which reads events from the OS and
 //! put them into [`Events`]. You can handle IO events from the OS with it.
 //!
 //! For more detail, see [`Poll`].
@@ -47,9 +29,9 @@
 //!
 //! # Example
 //!
-//! ```
-//! use mio::*;
-//! use mio::net::{TcpListener, TcpStream};
+//! ```rust
+//! use kayrx::krse::io::driver::linux::*;
+//! use kayrx::krse::io::driver::linux::net::{TcpListener, TcpStream};
 //!
 //! // Setup some tokens to allow us to identify which event is
 //! // for which socket.
