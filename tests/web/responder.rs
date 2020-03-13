@@ -5,8 +5,9 @@
     use kayrx::web::dev::{Body, ResponseBody};
     use kayrx::http::{header::CONTENT_TYPE, HeaderValue, StatusCode};
     use kayrx::web::test::{init_service, TestRequest};
-    use kayrx::web::{error, web, App};
-    use kayrx::http::{Error, Response as HttpResponse};
+    use kayrx::web::{web, App};
+    use kayrx::http::{Response as HttpResponse};
+    use kayrx::http::error::{self, Error}; 
 
     #[kayrx::test]
     async fn test_option_responder() {

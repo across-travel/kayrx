@@ -7,7 +7,7 @@ use std::pin::Pin;
 use kayrx::http::header::{self, HeaderMap, DispositionParam, DispositionType};
 use bytes::{Bytes, BytesMut};
 use futures_util::future::lazy;
-use kayrx::web::error::*;
+use kayrx::http::error::*;
 
 #[kayrx::test]
 async fn test_boundary() {

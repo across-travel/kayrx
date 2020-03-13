@@ -6,7 +6,7 @@ use kayrx::http::{header::CONTENT_TYPE, HeaderValue, StatusCode};
 use kayrx::web::test::{self, TestRequest};
 use kayrx::http::Response as HttpResponse;
 use kayrx::web::dev::{ServiceRequest, ServiceResponse};
-use kayrx::web::error::Result;
+use kayrx::http::error::Result;
 
 fn render_500<B>(mut res: ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> {
     res.response_mut()

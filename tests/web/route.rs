@@ -3,9 +3,9 @@ use std::time::Duration;
 use kayrx::timer::delay_for;
 use bytes::Bytes;
 use serde::Serialize;
-use kayrx::http::{Method, StatusCode};
+use kayrx::http::{error, Method, StatusCode};
 use kayrx::web::test::{call_service, init_service, read_body, TestRequest};
-use kayrx::web::{error, web, App};
+use kayrx::web::{web, App};
 use kayrx::http::Response as HttpResponse;
 
 #[derive(Serialize, PartialEq, Debug)]

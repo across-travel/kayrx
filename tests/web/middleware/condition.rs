@@ -1,7 +1,7 @@
 use kayrx::service::IntoService;
 use kayrx::service::Transform;
 use kayrx::web::dev::{ServiceRequest, ServiceResponse};
-use kayrx::web::error::Result;
+use kayrx::http::error::Result;
 use kayrx::http::{header::CONTENT_TYPE, HeaderValue, StatusCode};
 use kayrx::web::test::{self, TestRequest};
 use kayrx::http::Response;

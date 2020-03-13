@@ -3,7 +3,7 @@ use std::time::SystemTime;
 
 use kayrx::http::httpmessage::HttpMessage;
 use kayrx::web::{web, App, Responder};
-use kayrx::http::{header, Version, Error};
+use kayrx::http::{header, Version, error::Error};
 use kayrx::http::Response as HttpResponse;
 use kayrx::web::test::*;
 use kayrx::web::web::*;

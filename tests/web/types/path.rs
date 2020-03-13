@@ -5,8 +5,7 @@ use serde::Deserialize;
 use kayrx::web::*;
 use kayrx::web::web::{Path,PathConfig};
 use kayrx::web::test::TestRequest;
-use kayrx::web::error;
-use kayrx::http;
+use kayrx::http::{self, error};
 use kayrx::http::Response as HttpResponse;
 
 #[derive(Deserialize, Debug, Display)]

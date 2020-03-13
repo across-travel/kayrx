@@ -1,4 +1,4 @@
-use kayrx::http::{header, Error};
+use kayrx::http::{header, error::Error};
 use bytes::Bytes;
 use serde::Deserialize;
 

@@ -5,7 +5,7 @@
 
     use kayrx::web::*;
     use kayrx::web::web::*;
-    use kayrx::web::error::InternalError;
+    use kayrx::http::error::InternalError;
     use kayrx::web::test::TestRequest;
     use kayrx::http::Response;
 
