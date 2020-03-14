@@ -1,7 +1,7 @@
 //! Web framework and services of kayrx for the Rust.
 //! 
 //! ```rust
-//! use kayrx::web::{types, App, HttpServer, Responder};
+//! use kayrx::web::{get, types, App, HttpServer, Responder};
 //!
 //! #[get("/{id}/{name}/index.html")]
 //! async fn index(info: types::Path<(u32, String)>) -> impl Responder {
