@@ -77,6 +77,7 @@ mod server;
 mod service;
 mod web;
 
+pub mod client;
 pub mod error;
 pub mod file;
 pub mod guard;
@@ -84,7 +85,6 @@ pub mod middleware;
 pub mod multipart;
 pub mod test;
 pub mod types;
-pub mod client;
 
 pub use self::app::App;
 pub use self::config::ServiceConfig;
@@ -101,8 +101,6 @@ pub use self::web::*;
 
 pub use crate::http::Response as HttpResponse;
 pub use crate::http::ResponseBuilder as HttpResponseBuilder;
-pub use bytes::{Bytes, BytesMut};
-pub use futures_channel::oneshot::Canceled;
 
 pub mod dev {
     //! The `kayrx` prelude for library developers

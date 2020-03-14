@@ -13,3 +13,5 @@ pub(crate) mod cell;
 pub(crate)  mod future;
 pub(crate) mod task;
 pub(crate) mod thread;
+
+pub use bytes::{Bytes, BytesMut};
