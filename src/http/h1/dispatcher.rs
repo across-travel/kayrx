@@ -54,10 +54,10 @@ where
     U: Service<Request = (Request, Framed<T, Codec>), Response = ()>,
     U::Error: fmt::Display,
 {
-    inner: DispatcherState<T, S, B, X, U>,
+    pub inner: DispatcherState<T, S, B, X, U>,
 }
 
-enum DispatcherState<T, S, B, X, U>
+pub enum DispatcherState<T, S, B, X, U>
 where
     S: Service<Request = Request>,
     S::Error: Into<Error>,
@@ -72,7 +72,7 @@ where
     None,
 }
 
-struct InnerDispatcher<T, S, B, X, U>
+pub struct InnerDispatcher<T, S, B, X, U>
 where
     S: Service<Request = Request>,
     S::Error: Into<Error>,
@@ -86,7 +86,7 @@ where
     expect: CloneableService<X>,
     upgrade: Option<CloneableService<U>>,
     on_connect: Option<Box<dyn DataFactory>>,
-    flags: Flags,
+    pub flags: Flags,
     peer_addr: Option<net::SocketAddr>,
     error: Option<DispatchError>,
 
@@ -97,7 +97,7 @@ where
     ka_expire: Instant,
     ka_timer: Option<Delay>,
 
-    io: T,
+    pub io: T,
     read_buf: BytesMut,
     write_buf: BytesMut,
     codec: Codec,
@@ -179,7 +179,7 @@ where
     U::Error: fmt::Display,
 {
     /// Create http/1 dispatcher.
-    pub(crate) fn new(
+    pub fn new(
         stream: T,
         config: ServiceConfig,
         service: CloneableService<S>,
@@ -888,43 +888,3 @@ where
 {
     Pin::new(io).poll_read_buf(cx, buf)
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use crate::service::IntoService;
-//     use futures_util::future::{lazy, ok};
-
-//     use super::*;
-//     use crate::http::error::Error;
-//     use crate::http::h1::{ExpectHandler, UpgradeHandler};
-//     use crate::http::test::TestBuffer;
-
-//     #[kayrx::test]
-//     async fn test_req_parse_err() {
-//         lazy(|cx| {
-//             let buf = TestBuffer::new("GET /test HTTP/1\r\n\r\n");
-
-//             let mut h1 = Dispatcher::<_, _, _, _, UpgradeHandler<TestBuffer>>::new(
-//                 buf,
-//                 ServiceConfig::default(),
-//                 CloneableService::new(
-//                     (|_| ok::<_, Error>(Response::Ok().finish())).into_service(),
-//                 ),
-//                 CloneableService::new(ExpectHandler),
-//                 None,
-//                 None,
-//                 None,
-//             );
-//             match Pin::new(&mut h1).poll(cx) {
-//                 Poll::Pending => panic!(),
-//                 Poll::Ready(res) => assert!(res.is_err()),
-//             }
-
-//             if let DispatcherState::Normal(ref inner) = h1.inner {
-//                 assert!(inner.flags.contains(Flags::READ_DISCONNECT));
-//                 assert_eq!(&inner.io.write_buf[..26], b"HTTP/1.1 400 Bad Request\r\n");
-//             }
-//         })
-//         .await;
-//     }
-// }

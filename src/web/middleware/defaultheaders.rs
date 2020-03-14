@@ -15,7 +15,7 @@ use crate::web::service::{ServiceRequest, ServiceResponse};
 /// This middleware does not set header if response headers already contains it.
 ///
 /// ```rust
-/// use kayrx::{http, web::{web, middleware, App, HttpResponse}};
+/// use kayrx::{http, web::{self, middleware, App, HttpResponse}};
 ///
 /// fn main() {
 ///     let app = App::new()

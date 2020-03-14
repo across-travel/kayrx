@@ -3,7 +3,7 @@ use derive_more::Display;
 use serde::Deserialize;
 
 use kayrx::web::*;
-use kayrx::web::web::{Path,PathConfig};
+use kayrx::web::types::{Path,PathConfig};
 use kayrx::web::test::TestRequest;
 use kayrx::http::{self, error};
 use kayrx::http::Response as HttpResponse;

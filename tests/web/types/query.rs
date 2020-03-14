@@ -4,7 +4,7 @@
     use serde::Deserialize;
 
     use kayrx::web::*;
-    use kayrx::web::web::*;
+    use kayrx::web::types::*;
     use kayrx::http::error::InternalError;
     use kayrx::web::test::TestRequest;
     use kayrx::http::Response;

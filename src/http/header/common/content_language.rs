@@ -24,10 +24,10 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// # extern crate eternal;
+    /// # extern crate kayrx;
     /// # #[macro_use] extern crate language_tags;
-    /// use eternal::http::Response;
-    /// # use eternal::http::header::{ContentLanguage, qitem};
+    /// use kayrx::http::Response;
+    /// # use kayrx::http::header::{ContentLanguage, qitem};
     /// #
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -40,10 +40,10 @@ header! {
     /// ```
     ///
     /// ```rust
-    /// # extern crate eternal;
+    /// # extern crate kayrx;
     /// # #[macro_use] extern crate language_tags;
-    /// use eternal::http::Response;
-    /// # use eternal::http::header::{ContentLanguage, qitem};
+    /// use kayrx::http::Response;
+    /// # use kayrx::http::header::{ContentLanguage, qitem};
     /// #
     /// # fn main() {
     ///

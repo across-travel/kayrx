@@ -4,9 +4,7 @@ use std::{borrow, fmt, hash, ops, str};
 
 use bytes::Bytes;
 
-/// A utf-8 encoded string with [`Bytes`] as a storage.
-///
-/// [`Bytes`]: https://docs.rs/bytes/0.5.3/bytes/struct.Bytes.html
+/// A utf-8 encoded string with `Bytes` as a storage.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
 pub struct ByteString(Bytes);
 

@@ -5,7 +5,7 @@ use bytes::Bytes;
 use serde::Serialize;
 use kayrx::http::{error, Method, StatusCode};
 use kayrx::web::test::{call_service, init_service, read_body, TestRequest};
-use kayrx::web::{web, App};
+use kayrx::web::{self, App, types};
 use kayrx::http::Response as HttpResponse;
 
 #[derive(Serialize, PartialEq, Debug)]
@@ -41,7 +41,7 @@ async fn test_route() {
             .service(web::resource("/json").route(web::get().to(|| {
                 async {
                     delay_for(Duration::from_millis(25)).await;
-                    web::Json(MyObject {
+                    types::Json(MyObject {
                         name: "test".to_string(),
                     })
                 }

@@ -31,8 +31,8 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::ContentType;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::ContentType;
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -44,10 +44,10 @@ header! {
     ///
     /// ```rust
     /// # extern crate mime;
-    /// # extern crate eternal;
+    /// # extern crate kayrx;
     /// use mime::TEXT_HTML;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::ContentType;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::ContentType;
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();

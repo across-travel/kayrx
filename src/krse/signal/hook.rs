@@ -338,7 +338,8 @@ const FORBIDDEN_IMPL: &[c_int] = &[SIGKILL, SIGSTOP, SIGILL, SIGFPE, SIGSEGV];
 /// use std::io::Error;
 /// use std::process;
 ///
-/// fn main() -> Result<(), Error> {
+/// #[kayrx::main]
+/// async fn main() -> Result<(), Error> {
 ///     let signal = unsafe { hook::register(hook::SIGTERM, || process::abort()) }?;
 ///     // Stuff here...
 ///     hook::unregister(signal); // Not really necessary.

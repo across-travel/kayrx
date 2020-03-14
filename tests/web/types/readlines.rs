@@ -1,6 +1,7 @@
 use futures::stream::StreamExt;
 
-use kayrx::web::web::*;
+use kayrx::krse::Bytes;
+use kayrx::web::types::*;
 use kayrx::web::test::TestRequest;
 
 #[kayrx::test]

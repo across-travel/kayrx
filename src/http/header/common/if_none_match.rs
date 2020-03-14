@@ -32,16 +32,16 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::IfNoneMatch;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::IfNoneMatch;
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(IfNoneMatch::Any);
     /// ```
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{IfNoneMatch, EntityTag};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{IfNoneMatch, EntityTag};
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(

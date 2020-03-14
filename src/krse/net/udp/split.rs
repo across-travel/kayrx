@@ -21,14 +21,14 @@ use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-/// The send half after [`split`](super::UdpSocket::split).
+/// The send half after `split`
 ///
 /// Use [`send_to`](#method.send_to) or [`send`](#method.send) to send
 /// datagrams.
 #[derive(Debug)]
 pub struct SendHalf(Arc<UdpSocket>);
 
-/// The recv half after [`split`](super::UdpSocket::split).
+/// The recv half after `split`
 ///
 /// Use [`recv_from`](#method.recv_from) or [`recv`](#method.recv) to receive
 /// datagrams.

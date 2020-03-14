@@ -28,7 +28,7 @@ lazy_static::lazy_static! {
             .unwrap_or_else(|_| num_cpus::get() * 5);
             Mutex::new(
             Builder::new()
-                .thread_name("eternal".to_owned())
+                .thread_name("kayrx".to_owned())
                 .num_threads(num)
                 .build(),
         )

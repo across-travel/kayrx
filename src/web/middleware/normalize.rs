@@ -16,7 +16,7 @@ use crate::web::service::{ServiceRequest, ServiceResponse};
 /// - Merges multiple slashes into one.
 ///
 /// ```rust
-/// use kayrx::web::{web, middleware, App, HttpResponse};
+/// use kayrx::web::{self, middleware, App, HttpResponse};
 /// use kayrx::http;
 ///
 /// # fn main() {

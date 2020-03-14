@@ -1,5 +1,5 @@
 use kayrx::web::test::{init_service, TestRequest};
-use kayrx::web::{guard, web, App};
+use kayrx::web::{guard, self, App};
 use kayrx::http::{self, Response as HttpResponse};
 use kayrx::service::Service;
 use futures::future::ok;

@@ -18,7 +18,7 @@ impl<T: fmt::Debug> std::error::Error for SendError<T> {}
 // ===== TrySendError =====
 
 /// This enumeration is the list of the possible error outcomes for the
-/// [try_send](super::Sender::try_send) method.
+/// `try_send` method.
 #[derive(Debug)]
 pub enum TrySendError<T> {
     /// The data could not be sent on the channel because the channel is
@@ -96,7 +96,7 @@ impl Error for TryRecvError {}
 
 // ===== ClosedError =====
 
-/// Erorr returned by [`Sender::poll_ready`](super::Sender::poll_ready)].
+/// Erorr returned by `Sender::poll_ready`
 #[derive(Debug)]
 pub struct ClosedError(());
 

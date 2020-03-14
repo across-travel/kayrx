@@ -36,7 +36,7 @@ type HttpNewService = BoxServiceFactory<(), ServiceRequest, ServiceResponse, Err
 /// guards, route considered matched and route handler get called.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// fn main() {
 ///     let app = App::new().service(
@@ -96,9 +96,9 @@ where
     /// Add match guard to a resource.
     ///
     /// ```rust
-    /// use kayrx::web::{web, guard, App, HttpResponse};
+    /// use kayrx::web::{self, types, guard, App, HttpResponse};
     ///
-    /// async fn index(data: web::Path<(String, String)>) -> &'static str {
+    /// async fn index(data: types::Path<(String, String)>) -> &'static str {
     ///     "Welcome!"
     /// }
     ///
@@ -129,7 +129,7 @@ where
     /// Register a new route.
     ///
     /// ```rust
-    /// use kayrx::web::{web, guard, App, HttpResponse};
+    /// use kayrx::web::{self, guard, App, HttpResponse};
     ///
     /// fn main() {
     ///     let app = App::new().service(
@@ -146,7 +146,7 @@ where
     /// match guards for route selection.
     ///
     /// ```rust
-    /// use kayrx::web::{web, guard, App};
+    /// use kayrx::web::{self, guard, App};
     ///
     /// fn main() {
     ///     let app = App::new().service(
@@ -171,7 +171,7 @@ where
     /// Resource data overrides data registered by `App::data()` method.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, FromRequest};
+    /// use kayrx::web::{self, App, FromRequest};
     ///
     /// /// extract text data from request
     /// async fn index(body: String) -> String {
@@ -210,7 +210,7 @@ where
     /// Register a new route and add handler. This route matches all requests.
     ///
     /// ```rust
-    /// use kayrx::web::*;
+    /// use kayrx::web::{self, HttpRequest, HttpResponse, App};
     ///
     /// fn index(req: HttpRequest) -> HttpResponse {
     ///     unimplemented!()
@@ -222,7 +222,7 @@ where
     /// This is shortcut for:
     ///
     /// ```rust
-    /// # use kayrx::web::*;
+    /// # use kayrx::web::{self, HttpRequest, HttpResponse, App};
     /// # fn index(req: HttpRequest) -> HttpResponse { unimplemented!() }
     /// App::new().service(web::resource("/").route(web::route().to(index)));
     /// ```
@@ -288,7 +288,7 @@ where
     ///
     /// ```rust
     /// use kayrx::service::Service;
-    /// use kayrx::web::{web, App};
+    /// use kayrx::web::{self, App};
     /// use kayrx::http::{header::CONTENT_TYPE, HeaderValue};
     ///
     /// async fn index() -> &'static str {
@@ -589,7 +589,7 @@ impl ServiceFactory for ResourceEndpoint {
 //     use crate::web::middleware::DefaultHeaders;
 //     use crate::web::service::ServiceRequest;
 //     use crate::web::test::{call_service, init_service, TestRequest};
-//     use crate::web::{guard, web, App, Error, HttpResponse};
+//     use crate::web::{guard, self, App, Error, HttpResponse};
 
 //     #[kayrx::test]
 //     async fn test_middleware() {

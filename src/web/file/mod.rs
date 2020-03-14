@@ -22,7 +22,7 @@ use crate::web::error::{BlockingError, Error, ErrorInternalServerError};
 use crate::web::guard::Guard;
 use crate::http::header::{self, DispositionType};
 use crate::http::Method;
-use crate::web::{web, FromRequest, HttpRequest};
+use crate::web::{self, FromRequest, HttpRequest};
 use crate::http::Response as HttpResponse;
 use bytes::Bytes;
 use futures_util::future::{ok, ready, Either, FutureExt, LocalBoxFuture, Ready};

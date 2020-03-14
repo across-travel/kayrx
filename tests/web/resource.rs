@@ -8,7 +8,7 @@ use kayrx::http::{header, HeaderValue, Method, StatusCode};
 use kayrx::web::middleware::DefaultHeaders;
 use kayrx::web::service::ServiceRequest;
 use kayrx::web::test::{call_service, init_service, TestRequest};
-use kayrx::web::{guard, web, App};
+use kayrx::web::{guard, self, App};
 use kayrx::http::{Error, Response as HttpResponse};
 
 #[kayrx::test]

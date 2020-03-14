@@ -24,12 +24,13 @@ use crate::web::request::HttpRequest;
 ///
 /// ```rust
 /// use futures::{Future, Stream, StreamExt};
-/// use kayrx::web::{web, error, App, Error, HttpResponse};
+/// use kayrx::web::{self, types, error, App, Error, HttpResponse};
+/// use kayrx::krse::BytesMut;
 ///
 /// /// extract binary data from request
-/// async fn index(mut body: web::Payload) -> Result<HttpResponse, Error>
+/// async fn index(mut body: types::Payload) -> Result<HttpResponse, Error>
 /// {
-///     let mut bytes = web::BytesMut::new();
+///     let mut bytes = BytesMut::new();
 ///     while let Some(item) = body.next().await {
 ///         bytes.extend_from_slice(&item?);
 ///     }
@@ -72,12 +73,13 @@ impl Stream for Payload {
 ///
 /// ```rust
 /// use futures::{Future, Stream, StreamExt};
-/// use kayrx::web::{web, error, App, Error, HttpResponse};
+/// use kayrx::web::{self, types, error, App, Error, HttpResponse};
+/// use kayrx::krse::BytesMut;
 ///
 /// /// extract binary data from request
-/// async fn index(mut body: web::Payload) -> Result<HttpResponse, Error>
+/// async fn index(mut body: types::Payload) -> Result<HttpResponse, Error>
 /// {
-///     let mut bytes = web::BytesMut::new();
+///     let mut bytes = BytesMut::new();
 ///     while let Some(item) = body.next().await {
 ///         bytes.extend_from_slice(&item?);
 ///     }
@@ -115,7 +117,7 @@ impl FromRequest for Payload {
 ///
 /// ```rust
 /// use bytes::Bytes;
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, App};
 ///
 /// /// extract binary data from request
 /// async fn index(body: Bytes) -> String {
@@ -167,7 +169,7 @@ impl FromRequest for Bytes {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App, FromRequest};
+/// use kayrx::web::{self, App, FromRequest};
 ///
 /// /// extract text data from request
 /// async fn index(text: String) -> String {

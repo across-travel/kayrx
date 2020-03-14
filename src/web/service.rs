@@ -171,7 +171,7 @@ impl ServiceRequest {
     /// Peer socket address
     ///
     /// Peer address is actual socket address, if proxy is used in front of
-    /// Eternal http server, then peer address would be address of this proxy.
+    /// kayrx http server, then peer address would be address of this proxy.
     ///
     /// To get client connection information `ConnectionInfo` should be used.
     #[inline]
@@ -449,7 +449,7 @@ impl WebService {
     /// Add match guard to a web service.
     ///
     /// ```rust
-    /// use kayrx::web::{web, guard, dev, App, Error, HttpResponse};
+    /// use kayrx::web::{self, guard, dev, App, Error, HttpResponse};
     ///
     /// async fn index(req: dev::ServiceRequest) -> Result<dev::ServiceResponse, Error> {
     ///     Ok(req.into_response(HttpResponse::Ok().finish()))

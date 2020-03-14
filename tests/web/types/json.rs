@@ -3,7 +3,7 @@
     use serde::{Deserialize, Serialize};
 
     use kayrx::web::*;
-    use kayrx::web::web::*;
+    use kayrx::web::types::*;
     use kayrx::web::dev::*;
     use kayrx::http::error::*;
     use kayrx::web::error::*;

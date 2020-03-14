@@ -49,7 +49,7 @@ pub trait Responder {
     /// Add header to the Responder's response.
     ///
     /// ```rust
-    /// use kayrx::web::{web, HttpRequest, Responder};
+    /// use kayrx::web::{self, types, HttpRequest, Responder};
     /// use serde::Serialize;
     ///
     /// #[derive(Serialize)]
@@ -58,7 +58,7 @@ pub trait Responder {
     /// }
     ///
     /// fn index(req: HttpRequest) -> impl Responder {
-    ///     web::Json(
+    ///     types::Json(
     ///         MyObj{name: "Name".to_string()}
     ///     )
     ///     .with_header("x-version", "1.2.3")
@@ -250,7 +250,7 @@ impl<T: Responder> CustomResponder<T> {
     /// Add header to the Responder's response.
     ///
     /// ```rust
-    /// use kayrx::web::{web, HttpRequest, Responder};
+    /// use kayrx::web::{self, types, HttpRequest, Responder};
     /// use serde::Serialize;
     ///
     /// #[derive(Serialize)]
@@ -259,7 +259,7 @@ impl<T: Responder> CustomResponder<T> {
     /// }
     ///
     /// fn index(req: HttpRequest) -> impl Responder {
-    ///     web::Json(
+    ///     types::Json(
     ///         MyObj{name: "Name".to_string()}
     ///     )
     ///     .with_header("x-version", "1.2.3")

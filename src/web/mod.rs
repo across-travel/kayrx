@@ -1,10 +1,10 @@
 //! Web framework and services of kayrx for the Rust.
 //! 
 //! ```rust
-//! use kayrx::web::{web, App, HttpServer, Responder};
+//! use kayrx::web::{types, App, HttpServer, Responder};
 //!
 //! #[get("/{id}/{name}/index.html")]
-//! async fn index(info: web::Path<(u32, String)>) -> impl Responder {
+//! async fn index(info: types::Path<(u32, String)>) -> impl Responder {
 //!     format!("Hello {}! id:{}", info.1, info.0)
 //! }
 //!
@@ -86,6 +86,7 @@ pub mod multipart;
 pub mod test;
 pub mod types;
 
+pub use kayrx_macro::{connect, delete, get, post, head, options, patch, put, trace};
 pub use self::app::App;
 pub use self::config::ServiceConfig;
 pub use self::data::Data;

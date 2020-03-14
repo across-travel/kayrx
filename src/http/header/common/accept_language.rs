@@ -23,10 +23,10 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// # extern crate eternal::http;
+    /// # extern crate kayrx::http;
     /// # extern crate language_tags;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{AcceptLanguage, LanguageTag, qitem};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{AcceptLanguage, LanguageTag, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -42,10 +42,10 @@ header! {
     /// ```
     ///
     /// ```rust
-    /// # extern crate eternal::http;
+    /// # extern crate kayrx::http;
     /// # #[macro_use] extern crate language_tags;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{AcceptLanguage, QualityItem, q, qitem};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{AcceptLanguage, QualityItem, q, qitem};
     /// #
     /// # fn main() {
     /// let mut builder = Response::Ok();

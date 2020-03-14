@@ -61,13 +61,11 @@ impl Payload {
     }
 
     /// Length of the data in this payload
-    #[cfg(test)]
     pub fn len(&self) -> usize {
         self.inner.borrow().len()
     }
 
     /// Is payload empty
-    #[cfg(test)]
     pub fn is_empty(&self) -> bool {
         self.inner.borrow().len() == 0
     }
@@ -186,7 +184,6 @@ impl Inner {
         }
     }
 
-    #[cfg(test)]
     fn len(&self) -> usize {
         self.len
     }
@@ -221,23 +218,3 @@ impl Inner {
         self.items.push_front(data);
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use futures_util::future::poll_fn;
-
-//     #[kayrx::test]
-//     async fn test_unread_data() {
-//         let (_, mut payload) = Payload::create(false);
-
-//         payload.unread_data(Bytes::from("data"));
-//         assert!(!payload.is_empty());
-//         assert_eq!(payload.len(), 4);
-
-//         assert_eq!(
-//             Bytes::from("data"),
-//             poll_fn(|cx| payload.readany(cx)).await.unwrap().unwrap()
-//         );
-//     }
-// }

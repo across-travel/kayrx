@@ -24,9 +24,9 @@ header! {
     ///
     /// ```rust
     /// # extern crate http;
-    /// # extern crate eternal::http;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::Allow;
+    /// # extern crate kayrx::http;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::Allow;
     /// use http::Method;
     ///
     /// # fn main() {
@@ -39,9 +39,9 @@ header! {
     ///
     /// ```rust
     /// # extern crate http;
-    /// # extern crate eternal::http;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::Allow;
+    /// # extern crate kayrx::http;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::Allow;
     /// use http::Method;
     ///
     /// # fn main() {

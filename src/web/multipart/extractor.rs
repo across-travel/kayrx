@@ -13,7 +13,7 @@ use super::server::Multipart;
 ///
 /// ```rust
 /// use futures::{Stream, StreamExt};
-/// use kayrx::web::{web, HttpResponse, Error};
+/// use kayrx::web::{self, HttpResponse, Error};
 /// use actix_multipart as mp;
 ///
 /// async fn index(mut payload: mp::Multipart) -> Result<HttpResponse, Error> {

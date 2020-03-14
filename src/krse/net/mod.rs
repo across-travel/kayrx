@@ -8,9 +8,9 @@
 //! * [`TcpListener`] and [`TcpStream`] provide functionality for communication over TCP
 //! * [`UdpSocket`] provides functionality for communication over UDP
 //! * [`UnixListener`] and [`UnixStream`] provide functionality for communication over a
-//! Unix Domain Stream Socket **(available on Unix only)**
+//! Unix Domain Stream Socket 
 //! * [`UnixDatagram`] provides functionality for communication
-//! over Unix Domain Datagram Socket **(available on Unix only)**
+//! over Unix Domain Datagram Socket
 
 //!
 //! [`TcpListener`]: struct.TcpListener.html

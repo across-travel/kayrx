@@ -73,12 +73,9 @@ pub trait Decoder {
     ///
     /// ```no_run
     /// # use std::io;
-    /// #
     /// # use bytes::BytesMut;
     /// # use kayrx::codec::Decoder;
-    /// #
     /// # struct MyCodec;
-    /// #
     /// impl Decoder for MyCodec {
     ///     // ...
     ///     # type Item = BytesMut;

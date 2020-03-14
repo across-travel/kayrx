@@ -10,7 +10,7 @@
 //!    let mut client = Client::default();
 //!
 //!    let response = client.get("http://www.rust-lang.org") // <- Create request builder
-//!        .header("User-Agent", "Actix-web")
+//!        .header("User-Agent", "kayrx-web")
 //!        .send()                             // <- Send http request
 //!        .await;
 //!
@@ -56,7 +56,7 @@ use self::connect::{Connect, ConnectorWrapper};
 ///     let mut client = Client::default();
 ///
 ///     let res = client.get("http://www.rust-lang.org") // <- Create request builder
-///         .header("User-Agent", "Actix-web")
+///         .header("User-Agent", "kayrx-web")
 ///         .send()                             // <- Send http request
 ///         .await;                             // <- send request and wait for response
 ///

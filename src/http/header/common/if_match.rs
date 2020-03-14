@@ -30,16 +30,16 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::IfMatch;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::IfMatch;
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(IfMatch::Any);
     /// ```
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{IfMatch, EntityTag};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{IfMatch, EntityTag};
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(

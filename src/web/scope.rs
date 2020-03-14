@@ -37,7 +37,7 @@ type BoxedResponse = LocalBoxFuture<'static, Result<ServiceResponse, Error>>;
 /// `Path` extractor also is able to extract scope level variable segments.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// fn main() {
 ///     let app = App::new().service(
@@ -95,9 +95,9 @@ where
     /// Add match guard to a scope.
     ///
     /// ```rust
-    /// use kayrx::web::{web, guard, App, HttpRequest, HttpResponse};
+    /// use kayrx::web::{self, types, guard, App, HttpRequest, HttpResponse};
     ///
-    /// async fn index(data: web::Path<(String, String)>) -> &'static str {
+    /// async fn index(data: types::Path<(String, String)>) -> &'static str {
     ///     "Welcome!"
     /// }
     ///
@@ -122,7 +122,7 @@ where
     ///
     /// ```rust
     /// use std::cell::Cell;
-    /// use kayrx::web::{web, App, HttpResponse, Responder};
+    /// use kayrx::web::{self, App, HttpResponse, Responder};
     ///
     /// struct MyData {
     ///     counter: Cell<usize>,
@@ -166,7 +166,7 @@ where
     /// some of the resource's configuration could be moved to different module.
     ///
     /// ```rust
-    /// use kayrx::web::{web, middleware, App, HttpResponse};
+    /// use kayrx::web::{self, middleware, App, HttpResponse};
     ///
     /// // this function could be located in different module
     /// fn config(cfg: &mut web::ServiceConfig) {
@@ -211,14 +211,14 @@ where
     ///
     /// This is similar to `App's` service registration.
     ///
-    /// Actix web provides several services implementations:
+    /// kayrx web provides several services implementations:
     ///
     /// * *Resource* is an entry in resource table which corresponds to requested URL.
     /// * *Scope* is a set of resources with common root path.
     /// * "StaticFiles" is a service for static files support
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpRequest};
+    /// use kayrx::web::{self, App, HttpRequest};
     ///
     /// struct AppState;
     ///
@@ -250,9 +250,9 @@ where
     /// multiple resources with one route would be registered for same resource path.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpResponse};
+    /// use kayrx::web::{self, types, App, HttpResponse};
     ///
-    /// async fn index(data: web::Path<(String, String)>) -> &'static str {
+    /// async fn index(data: types::Path<(String, String)>) -> &'static str {
     ///     "Welcome!"
     /// }
     ///
@@ -347,7 +347,7 @@ where
     ///
     /// ```rust
     /// use kayrx::service::Service;
-    /// use kayrx::web::{web, App};
+    /// use kayrx::web::{self, App};
     /// use kayrx::http::{header::CONTENT_TYPE, HeaderValue};
     ///
     /// async fn index() -> &'static str {

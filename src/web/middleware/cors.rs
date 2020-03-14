@@ -1,4 +1,4 @@
-//! Cross-origin resource sharing (CORS) for Eternal.
+//! Cross-origin resource sharing (CORS) for kayrx.
 //!
 //! CORS middleware could be used with application and with resource.
 //! Cors middleware could be used as parameter for `App::wrap()`,
@@ -7,7 +7,7 @@
 //! # Example
 //!
 //! ```rust
-//! use kayrx::{http, web::{web, App, HttpRequest, HttpResponse, HttpServer, web::Middleware::Cors}};
+//! use kayrx::{http, web::{self, App, HttpRequest, HttpResponse, HttpServer, middleware::Cors}};
 //!
 //! async fn index(req: HttpRequest) -> &'static str {
 //!     "Hello world"
@@ -154,7 +154,7 @@ impl<T> AllOrSome<T> {
 /// # Example
 ///
 /// ```rust
-/// use kayrx::{http::header, web::Middleware::Cors};
+/// use kayrx::{http::header, web::middleware::Cors};
 ///
 /// # fn main() {
 /// let cors = Cors::new()

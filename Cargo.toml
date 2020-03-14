@@ -1,6 +1,6 @@
 [package]
 name = "kayrx"
-version = "0.9.4"
+version = "0.9.5"
 authors = ["Nikolay Kim <fafhrd91@gmail.com>",  "Tokio Contributors <team@tokio.rs>", "krircc <krircc@qq.com>"]
 documentation = "https://docs.rs/kayrx/"
 repository = "https://github.com/kayrx/kayrx"
@@ -83,6 +83,7 @@ webpki-roots = { version = "0.17" }
 coo-kie = { version = "0.13.3", package = "cookie", optional = true }
 
 [dev-dependencies]
+bitflags = "1.2.1"
 bytes = "0.5.3"
 futures = "0.3"
 serde = { version = "1.0", features=["derive"] }

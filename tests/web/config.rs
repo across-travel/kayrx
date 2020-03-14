@@ -5,7 +5,7 @@ use kayrx::web::*;
 use kayrx::web::dev::*;
 use kayrx::http::{Method, StatusCode};
 use kayrx::web::test::{call_service, init_service, read_body, TestRequest};
-use kayrx::web::{web, App, HttpRequest};
+use kayrx::web::{self, App, HttpRequest};
 use kayrx::http::Response as HttpResponse;
 
 #[kayrx::test]

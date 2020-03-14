@@ -22,8 +22,8 @@ header! {
     /// # Example
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::IfModifiedSince;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::IfModifiedSince;
     /// use std::time::{SystemTime, Duration};
     ///
     /// let mut builder = Response::Ok();

@@ -31,10 +31,10 @@ header! {
     ///
     /// # Examples
     /// ```rust
-    /// # extern crate eternal::http;
+    /// # extern crate kayrx::http;
     /// extern crate mime;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{Accept, qitem};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{Accept, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -48,10 +48,10 @@ header! {
     /// ```
     ///
     /// ```rust
-    /// # extern crate eternal::http;
+    /// # extern crate kayrx::http;
     /// extern crate mime;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{Accept, qitem};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{Accept, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -65,10 +65,10 @@ header! {
     /// ```
     ///
     /// ```rust
-    /// # extern crate eternal::http;
+    /// # extern crate kayrx::http;
     /// extern crate mime;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{Accept, QualityItem, q, qitem};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{Accept, QualityItem, q, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();

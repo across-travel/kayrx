@@ -6,10 +6,10 @@ use crate::service::Service;
 
 #[doc(hidden)]
 /// Service that allows to turn non-clone service to a service with `Clone` impl
-pub(crate) struct CloneableService<T>(Rc<UnsafeCell<T>>);
+pub struct CloneableService<T>(Rc<UnsafeCell<T>>);
 
 impl<T> CloneableService<T> {
-    pub(crate) fn new(service: T) -> Self
+    pub fn new(service: T) -> Self
     where
         T: Service,
     {

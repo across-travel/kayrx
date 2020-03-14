@@ -10,7 +10,7 @@ use kayrx::http::header::{ self, ContentDisposition, DispositionParam, Dispositi
 use kayrx::http::{Response as HttpResponse,  Method, StatusCode};
 use kayrx::web::middleware::Compress;
 use kayrx::web::test::{self, TestRequest};
-use kayrx::web::{web, App, Responder};
+use kayrx::web::{self, App, Responder};
 use kayrx::service::ServiceFactory;
 use kayrx::web::file::*;
 use futures::future::ok;

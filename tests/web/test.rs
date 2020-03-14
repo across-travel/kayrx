@@ -2,12 +2,14 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 
 use kayrx::http::httpmessage::HttpMessage;
-use kayrx::web::{web, App, Responder};
+use kayrx::web::{self, App, Responder};
 use kayrx::http::{header, Version, error::Error};
 use kayrx::http::Response as HttpResponse;
+use kayrx::krse::Bytes;
 use kayrx::web::test::*;
-use kayrx::web::web::*;
+use kayrx::web::types;
 use kayrx::web::dev::*;
+use kayrx::web::Data;
 
 #[kayrx::test]
 async fn test_basics() {
@@ -100,7 +102,7 @@ pub struct Person {
 #[kayrx::test]
 async fn test_response_json() {
     let mut app = init_service(App::new().service(web::resource("/people").route(
-        web::post().to(|person: web::Json<Person>| {
+        web::post().to(|person: types::Json<Person>| {
             async { HttpResponse::Ok().json(person.into_inner()) }
         }),
     )))
@@ -121,7 +123,7 @@ async fn test_response_json() {
 #[kayrx::test]
 async fn test_request_response_form() {
     let mut app = init_service(App::new().service(web::resource("/people").route(
-        web::post().to(|person: web::Form<Person>| {
+        web::post().to(|person: types::Form<Person>| {
             async { HttpResponse::Ok().json(person.into_inner()) }
         }),
     )))
@@ -147,7 +149,7 @@ async fn test_request_response_form() {
 #[kayrx::test]
 async fn test_request_response_json() {
     let mut app = init_service(App::new().service(web::resource("/people").route(
-        web::post().to(|person: web::Json<Person>| {
+        web::post().to(|person: types::Json<Person>| {
             async { HttpResponse::Ok().json(person.into_inner()) }
         }),
     )))

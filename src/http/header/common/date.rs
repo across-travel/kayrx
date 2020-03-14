@@ -20,8 +20,8 @@ header! {
     /// # Example
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::Date;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::Date;
     /// use std::time::SystemTime;
     ///
     /// let mut builder = Response::Ok();

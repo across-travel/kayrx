@@ -2,10 +2,10 @@ use kayrx::service::Service;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 
-use kayrx::web::web::*;
+use kayrx::web::Data;
 use kayrx::http::StatusCode;
 use kayrx::web::test::{self, init_service, TestRequest};
-use kayrx::web::{web, App};
+use kayrx::web::{self, App};
 use kayrx::http::Response as HttpResponse;
 
 #[kayrx::test]

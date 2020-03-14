@@ -29,16 +29,16 @@ use crate::http::header::{
 ///
 /// # Examples
 /// ```rust
-/// use eternal::http::Response;
-/// use eternal::http::header::{CacheControl, CacheDirective};
+/// use kayrx::http::Response;
+/// use kayrx::http::header::{CacheControl, CacheDirective};
 ///
 /// let mut builder = Response::Ok();
 /// builder.set(CacheControl(vec![CacheDirective::MaxAge(86400u32)]));
 /// ```
 ///
 /// ```rust
-/// use eternal::http::Response;
-/// use eternal::http::header::{CacheControl, CacheDirective};
+/// use kayrx::http::Response;
+/// use kayrx::http::header::{CacheControl, CacheDirective};
 ///
 /// let mut builder = Response::Ok();
 /// builder.set(CacheControl(vec![

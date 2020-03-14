@@ -340,6 +340,7 @@ impl Driver {
 /// ```rust,no_run
 /// use kayrx::krse::signal::unix::{signal, SignalKind};
 ///
+/// #[kayrx::main]
 /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///     // An infinite stream of hangup signals.
 ///     let mut stream = signal(SignalKind::hangup())?;
@@ -408,6 +409,7 @@ impl Signal {
     /// ```rust,no_run
     /// use kayrx::krse::signal::unix::{signal, SignalKind};
     ///
+    /// #[kayrx::main]
     /// async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///     // An infinite stream of hangup signals.
     ///     let mut stream = signal(SignalKind::hangup())?;

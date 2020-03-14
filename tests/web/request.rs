@@ -1,12 +1,12 @@
 use kayrx::web::*;
-use kayrx::web::web::*;
+use kayrx::web::types::*;
 use kayrx::web::dev::*;
 use std::rc::Rc;
 use std::cell::RefCell;
 use kayrx::web::dev::{ResourceDef, ResourceMap};
 use kayrx::http::{header, StatusCode};
 use kayrx::web::test::{call_service, init_service, TestRequest};
-use kayrx::web::{web, App, error::*};
+use kayrx::web::{self, App, error::*};
 use kayrx::http::Response as HttpResponse;
 
 #[test]

@@ -1,4 +1,4 @@
-//! Various helpers for Actix applications to use during testing.
+//! Various helpers for kayrx applications to use during testing.
 use std::convert::TryFrom;
 use std::net::SocketAddr;
 use std::rc::Rc;
@@ -61,7 +61,7 @@ pub fn default_service(
 ///
 /// ```rust
 /// use kayrx::service::Service;
-/// use kayrx::web::{test, web, App, HttpResponse};
+/// use kayrx::web::{test, self, App, HttpResponse};
 /// use kayrx::http::StatusCode;
 ///
 /// #[kayrx::test]
@@ -99,7 +99,7 @@ where
 /// Calls service and waits for response future completion.
 ///
 /// ```rust
-/// use kayrx::web::{test, App, HttpResponse};
+/// use kayrx::web::{self, test, App, HttpResponse};
 /// use kayrx::http::StatusCode;
 /// use kayrx::service::Service;
 ///
@@ -131,7 +131,7 @@ where
 /// Helper function that returns a response body of a TestRequest
 ///
 /// ```rust
-/// use kayrx::web::{test, web, App, HttpResponse};
+/// use kayrx::web::{test, self, App, HttpResponse};
 /// use kayrx::http::header;
 /// use bytes::Bytes;
 ///
@@ -175,7 +175,7 @@ where
 /// Helper function that returns a response body of a ServiceResponse.
 ///
 /// ```rust
-/// use kayrx::web::{test, web, App, HttpResponse};
+/// use kayrx::web::{test, self, App, HttpResponse};
 /// use kayrx::http::header;
 /// use bytes::Bytes;
 ///
@@ -225,7 +225,7 @@ where
 /// Helper function that returns a deserialized response body of a TestRequest
 ///
 /// ```rust
-/// use kayrx::web::{App, test, web, HttpResponse};
+/// use kayrx::web::{App, test, self, types, HttpResponse};
 /// use kayrx::http::header;
 /// use serde::{Serialize, Deserialize};
 ///
@@ -240,7 +240,7 @@ where
 ///     let mut app = test::init_service(
 ///         App::new().service(
 ///             web::resource("/people")
-///                 .route(web::post().to(|person: web::Json<Person>| async {
+///                 .route(web::post().to(|person: types::Json<Person>| async {
 ///                     HttpResponse::Ok()
 ///                         .json(person.into_inner())})
 ///                     ))
@@ -547,7 +547,7 @@ impl TestRequest {
 /// # Examples
 ///
 /// ```rust
-/// use kayrx::web::{web, test, App, HttpResponse, Error};
+/// use kayrx::web::{self, test, App, HttpResponse, Error};
 ///
 /// async fn my_handler() -> Result<HttpResponse, Error> {
 ///     Ok(HttpResponse::Ok().into())
@@ -587,7 +587,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use kayrx::web::{web, test, App, HttpResponse, Error};
+/// use kayrx::web::{self, test, App, HttpResponse, Error};
 ///
 /// async fn my_handler() -> Result<HttpResponse, Error> {
 ///     Ok(HttpResponse::Ok().into())

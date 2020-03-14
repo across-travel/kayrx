@@ -137,7 +137,7 @@ impl HttpRequest {
     /// Generate url for named resource
     ///
     /// ```rust
-    /// # use kayrx::web::{web, App, HttpRequest, HttpResponse};
+    /// # use kayrx::web::{self, App, HttpRequest, HttpResponse};
     /// #
     /// fn index(req: HttpRequest) -> HttpResponse {
     ///     let url = req.url_for("foo", &["1", "2", "3"]); // <- generate url for "foo" resource
@@ -260,7 +260,7 @@ impl Drop for HttpRequest {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpRequest};
+/// use kayrx::web::{self, App, HttpRequest};
 /// use serde_derive::Deserialize;
 ///
 /// /// extract `Thing` from request
@@ -339,7 +339,7 @@ impl HttpRequestPool {
 //     use crate::web::dev::{ResourceDef, ResourceMap};
 //     use crate::http::{header, StatusCode};
 //     use crate::web::test::{call_service, init_service, TestRequest};
-//     use crate::web::{web, App, HttpResponse};
+//     use crate::web::{self, App, HttpResponse};
 
 //     #[test]
 //     fn test_debug() {

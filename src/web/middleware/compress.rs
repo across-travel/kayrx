@@ -24,7 +24,7 @@ use crate::web::service::{ServiceRequest, ServiceResponse};
 /// To disable compression set encoding to `ContentEncoding::Identity` value.
 ///
 /// ```rust
-/// use kayrx::web::{web, middleware, App, HttpResponse};
+/// use kayrx::web::{self, middleware, App, HttpResponse};
 ///
 /// fn main() {
 ///     let app = App::new()

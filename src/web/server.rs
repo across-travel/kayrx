@@ -29,7 +29,7 @@ struct Config {
 /// Create new http server with application factory.
 ///
 /// ```rust,no_run
-/// use kayrx::web::{web, App, HttpResponse, HttpServer};
+/// use kayrx::web::{self, App, HttpResponse, HttpServer};
 ///
 /// #[kayrx::main]
 /// async fn main() -> std::io::Result<()> {
@@ -459,12 +459,12 @@ where
     /// For each address this method starts separate thread which does
     /// `accept()` in a loop.
     ///
-    /// This methods panics if no socket address can be bound or an `Actix` system is not yet
+    /// This methods panics if no socket address can be bound or an `kayrx` system is not yet
     /// configured.
     ///
     /// ```rust,no_run
     /// use std::io;
-    /// use kayrx::web::{web, App, HttpResponse, HttpServer};
+    /// use kayrx::web::{self, App, HttpResponse, HttpServer};
     ///
     /// #[kayrx::main]
     /// async fn main() -> io::Result<()> {

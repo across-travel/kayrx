@@ -139,7 +139,8 @@ impl Route {
     /// Add method guard to the route.
     ///
     /// ```rust
-    /// # use kayrx::web::*;
+    /// # use kayrx::web::{self, App, HttpRequest, HttpResponse};
+    /// # use kayrx::http;
     /// # fn main() {
     /// App::new().service(web::resource("/path").route(
     ///     web::get()
@@ -159,7 +160,7 @@ impl Route {
     /// Add guard to the route.
     ///
     /// ```rust
-    /// # use kayrx::web::*;
+    /// # use kayrx::web::{self, App, HttpRequest, HttpResponse};
     /// # fn main() {
     /// App::new().service(web::resource("/path").route(
     ///     web::route()
@@ -177,7 +178,7 @@ impl Route {
     /// Set handler function, use request extractors for parameters.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App};
+    /// use kayrx::web::{self, types, App};
     /// use kayrx::http;
     /// use serde_derive::Deserialize;
     ///
@@ -187,7 +188,7 @@ impl Route {
     /// }
     ///
     /// /// extract path info using serde
-    /// async fn index(info: web::Path<Info>) -> String {
+    /// async fn index(info: types::Path<Info>) -> String {
     ///     format!("Welcome {}!", info.username)
     /// }
     ///
@@ -204,7 +205,7 @@ impl Route {
     /// ```rust
     /// # use std::collections::HashMap;
     /// # use serde_derive::Deserialize;
-    /// use kayrx::web::{web, App};
+    /// use kayrx::web::{self, types, App};
     ///
     /// #[derive(Deserialize)]
     /// struct Info {
@@ -212,7 +213,7 @@ impl Route {
     /// }
     ///
     /// /// extract path info using serde
-    /// async fn index(path: web::Path<Info>, query: web::Query<HashMap<String, String>>, body: web::Json<Info>) -> String {
+    /// async fn index(path: types::Path<Info>, query: types::Query<HashMap<String, String>>, body: types::Json<Info>) -> String {
     ///     format!("Welcome {}!", path.username)
     /// }
     ///

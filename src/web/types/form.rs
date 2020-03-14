@@ -38,7 +38,7 @@ use crate::web::responder::Responder;
 ///
 /// ### Example
 /// ```rust
-/// use kayrx::web::web;
+/// use kayrx::web::types;
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -49,7 +49,7 @@ use crate::web::responder::Responder;
 /// /// Extract form data using serde.
 /// /// This handler get called only if content type is *x-www-form-urlencoded*
 /// /// and content of the request could be deserialized to a `FormData` struct
-/// fn index(form: web::Form<FormData>) -> String {
+/// fn index(form: types::Form<FormData>) -> String {
 ///     format!("Welcome {}!", form.username)
 /// }
 /// # fn main() {}
@@ -63,7 +63,7 @@ use crate::web::responder::Responder;
 ///
 /// ### Example
 /// ```rust
-/// use kayrx::web::*;
+/// use kayrx::web::types;
 /// use serde_derive::Serialize;
 ///
 /// #[derive(Serialize)]
@@ -75,8 +75,8 @@ use crate::web::responder::Responder;
 /// // Will return a 200 response with header
 /// // `Content-Type: application/x-www-form-urlencoded`
 /// // and body "name=kayrx&age=123"
-/// fn index() -> web::Form<SomeForm> {
-///     web::Form(SomeForm {
+/// fn index() -> types::Form<SomeForm> {
+///     types::Form(SomeForm {
 ///         name: "kayrx".into(),
 ///         age: 123
 ///     })
@@ -170,7 +170,7 @@ impl<T: Serialize> Responder for Form<T> {
 /// Form extractor configuration
 ///
 /// ```rust
-/// use kayrx::web::{web, App, FromRequest, Result};
+/// use kayrx::web::{self, types, App, FromRequest, Result};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -180,7 +180,7 @@ impl<T: Serialize> Responder for Form<T> {
 ///
 /// /// Extract form data using serde.
 /// /// Custom configuration is used for this handler, max payload size is 4k
-/// async fn index(form: web::Form<FormData>) -> Result<String> {
+/// async fn index(form: types::Form<FormData>) -> Result<String> {
 ///     Ok(format!("Welcome {}!", form.username))
 /// }
 ///

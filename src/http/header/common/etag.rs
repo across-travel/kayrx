@@ -28,16 +28,16 @@ header! {
     /// # Examples
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{ETag, EntityTag};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{ETag, EntityTag};
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(ETag(EntityTag::new(false, "xyzzy".to_owned())));
     /// ```
     ///
     /// ```rust
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{ETag, EntityTag};
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{ETag, EntityTag};
     ///
     /// let mut builder = Response::Ok();
     /// builder.set(ETag(EntityTag::new(true, "xyzzy".to_owned())));

@@ -22,9 +22,9 @@ header! {
     ///
     /// # Examples
     /// ```rust
-    /// # extern crate eternal::http;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{AcceptCharset, Charset, qitem};
+    /// # extern crate kayrx::http;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{AcceptCharset, Charset, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -34,9 +34,9 @@ header! {
     /// # }
     /// ```
     /// ```rust
-    /// # extern crate eternal::http;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{AcceptCharset, Charset, q, QualityItem};
+    /// # extern crate kayrx::http;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{AcceptCharset, Charset, q, QualityItem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();
@@ -49,9 +49,9 @@ header! {
     /// # }
     /// ```
     /// ```rust
-    /// # extern crate eternal::http;
-    /// use eternal::http::Response;
-    /// use eternal::http::header::{AcceptCharset, Charset, qitem};
+    /// # extern crate kayrx::http;
+    /// use kayrx::http::Response;
+    /// use kayrx::http::header::{AcceptCharset, Charset, qitem};
     ///
     /// # fn main() {
     /// let mut builder = Response::Ok();

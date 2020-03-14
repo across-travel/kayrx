@@ -32,7 +32,7 @@ use futures_core::Future;
 /// the exposed `Params` object:
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/users/{userid}/{friend}")
@@ -50,7 +50,7 @@ pub fn resource<T: IntoPattern>(path: T) -> Resource {
 /// Scope path can contain variable path segments as resources.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::scope("/{project_id}")
@@ -77,7 +77,7 @@ pub fn route() -> Route {
 /// Create *route* with `GET` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -95,7 +95,7 @@ pub fn get() -> Route {
 /// Create *route* with `POST` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -113,7 +113,7 @@ pub fn post() -> Route {
 /// Create *route* with `PUT` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -131,7 +131,7 @@ pub fn put() -> Route {
 /// Create *route* with `PATCH` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -149,7 +149,7 @@ pub fn patch() -> Route {
 /// Create *route* with `DELETE` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -167,7 +167,7 @@ pub fn delete() -> Route {
 /// Create *route* with `HEAD` method guard.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse};
+/// use kayrx::web::{self, App, HttpResponse};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -185,7 +185,7 @@ pub fn head() -> Route {
 /// Create *route* and add method guard.
 ///
 /// ```rust
-/// use kayrx::{http, web::{web, App, HttpResponse}};
+/// use kayrx::{http, web::{self, App, HttpResponse}};
 ///
 /// let app = App::new().service(
 ///     web::resource("/{project_id}")
@@ -203,7 +203,7 @@ pub fn method(method: Method) -> Route {
 /// Create a new route and add handler.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, HttpResponse, Responder};
+/// use kayrx::web::{self, App, HttpResponse, Responder};
 ///
 /// async fn index() -> impl Responder {
 ///    HttpResponse::Ok()
@@ -227,7 +227,7 @@ where
 /// Create raw service for a specific path.
 ///
 /// ```rust
-/// use kayrx::web::{dev, web, guard, App, Error, HttpResponse};
+/// use kayrx::web::{dev, self, guard, App, Error, HttpResponse};
 ///
 /// async fn my_service(req: dev::ServiceRequest) -> Result<dev::ServiceResponse, Error> {
 ///     Ok(req.into_response(HttpResponse::Ok().finish()))

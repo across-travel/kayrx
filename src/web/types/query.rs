@@ -24,7 +24,7 @@ use crate::web::request::HttpRequest;
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Debug, Deserialize)]
@@ -42,7 +42,8 @@ use crate::web::request::HttpRequest;
 /// // Use `Query` extractor for query information (and destructure it within the signature).
 /// // This handler gets called only if the request's query string contains a `username` field.
 /// // The correct request for this handler would be `/index.html?id=64&response_type=Code"`.
-/// async fn index(web::Query(info): web::Query<AuthRequest>) -> String {
+/// 
+/// async fn index(types::Query(info): types::Query<AuthRequest>) -> String {
 ///     format!("Authorization request for client with id={} and type={:?}!", info.id, info.response_type)
 /// }
 ///
@@ -102,7 +103,7 @@ impl<T: fmt::Display> fmt::Display for Query<T> {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Debug, Deserialize)]
@@ -120,7 +121,7 @@ impl<T: fmt::Display> fmt::Display for Query<T> {
 /// // Use `Query` extractor for query information.
 /// // This handler get called only if request's query contains `username` field
 /// // The correct request for this handler would be `/index.html?id=64&response_type=Code"`
-/// async fn index(info: web::Query<AuthRequest>) -> String {
+/// async fn index(info: types::Query<AuthRequest>) -> String {
 ///     format!("Authorization request for client with id={} and type={:?}!", info.id, info.response_type)
 /// }
 ///
@@ -172,7 +173,7 @@ where
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{error, web, App, FromRequest, HttpResponse};
+/// use kayrx::web::{error, self, types, App, FromRequest, HttpResponse};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -181,7 +182,7 @@ where
 /// }
 ///
 /// /// deserialize `Info` from request's querystring
-/// async fn index(info: web::Query<Info>) -> String {
+/// async fn index(info: types::Query<Info>) -> String {
 ///     format!("Welcome {}!", info.username)
 /// }
 ///
@@ -189,7 +190,7 @@ where
 ///     let app = App::new().service(
 ///         web::resource("/index.html").app_data(
 ///             // change query extractor configuration
-///             web::Query::<Info>::configure(|cfg| {
+///             types::Query::<Info>::configure(|cfg| {
 ///                 cfg.error_handler(|err, req| {  // <- create custom error response
 ///                     error::InternalError::from_response(
 ///                         err, HttpResponse::Conflict().finish()).into()

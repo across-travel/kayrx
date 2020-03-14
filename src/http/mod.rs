@@ -50,3 +50,8 @@ pub enum Protocol {
     Http1,
     Http2,
 }
+
+pub mod dev {
+    pub use super::cloneable::CloneableService;
+    pub use super::h1::dev::{DispatcherState, Flags};
+}

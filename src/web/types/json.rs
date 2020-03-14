@@ -38,7 +38,7 @@ use crate::web::responder::Responder;
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -47,7 +47,7 @@ use crate::web::responder::Responder;
 /// }
 ///
 /// /// deserialize `Info` from request's body
-/// async fn index(info: web::Json<Info>) -> String {
+/// async fn index(info: types::Json<Info>) -> String {
 ///     format!("Welcome {}!", info.username)
 /// }
 ///
@@ -65,7 +65,7 @@ use crate::web::responder::Responder;
 /// trait from *serde*.
 ///
 /// ```rust
-/// use kayrx::web::*;
+/// use kayrx::web::types;
 /// use serde_derive::Serialize;
 ///
 /// #[derive(Serialize)]
@@ -73,8 +73,8 @@ use crate::web::responder::Responder;
 ///     name: String,
 /// }
 ///
-/// fn index(req: HttpRequest) -> Result<web::Json<MyObj>> {
-///     Ok(web::Json(MyObj {
+/// fn index(req: HttpRequest) -> Result<types::Json<MyObj>> {
+///     Ok(types::Json(MyObj {
 ///         name: req.match_info().get("name").unwrap().to_string(),
 ///     }))
 /// }
@@ -149,7 +149,7 @@ impl<T: Serialize> Responder for Json<T> {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -158,7 +158,7 @@ impl<T: Serialize> Responder for Json<T> {
 /// }
 ///
 /// /// deserialize `Info` from request's body
-/// async fn index(info: web::Json<Info>) -> String {
+/// async fn index(info: types::Json<Info>) -> String {
 ///     format!("Welcome {}!", info.username)
 /// }
 ///
@@ -209,7 +209,7 @@ where
 /// Json extractor configuration
 ///
 /// ```rust
-/// use kayrx::web::{error, web, App, FromRequest, HttpResponse};
+/// use kayrx::web::{self, error, types, App, FromRequest, HttpResponse};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -218,7 +218,7 @@ where
 /// }
 ///
 /// /// deserialize `Info` from request's body, max payload size is 4kb
-/// async fn index(info: web::Json<Info>) -> String {
+/// async fn index(info: types::Json<Info>) -> String {
 ///     format!("Welcome {}!", info.username)
 /// }
 ///
@@ -227,7 +227,7 @@ where
 ///         web::resource("/index.html")
 ///             .app_data(
 ///                 // change json extractor configuration
-///                 web::Json::<Info>::configure(|cfg| {
+///                 types::Json::<Info>::configure(|cfg| {
 ///                     cfg.limit(4096)
 ///                        .content_type(|mime| {  // <- accept text/plain content type
 ///                            mime.type_() == mime::TEXT && mime.subtype() == mime::PLAIN

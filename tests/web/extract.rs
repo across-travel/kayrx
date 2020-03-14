@@ -3,7 +3,7 @@ use bytes::Bytes;
 use serde::Deserialize;
 
 use kayrx::web::*;
-use kayrx::web::web::*;
+use kayrx::web::types::*;
 use kayrx::web::test::TestRequest;
 
 #[derive(Deserialize, Debug, PartialEq)]

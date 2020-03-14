@@ -4,7 +4,7 @@
 //! handler service. In essence it is just a function that accepts a
 //! reference to a `RequestHead` instance and returns a boolean.
 //! It is possible to add guards to *scopes*, *resources*
-//! and *routes*. Actix provide several guards by default, like various
+//! and *routes*. kayrx provide several guards by default, like various
 //! http methods, header, etc. To become a guard, type must implement `Guard`
 //! trait. Simple functions coulds guards as well.
 //!
@@ -13,7 +13,7 @@
 //! Extensions containers are available via the `RequestHead::extensions()` method.
 //!
 //! ```rust
-//! use kayrx::web::{web, dev, guard, App, HttpResponse};
+//! use kayrx::web::{self, dev, guard, App, HttpResponse};
 //! use kayrx::http;
 //!
 //! fn main() {
@@ -44,7 +44,7 @@ pub trait Guard {
 /// Create guard object for supplied function.
 ///
 /// ```rust
-/// use kayrx::web::{guard, web, App, HttpResponse};
+/// use kayrx::web::{guard, self, App, HttpResponse};
 ///
 /// fn main() {
 ///     App::new().service(web::resource("/index.html").route(
@@ -87,7 +87,7 @@ where
 /// Return guard that matches if any of supplied guards.
 ///
 /// ```rust
-/// use kayrx::web::{web, guard, App, HttpResponse};
+/// use kayrx::web::{self, guard, App, HttpResponse};
 ///
 /// fn main() {
 ///     App::new().service(web::resource("/index.html").route(
@@ -126,7 +126,7 @@ impl Guard for AnyGuard {
 /// Return guard that matches if all of the supplied guards.
 ///
 /// ```rust
-/// use kayrx::web::{guard, web, App, HttpResponse};
+/// use kayrx::web::{guard, self, App, HttpResponse};
 ///
 /// fn main() {
 ///     App::new().service(web::resource("/index.html").route(
@@ -261,7 +261,7 @@ impl Guard for HeaderGuard {
 /// Return predicate that matches if request contains specified Host name.
 ///
 /// ```rust
-/// use kayrx::web::{web, guard::Host, App, HttpResponse};
+/// use kayrx::web::{self, guard::Host, App, HttpResponse};
 ///
 /// fn main() {
 ///     App::new().service(

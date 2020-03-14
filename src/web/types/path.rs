@@ -21,12 +21,12 @@ use crate::web::FromRequest;
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 ///
 /// /// extract path info from "/{username}/{count}/index.html" url
 /// /// {username} - deserializes to a String
 /// /// {count} -  - deserializes to a u32
-/// async fn index(info: web::Path<(String, u32)>) -> String {
+/// async fn index(info: types::Path<(String, u32)>) -> String {
 ///     format!("Welcome {}! {}", info.0, info.1)
 /// }
 ///
@@ -42,7 +42,7 @@ use crate::web::FromRequest;
 /// implements `Deserialize` trait from *serde*.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, Error};
+/// use kayrx::web::{self, types, App, Error};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -51,7 +51,7 @@ use crate::web::FromRequest;
 /// }
 ///
 /// /// extract `Info` from a path using serde
-/// async fn index(info: web::Path<Info>) -> Result<String, Error> {
+/// async fn index(info: types::Path<Info>) -> Result<String, Error> {
 ///     Ok(format!("Welcome {}!", info.username))
 /// }
 ///
@@ -116,12 +116,12 @@ impl<T: fmt::Display> fmt::Display for Path<T> {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, App};
+/// use kayrx::web::{self, types, App};
 ///
 /// /// extract path info from "/{username}/{count}/index.html" url
 /// /// {username} - deserializes to a String
 /// /// {count} -  - deserializes to a u32
-/// async fn index(info: web::Path<(String, u32)>) -> String {
+/// async fn index(info: types::Path<(String, u32)>) -> String {
 ///     format!("Welcome {}! {}", info.0, info.1)
 /// }
 ///
@@ -137,7 +137,7 @@ impl<T: fmt::Display> fmt::Display for Path<T> {
 /// implements `Deserialize` trait from *serde*.
 ///
 /// ```rust
-/// use kayrx::web::{web, App, Error};
+/// use kayrx::web::{self, types, App, Error};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize)]
@@ -146,7 +146,7 @@ impl<T: fmt::Display> fmt::Display for Path<T> {
 /// }
 ///
 /// /// extract `Info` from a path using serde
-/// async fn index(info: web::Path<Info>) -> Result<String, Error> {
+/// async fn index(info: types::Path<Info>) -> Result<String, Error> {
 ///     Ok(format!("Welcome {}!", info.username))
 /// }
 ///
@@ -195,8 +195,8 @@ where
 /// Path extractor configuration
 ///
 /// ```rust
-/// use kayrx::web::web::PathConfig;
-/// use kayrx::web::{error, web, App, FromRequest, HttpResponse};
+/// use kayrx::web::types::PathConfig;
+/// use kayrx::web::{ error, self, types, App, FromRequest, HttpResponse};
 /// use serde_derive::Deserialize;
 ///
 /// #[derive(Deserialize, Debug)]
@@ -208,7 +208,7 @@ where
 /// }
 ///
 /// // deserialize `Info` from request's path
-/// async fn index(folder: web::Path<Folder>) -> String {
+/// async fn index(folder: types::Path<Folder>) -> String {
 ///     format!("Selected folder: {:?}!", folder)
 /// }
 ///

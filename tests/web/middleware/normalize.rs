@@ -2,7 +2,7 @@ use kayrx::service::{IntoService, Service, Transform};
 use futures::future::ok;
 use kayrx::web::dev::ServiceRequest;
 use kayrx::web::test::{call_service, init_service, TestRequest};
-use kayrx::web::{web, App};
+use kayrx::web::{self, App};
 use kayrx::http::Response as HttpResponse;
 use kayrx::web::middleware::NormalizePath;
 

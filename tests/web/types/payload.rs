@@ -1,6 +1,6 @@
 use bytes::Bytes;
 use kayrx::web::*;
-use kayrx::web::web::PayloadConfig;
+use kayrx::web::types::PayloadConfig;
 use kayrx::web::error::*;
 use kayrx::http::header;
 use kayrx::web::test::TestRequest;

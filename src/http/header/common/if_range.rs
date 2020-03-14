@@ -36,8 +36,8 @@ use crate::http::httpmessage::HttpMessage;
 /// # Examples
 ///
 /// ```rust
-/// use eternal::http::Response;
-/// use eternal::http::header::{EntityTag, IfRange};
+/// use kayrx::http::Response;
+/// use kayrx::http::header::{EntityTag, IfRange};
 ///
 /// let mut builder = Response::Ok();
 /// builder.set(IfRange::EntityTag(EntityTag::new(
@@ -47,8 +47,8 @@ use crate::http::httpmessage::HttpMessage;
 /// ```
 ///
 /// ```rust
-/// use eternal::http::Response;
-/// use eternal::http::header::IfRange;
+/// use kayrx::http::Response;
+/// use kayrx::http::header::IfRange;
 /// use std::time::{Duration, SystemTime};
 ///
 /// let mut builder = Response::Ok();

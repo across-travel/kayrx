@@ -11,7 +11,7 @@ extern crate log;
 
 #[cfg(not(test))] 
 pub use kayrx_macro::main;
-pub use kayrx_macro::{test, connect, delete, get, post, head, options, patch, put, trace};
+pub use kayrx_macro::test;
 pub mod codec;
 pub mod connect;
 pub mod fiber;

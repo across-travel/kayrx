@@ -1,4 +1,4 @@
-//! Helper types
+//! Web Helper types
 
 pub(crate) mod form;
 pub(crate) mod json;

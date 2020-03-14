@@ -84,7 +84,7 @@ where
     ///
     /// ```rust
     /// use std::cell::Cell;
-    /// use kayrx::web::{web, App, HttpResponse, Responder};
+    /// use kayrx::web::{self, App, HttpResponse, Responder};
     ///
     /// struct MyData {
     ///     counter: Cell<usize>,
@@ -193,9 +193,9 @@ where
     /// multiple resources with one route would be registered for same resource path.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpResponse};
+    /// use kayrx::web::{self, types, App, HttpResponse};
     ///
-    /// async fn index(data: web::Path<(String, String)>) -> &'static str {
+    /// async fn index(data: types::Path<(String, String)>) -> &'static str {
     ///     "Welcome!"
     /// }
     ///
@@ -217,7 +217,7 @@ where
     ///
     /// Http service is any type that implements `HttpServiceFactory` trait.
     ///
-    /// Actix web provides several services implementations:
+    /// kayrx web provides several services implementations:
     ///
     /// * *Resource* is an entry in resource table which corresponds to requested URL.
     /// * *Scope* is a set of resources with common root path.
@@ -236,7 +236,7 @@ where
     /// It is possible to use services like `Resource`, `Route`.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpResponse};
+    /// use kayrx::web::{self, App, HttpResponse};
     ///
     /// async fn index() -> &'static str {
     ///     "Welcome!"
@@ -254,7 +254,7 @@ where
     /// It is also possible to use static files as default service.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpResponse};
+    /// use kayrx::web::{self, App, HttpResponse};
     ///
     /// fn main() {
     ///     let app = App::new()
@@ -291,7 +291,7 @@ where
     /// `HttpRequest::url_for()` will work as expected.
     ///
     /// ```rust
-    /// use kayrx::web::{web, App, HttpRequest, HttpResponse, Result};
+    /// use kayrx::web::{self, App, HttpRequest, HttpResponse, Result};
     ///
     /// async fn index(req: HttpRequest) -> Result<HttpResponse> {
     ///     let url = req.url_for("youtube", &["asdlkjqme"])?;
@@ -334,7 +334,7 @@ where
     ///
     /// ```rust
     /// use kayrx::service::Service;
-    /// use kayrx::web::{middleware, web, App};
+    /// use kayrx::web::{middleware, self, App};
     /// use kayrx::http::{header::CONTENT_TYPE, HeaderValue};
     ///
     /// async fn index() -> &'static str {
@@ -392,7 +392,7 @@ where
     ///
     /// ```rust
     /// use kayrx::service::Service;
-    /// use kayrx::web::{web, App};
+    /// use kayrx::web::{self, App};
     /// use kayrx::http::{header::CONTENT_TYPE, HeaderValue};
     ///
     /// async fn index() -> &'static str {
@@ -482,7 +482,7 @@ where
 //     use crate::web::middleware::DefaultHeaders;
 //     use crate::web::service::ServiceRequest;
 //     use crate::web::test::{call_service, init_service, read_body, TestRequest};
-//     use crate::web::{web, HttpRequest, HttpResponse};
+//     use crate::web::{self, HttpRequest, HttpResponse};
 
 //     #[kayrx::test]
 //     async fn test_default_resource() {

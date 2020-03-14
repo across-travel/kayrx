@@ -48,7 +48,7 @@ pub trait FromRequest: Sized {
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, dev, App, Error, HttpRequest, FromRequest};
+/// use kayrx::web::{self, dev, App, Error, HttpRequest, FromRequest};
 /// use kayrx::web::error::ErrorBadRequest;
 /// use futures::future::{ok, err, Ready};
 /// use serde_derive::Deserialize;
@@ -120,7 +120,7 @@ where
 /// ## Example
 ///
 /// ```rust
-/// use kayrx::web::{web, dev, App, Result, Error, HttpRequest, FromRequest};
+/// use kayrx::web::{self, dev, App, Result, Error, HttpRequest, FromRequest};
 /// use kayrx::web::error::ErrorBadRequest;
 /// use futures::future::{ok, err, Ready};
 /// use serde_derive::Deserialize;

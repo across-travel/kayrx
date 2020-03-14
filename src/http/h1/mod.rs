@@ -21,6 +21,10 @@ pub use self::service::{H1Service, H1ServiceHandler, OneRequest};
 pub use self::upgrade::UpgradeHandler;
 pub use self::utils::SendResponse;
 
+pub mod dev {
+    pub use super::dispatcher::{DispatcherState, Flags};
+}
+
 #[derive(Debug)]
 /// Codec message
 pub enum Message<T> {

@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
 use kayrx::web::test::{init_service, TestRequest};
-use kayrx::web::{web, App};
+use kayrx::web::{self, App};
 use kayrx::http::Response as HttpResponse;
 use kayrx::service::Service;
 

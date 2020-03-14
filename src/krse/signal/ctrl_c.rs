@@ -32,9 +32,10 @@ use std::io;
 ///
 /// # Examples
 ///
-/// ```rust,no_run
+/// ```rust
 /// use kayrx::krse::signal;
 ///
+/// #[kayrx::main]
 /// async fn main() {
 ///     println!("waiting for ctrl-c");
 ///

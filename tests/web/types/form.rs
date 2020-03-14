@@ -5,7 +5,7 @@ use kayrx::http::header::{HeaderValue, CONTENT_TYPE, CONTENT_LENGTH};
 use kayrx::web::test::TestRequest;
 use kayrx::web::error::*;
 use kayrx::web::*;
-use kayrx::web::web::*;
+use kayrx::web::types::*;
 use kayrx::web::dev::*;
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]

@@ -240,7 +240,7 @@ impl DispositionParam {
 /// # Example
 ///
 /// ```
-/// use eternal::http::header::{
+/// use kayrx::http::header::{
 ///     Charset, ContentDisposition, DispositionParam, DispositionType,
 ///     ExtendedValue,
 /// };

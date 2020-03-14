@@ -15,6 +15,7 @@
 //! ```rust,no_run
 //! use kayrx::krse::signal;
 //!
+//! #[kayrx::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     signal::ctrl_c().await?;
 //!     println!("ctrl-c received!");
@@ -25,9 +26,9 @@
 //! Wait for SIGHUP on Unix
 //!
 //! ```rust,no_run
-//! # #[cfg(unix)] {
 //! use kayrx::krse::signal::unix::{signal, SignalKind};
 //!
+//! #[kayrx::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     // An infinite stream of hangup signals.
 //!     let mut stream = signal(SignalKind::hangup())?;
@@ -38,11 +39,10 @@
 //!         println!("got signal HUP");
 //!     }
 //! }
-//! # }
 //! ```
 
 mod ctrl_c;
-pub(crate) mod hook; 
+pub mod hook; 
 pub mod unix;
 mod registry;
 

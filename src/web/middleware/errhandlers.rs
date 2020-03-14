@@ -30,7 +30,7 @@ type ErrorHandler<B> = dyn Fn(ServiceResponse<B>) -> Result<ErrorHandlerResponse
 ///
 /// ```rust
 /// use kayrx::web::middleware::errhandlers::{ErrorHandlers, ErrorHandlerResponse};
-/// use kayrx::web::{web, dev, App, HttpRequest, HttpResponse, Result};
+/// use kayrx::web::{self, dev, App, HttpRequest, HttpResponse, Result};
 /// use kayrx::http;
 ///
 /// fn render_500<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHandlerResponse<B>> {
