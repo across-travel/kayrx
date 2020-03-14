@@ -1,3 +1,5 @@
+//! General Multi-thread Server
+
 mod accept;
 mod builder;
 mod config;

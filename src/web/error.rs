@@ -1,4 +1,6 @@
 //! Error and Result module
+
+use std::result;
 use derive_more::{Display, From};
 use serde_json::error::Error as JsonError;
 use url::ParseError as UrlParseError;
@@ -6,6 +8,10 @@ use url::ParseError as UrlParseError;
 use crate::http::{StatusCode, Response as HttpResponse};
 
 pub(crate) use crate::http::error::*;
+
+/// A specialized [`Result`](https://doc.rust-lang.org/std/result/enum.Result.html)
+/// for kayrx.
+pub type Result<T, E = Error> = result::Result<T, E>;
 
 /// Errors which can occur when attempting to generate resource uri.
 #[derive(Debug, PartialEq, Display, From)]

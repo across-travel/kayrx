@@ -421,6 +421,7 @@ impl<B: MessageBody> fmt::Debug for ServiceResponse<B> {
     }
 }
 
+/// Web Service Helper
 pub struct WebService {
     rdef: Vec<String>,
     name: Option<String>,

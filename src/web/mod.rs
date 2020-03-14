@@ -1,3 +1,65 @@
+//! Web framework and services of kayrx for the Rust.
+//! 
+//! ```rust
+//! use kayrx::web::{web, App, HttpServer, Responder};
+//!
+//! #[get("/{id}/{name}/index.html")]
+//! async fn index(info: web::Path<(u32, String)>) -> impl Responder {
+//!     format!("Hello {}! id:{}", info.1, info.0)
+//! }
+//!
+//! #[kayrx::main]
+//! async fn main() -> std::io::Result<()> {
+//!     HttpServer::new(|| App::new().service(index))
+//!         .bind("127.0.0.1:8080")?
+//!         .run()
+//!         .await
+//! }
+//! ```
+//! 
+//! ## Documentation & Resources
+//!
+//!
+//! * [Website](https://kayrx.github.io/kayrx/)
+//! * [Examples](https://github.com/kayrx/awesome/tree/master/examples)
+//!
+//! To main API pages:
+//!
+//! * [App](struct.App.html): This struct represents an kayrx-web
+//!   application and is used to configure routes and other common
+//!   settings.
+//!
+//! * [HttpServer](struct.HttpServer.html): This struct
+//!   represents an HTTP server instance and is used to instantiate and
+//!   configure servers.
+//!
+//! * [web](web/index.html): This module
+//!   provides essential helper functions and types for application registration.
+//!
+//! * [HttpRequest](struct.HttpRequest.html) and
+//!   [HttpResponse](struct.HttpResponse.html): These structs
+//!   represent HTTP requests and responses and expose various methods
+//!   for inspecting, creating and otherwise utilizing them.
+//!
+//! ## Features
+//!
+//! * Supported *HTTP/1.x* and *HTTP/2.0* protocols
+//! * Streaming and pipelining
+//! * Keep-alive and slow requests handling
+//! * `WebSockets` server/client
+//! * Transparent content compression/decompression (br, gzip, deflate)
+//! * Configurable request routing
+//! * Multipart streams
+//! * SSL support with Rustls
+//! * Middlewares (`Logger`,  `CORS`, `DefaultHeaders` etc.)
+//! * Static assets
+//! * Async Web Client.
+//!
+//! ## Package feature
+//!
+//! * `cookie` - enables http cookie support.
+//! 
+
 mod app;
 mod app_service;
 mod config;
@@ -13,7 +75,7 @@ mod route;
 mod scope;
 mod server;
 mod service;
-mod types;
+mod web;
 
 pub mod error;
 pub mod file;
@@ -21,10 +83,12 @@ pub mod guard;
 pub mod middleware;
 pub mod multipart;
 pub mod test;
-pub mod web;
+pub mod types;
 pub mod client;
 
 pub use self::app::App;
+pub use self::config::ServiceConfig;
+pub use self::data::Data;
 pub use self::extract::FromRequest;
 pub use self::request::HttpRequest;
 pub use self::resource::Resource;
@@ -32,6 +96,13 @@ pub use self::responder::{Either, Responder};
 pub use self::route::Route;
 pub use self::scope::Scope;
 pub use self::server::HttpServer;
+pub use self::service::WebService;
+pub use self::web::*;
+
+pub use crate::http::Response as HttpResponse;
+pub use crate::http::ResponseBuilder as HttpResponseBuilder;
+pub use bytes::{Bytes, BytesMut};
+pub use futures_channel::oneshot::Canceled;
 
 pub mod dev {
     //! The `kayrx` prelude for library developers
@@ -110,4 +181,3 @@ pub mod dev {
         }
     }
 }
-

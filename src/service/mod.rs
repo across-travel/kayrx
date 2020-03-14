@@ -1,3 +1,5 @@
+//! Asynchronous function from Request to Response.
+
 use std::cell::RefCell;
 use std::future::Future;
 use std::rc::Rc;

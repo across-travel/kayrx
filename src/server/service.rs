@@ -2,7 +2,6 @@ use std::marker::PhantomData;
 use std::net::SocketAddr;
 use std::task::{Context, Poll};
 use std::time::Duration;
-
 use futures_util::future::{err, ok, LocalBoxFuture, Ready};
 use futures_util::{FutureExt, TryFutureExt};
 use log::error;

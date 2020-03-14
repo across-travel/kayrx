@@ -2,8 +2,6 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::time::Duration;
 use std::{io, mem, net};
-
-use crate::krse::net::TcpStream;
 use futures_core::{Future, Stream};
 use futures_channel::mpsc::{unbounded, UnboundedReceiver};
 use futures_channel::oneshot;
@@ -14,6 +12,7 @@ use log::{error, info};
 use net2::TcpBuilder;
 use num_cpus;
 
+use crate::krse::net::TcpStream;
 use crate::timer::{delay_until, Instant};
 use crate::fiber::{spawn, System};
 use crate::server::accept::{AcceptLoop, AcceptNotify, Command};

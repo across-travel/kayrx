@@ -106,7 +106,7 @@ where
     BLOCKING.with(|cell| {
         let schedule = match cell.get() {
             Some(ptr) => unsafe { &*ptr },
-            None => panic!("not currently running on the Tokio runtime."),
+            None => panic!("not currently running on the runtime."),
         };
 
         let (task, handle) = fiber::joinable(BlockingFiber::new(func));

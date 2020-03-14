@@ -1,4 +1,4 @@
-//! A runtime implementation that runs everything on the current thread.
+//! The runtime implementation that runs everything on the current thread.
 
 pub(crate) mod inner;
 pub(crate) mod block_pool;
@@ -38,7 +38,7 @@ use std::future::Future;
 /// # Panics
 ///
 /// This function panics if  system is not running.
-pub fn spawn<F>(f: F)
+pub fn spawn<F>(future: F)
 where
     F: futures_core::Future<Output = ()> + 'static,
 {
@@ -46,18 +46,19 @@ where
         panic!("System is not running");
     }
 
-    Arbiter::spawn(f);
+    Arbiter::spawn(future);
 }
 
-pub fn take<T>(task: T) -> JoinHandle<T::Output>
+/// Take fiber to  global  runtime executor.
+pub fn take<T>(fiber: T) -> JoinHandle<T::Output>
 where
     T: Future + Send + 'static,
     T::Output: Send + 'static,
 {
-    context::spawn(task)
+    context::spawn(fiber)
 }
 
-
+/// Run fiber  on the Threadpool.
 pub fn run<F, R>(f: F) -> JoinHandle<R>
 where
     F: FnOnce() -> R + Send + 'static,
