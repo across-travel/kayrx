@@ -9,6 +9,8 @@
 #[macro_use]
 extern crate log;
 
+extern crate alloc;
+
 #[cfg(not(test))] 
 pub use kayrx_macro::main;
 pub use kayrx_macro::test;
@@ -17,6 +19,7 @@ pub mod connect;
 pub mod fiber;
 pub mod framed;
 pub mod http;
+pub mod jrpc;
 pub mod krse;
 pub mod router;
 pub mod secure;
