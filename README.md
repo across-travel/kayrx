@@ -37,6 +37,7 @@
 * Timer :  timeouts, delays, and intervals.
 * Codec : Decode, Encode, Framed
 * Supported HTTP/1.x and HTTP/2.0 protocols
+* JsonRPC server, client and utils
 * Streaming and pipelining
 * Keep-alive and slow requests handling
 * Server/Client WebSockets support
