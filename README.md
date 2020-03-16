@@ -49,15 +49,7 @@
 * Middlewares (Logger, CORS, etc)
 * Asynchronous HTTP client
 
-## Ecosystem Component Librarys
-
-- [keclc-file](https://github.com/kayrx/keclc/tree/master/keclc-file)
-- [keclc-framed	](https://github.com/kayrx/keclc/tree/master/keclc-framed)
-- [keclc-httpauth](https://github.com/kayrx/keclc/tree/master/keclc-httpauth)
-- [keclc-ioframe](https://github.com/kayrx/keclc/tree/master/keclc-ioframe)
-- [keclc-multipart](https://github.com/kayrx/keclc/tree/master/keclc-multipart)
-
-[And More](https://github.com/kayrx/keclc)
+[**And More**](https://github.com/kayrx/keclc)
 
 ## Example
 
@@ -65,19 +57,16 @@ Dependencies:
 
 ```toml
 [dependencies]
-kayrx = "0.7"
+kayrx = "0.9"
 ```
 
 Code:
 
 ```rust
-#[macro_use]
-extern crate kayrx;
-
-use kayrx::web::{web, App, HttpServer, Responder};
+use kayrx::web::{self, types, App, HttpServer, Responder};
 
 #[get("/{id}/{name}/index.html")]
-async fn index(info: web::Path<(u32, String)>) -> impl Responder {
+async fn index(info: types::Path<(u32, String)>) -> impl Responder {
     format!("Hello {}! id:{}", info.1, info.0)
 }
 
