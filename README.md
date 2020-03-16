@@ -63,7 +63,7 @@ kayrx = "0.9"
 Code:
 
 ```rust
-use kayrx::web::{self, types, App, HttpServer, Responder};
+use kayrx::web::{self, get,types, App, HttpServer, Responder};
 
 #[get("/{id}/{name}/index.html")]
 async fn index(info: types::Path<(u32, String)>) -> impl Responder {
