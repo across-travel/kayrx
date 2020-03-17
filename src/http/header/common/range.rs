@@ -39,7 +39,7 @@ use header::{Header, Raw};
 /// # Examples
 ///
 /// ```
-/// use hyper::header::{Headers, Range, ByteRangeSpec};
+/// use kayrx::http::header::{Headers, Range, ByteRangeSpec};
 ///
 /// let mut headers = Headers::new();
 /// headers.set(Range::Bytes(
@@ -51,7 +51,7 @@ use header::{Header, Raw};
 /// ```
 ///
 /// ```
-/// use hyper::header::{Headers, Range};
+/// use kayrx::http::header::{Headers, Range};
 ///
 /// let mut headers = Headers::new();
 /// headers.set(Range::bytes(1, 100));

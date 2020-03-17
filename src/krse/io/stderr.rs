@@ -23,7 +23,7 @@ use std::task::Poll;
     /// Constructs a new handle to the standard error of the current process.
     ///
     /// The returned handle allows writing to standard error from the within the
-    /// Tokio runtime.
+    /// kayrx runtime.
     pub fn stderr() -> Stderr {
         let std = io::stderr();
         Stderr {

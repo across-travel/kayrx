@@ -17,15 +17,15 @@ macro_rules! ready {
 /// # DNS
 ///
 /// Implementations of `ToSocketAddrs` for string types require a DNS lookup.
-/// These implementations are only provided when Tokio is used with the
+/// These implementations are only provided when kayrx is used with the
 /// **`dns`** feature flag.
 ///
 /// # Calling
 ///
-/// Currently, this trait is only used as an argument to Tokio functions that
+/// Currently, this trait is only used as an argument to kayrx functions that
 /// need to reference a target socket address.
 ///
-/// This trait is sealed and is intended to be opaque. Users of Tokio should
+/// This trait is sealed and is intended to be opaque. Users of kayrx should
 /// only use `ToSocketAddrs` in trait bounds and __must not__ attempt to call
 /// the functions directly or reference associated types. Changing these is not
 /// considered a breaking change.

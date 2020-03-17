@@ -142,7 +142,7 @@ impl TestServerRuntime {
         self.system.stop();
     }
 
-    /// Connect to server, return tokio TcpStream
+    /// Connect to server, return kayrx TcpStream
     pub fn connect(&self) -> std::io::Result<TcpStream> {
         TcpStream::from_std(net::TcpStream::connect(self.addr)?)
     }

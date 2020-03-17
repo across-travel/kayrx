@@ -37,7 +37,7 @@ fn notifications_work() {
         (c, RawServer::new(s))
     };
 
-    async_std::task::spawn(async move {
+    kayrx::fiber::spawn(async move {
         let n = common::Notification {
             jsonrpc: common::Version::V2,
             method: "foo".to_string(),
@@ -48,7 +48,7 @@ fn notifications_work() {
         client.send_request(request).await.unwrap();
     });
 
-    async_std::task::block_on(async move {
+    kayrx::fiber::run(async move {
         match server.next_event().await {
             RawServerEvent::Notification(n) => {
                 assert_eq!(n.method(), "foo");
@@ -79,7 +79,7 @@ fn subscriptions_work() {
         (c, RawServer::new(s))
     };
 
-    async_std::task::spawn(async move {
+    kayrx::fiber::spawn(async move {
         let request = common::Request::Single(common::Call::MethodCall(common::MethodCall {
             jsonrpc: common::Version::V2,
             method: "foo".to_string(),
@@ -112,7 +112,7 @@ fn subscriptions_work() {
         // server side.
     });
 
-    async_std::task::block_on(async move {
+    kayrx::fiber::run(async move {
         let sub_id = match server.next_event().await {
             RawServerEvent::Request(rq) => {
                 assert_eq!(rq.method(), "foo");

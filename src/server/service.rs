@@ -8,7 +8,7 @@ use log::error;
 
 use super::Token;
 use crate::fiber::spawn;
-use crate::service::{self as kayrx, Service, ServiceFactory as ActixServiceFactory};
+use crate::service::{self as kayrx, Service, ServiceFactory as KayrxServiceFactory};
 use crate::server::socket::{FromStream, StdStream};
 use crate::krse::task::counter::CounterGuard;
 

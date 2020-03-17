@@ -1,4 +1,4 @@
-//! Test Various helpers for Actix applications to use during testing.
+//! Test Various helpers for kayrx applications to use during testing.
 use std::convert::TryFrom;
 use std::fmt::Write as FmtWrite;
 use std::io::{self, Read, Write};

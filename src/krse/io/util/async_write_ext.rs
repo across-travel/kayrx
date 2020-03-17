@@ -35,10 +35,9 @@ use bytes::Buf;
     /// As a convenience, this trait may be imported using the [`prelude`]:
     ///
     /// ```no_run
-    /// use tokio::prelude::*;
-    /// use tokio::fs::File;
+    /// use kayrx::krse::fs::File;
     ///
-    /// #[tokio::main]
+    /// #[kayrx::main]
     /// async fn main() -> io::Result<()> {
     ///     let data = b"some bytes";
     ///
@@ -93,10 +92,10 @@ use bytes::Buf;
         /// # Examples
         ///
         /// ```no_run
-        /// use tokio::io::{self, AsyncWriteExt};
-        /// use tokio::fs::File;
+        /// use kayrx::krse::io::{self, AsyncWriteExt};
+        /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut file = File::create("foo.txt").await?;
         ///
@@ -155,13 +154,13 @@ use bytes::Buf;
         /// [`Buf`]: bytes::Buf
         ///
         /// ```no_run
-        /// use tokio::io::{self, AsyncWriteExt};
-        /// use tokio::fs::File;
+        /// use kayrx::krse::io::{self, AsyncWriteExt};
+        /// use kayrx::krse::fs::File;
         ///
         /// use bytes::Buf;
         /// use std::io::Cursor;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut file = File::create("foo.txt").await?;
         ///     let mut buffer = Cursor::new(b"data to write");
@@ -205,10 +204,10 @@ use bytes::Buf;
         /// # Examples
         ///
         /// ```no_run
-        /// use tokio::io::{self, AsyncWriteExt};
-        /// use tokio::fs::File;
+        /// use kayrx::krse::io::{self, AsyncWriteExt};
+        /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut buffer = File::create("foo.txt").await?;
         ///
@@ -248,9 +247,9 @@ use bytes::Buf;
             /// Write unsigned 8 bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -285,9 +284,9 @@ use bytes::Buf;
             /// Write unsigned 8 bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -323,9 +322,9 @@ use bytes::Buf;
             /// Write unsigned 16-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -361,9 +360,9 @@ use bytes::Buf;
             /// Write signed 16-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -399,9 +398,9 @@ use bytes::Buf;
             /// Write unsigned 32-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -437,9 +436,9 @@ use bytes::Buf;
             /// Write signed 32-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -475,9 +474,9 @@ use bytes::Buf;
             /// Write unsigned 64-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -513,9 +512,9 @@ use bytes::Buf;
             /// Write signed 64-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -551,9 +550,9 @@ use bytes::Buf;
             /// Write unsigned 128-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -591,9 +590,9 @@ use bytes::Buf;
             /// Write signed 128-bit integers to a `AsyncWrite`:
             ///
             /// ```rust
-            /// use tokio::io::{self, AsyncWriteExt};
+            /// use kayrx::krse::io::{self, AsyncWriteExt};
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut writer = Vec::new();
             ///
@@ -626,10 +625,10 @@ use bytes::Buf;
         /// # Examples
         ///
         /// ```no_run
-        /// use tokio::io::{self, BufWriter, AsyncWriteExt};
-        /// use tokio::fs::File;
+        /// use kayrx::krse::io::{self, BufWriter, AsyncWriteExt};
+        /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let f = File::create("foo.txt").await?;
         ///     let mut buffer = BufWriter::new(f);
@@ -663,10 +662,10 @@ use bytes::Buf;
         /// # Examples
         ///
         /// ```no_run
-        /// use tokio::io::{self, BufWriter, AsyncWriteExt};
-        /// use tokio::fs::File;
+        /// use kayrx::krse::io::{self, BufWriter, AsyncWriteExt};
+        /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let f = File::create("foo.txt").await?;
         ///     let mut buffer = BufWriter::new(f);

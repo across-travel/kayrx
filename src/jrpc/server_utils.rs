@@ -31,7 +31,6 @@
 pub mod access_control;
 pub mod cors;
 pub mod hosts;
-pub mod utils;
 
 mod matcher;
 

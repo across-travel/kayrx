@@ -2,7 +2,7 @@
 //!
 //! This module contains utility methods and adapter types for input/output to
 //! files or standard streams (`Stdin`, `Stdout`, `Stderr`), and
-//! filesystem manipulation, for use within (and only within) a Tokio runtime.
+//! filesystem manipulation, for use within (and only within) a kayrx runtime.
 //!
 //! Tasks run by *worker* threads should not block, as this could delay
 //! servicing reactor events. Portable filesystem operations are blocking,

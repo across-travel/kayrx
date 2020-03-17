@@ -110,7 +110,7 @@ impl crate::krse::stream::Stream for ReadDir {
 /// [`ReadDir`]: struct.ReadDir.html
 ///
 /// This is a specialized version of [`std::fs::DirEntry`] for usage from the
-/// Tokio runtime.
+/// kayrx runtime.
 ///
 /// An instance of `DirEntry` represents an entry inside of a directory on the
 /// filesystem. Each entry can be inspected via methods to learn about the full

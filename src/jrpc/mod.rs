@@ -65,7 +65,7 @@
 //! [`start_request`](raw::client::RawClient::start_request) method to perform requests.
 //!
 //! ```no_run
-//! let result: String = async_std::task::block_on(async {
+//! let result: String = kayrx::fiber::run(async {
 //!     let mut transport = jsonrpsee::transport::http::HttpTransportClient::new("http://localhost:8000");
 //!     let mut client = jsonrpsee::raw::RawClient::new(transport);
 //!     let request_id = client.start_request("system_name", jsonrpsee::common::Params::None).await.unwrap();
@@ -81,7 +81,7 @@
 //! ```no_run
 //! # jsonrpsee::rpc_api! { System { fn system_name() -> String; } }
 //! # fn main() {
-//! let result = async_std::task::block_on(async {
+//! let result = kayrx::fiber::run(async {
 //!     let mut transport = jsonrpsee::transport::http::HttpTransportClient::new("http://localhost:8000");
 //!     let mut client = jsonrpsee::raw::RawClient::new(transport);
 //!     System::system_name(&mut client).await
@@ -103,7 +103,7 @@
 //!
 //! ```no_run
 //! // Should run forever
-//! async_std::task::block_on(async {
+//! kayrx::fiber::run(async {
 //!     let mut transport = jsonrpsee::transport::http::HttpTransportServer::bind(&"localhost:8000".parse().unwrap()).await.unwrap();
 //!     let mut server = jsonrpsee::raw::RawServer::new(transport);
 //!     loop {
@@ -131,7 +131,7 @@
 //! # jsonrpsee::rpc_api! { System { fn system_name() -> String; } }
 //! # fn main() {
 //! // Should run forever
-//! async_std::task::block_on(async {
+//! kayrx::fiber::run(async {
 //!     let mut transport = jsonrpsee::transport::http::HttpTransportServer::bind(&"localhost:8000".parse().unwrap()).await.unwrap();
 //!     let mut server = jsonrpsee::raw::RawServer::new(transport);
 //!     while let Ok(request) = System::next_request(&mut server).await {
@@ -189,27 +189,3 @@ pub fn local_raw() -> (
     let server = raw::RawServer::new(server);
     (client, server)
 }
-
-// /// Builds a new HTTP server.
-// #[cfg(feature = "http")]
-// #[cfg_attr(docsrs, doc(cfg(feature = "http")))]
-// pub async fn http_server(addr: &SocketAddr) -> Result<Server, Box<dyn error::Error + Send + Sync>> {
-//     let transport = transport::http::HttpTransportServer::bind(addr).await?;
-//     Ok(From::from(raw::RawServer::new(transport)))
-// }
-
-// /// Builds a new HTTP client.
-// #[cfg(feature = "http")]
-// #[cfg_attr(docsrs, doc(cfg(feature = "http")))]
-// pub fn http_client(addr: &str) -> Client {
-//     let transport = transport::http::HttpTransportClient::new(addr);
-//     Client::from(raw::RawClient::new(transport))
-// }
-
-// /// Builds a new WebSockets client.
-// #[cfg(feature = "ws")]
-// #[cfg_attr(docsrs, doc(cfg(feature = "ws")))]
-// pub async fn ws_client(target: &str) -> Result<Client, transport::ws::WsNewDnsError> {
-//     let transport = transport::ws::WsTransportClient::new(target).await?;
-//     Ok(Client::from(raw::RawClient::new(transport)))
-// }

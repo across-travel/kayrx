@@ -14,7 +14,7 @@ async fn index(req: HttpRequest) -> Result<NamedFile> {
 
 #[kayrx::main]
 async fn main() -> std::io::Result<()> {
-    use actix_web::{web, App, HttpServer};
+    use kayrx::web::{web, App, HttpServer};
 
     HttpServer::new(|| App::new().route("/{filename:.*}", web::get().to(index)))
         .bind("127.0.0.1:8088")?
@@ -31,7 +31,7 @@ async fn main() -> std::io::Result<()> {
 use keclc_files as fs;
 use kayrx::web::{App, HttpServer};
 
-#[actix_rt::main]
+#[kayrx::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new().service(fs::Files::new("/static", ".").show_files_listing())

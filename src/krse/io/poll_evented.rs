@@ -62,7 +62,7 @@ macro_rules! ready {
     /// [`clear_read_ready`].
     ///
     /// ```rust
-    /// use tokio::io::PollEvented;
+    /// use kayrx::krse::io::PollEvented;
     ///
     /// use futures::ready;
     /// use linux::Ready;

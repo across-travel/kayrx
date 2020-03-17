@@ -50,8 +50,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::AsyncBufRead;
-    /// use tokio::io::AsyncBufReadExt;
+    /// # use kayrx::krse::io::AsyncBufRead;
+    /// use kayrx::krse::io::AsyncBufReadExt;
     ///
     /// # async fn dox(my_buf_read: impl AsyncBufRead + Unpin) -> std::io::Result<()> {
     /// let mut segments = my_buf_read.split(b'f');

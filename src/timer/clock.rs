@@ -65,13 +65,13 @@ pub mod clock_util {
     ///
     /// # Panics
     ///
-    /// Panics if time is already frozen or if called from outside of the Tokio
+    /// Panics if time is already frozen or if called from outside of the kayrx::krse
     /// runtime.
     pub fn pause() {
         CLOCK.with(|cell| {
             let ptr = match cell.get() {
                 Some(ptr) => ptr,
-                None => panic!("time cannot be frozen from outside the Tokio runtime"),
+                None => panic!("time cannot be frozen from outside the kayrx::krse runtime"),
             };
 
             let clock = unsafe { &*ptr };
@@ -92,13 +92,13 @@ pub mod clock_util {
     ///
     /// # Panics
     ///
-    /// Panics if time is not frozen or if called from outside of the Tokio
+    /// Panics if time is not frozen or if called from outside of the kayrx::krse
     /// runtime.
     pub fn resume() {
         CLOCK.with(|cell| {
             let ptr = match cell.get() {
                 Some(ptr) => ptr,
-                None => panic!("time cannot be frozen from outside the Tokio runtime"),
+                None => panic!("time cannot be frozen from outside the kayrx::krse runtime"),
             };
 
             let clock = unsafe { &*ptr };
@@ -119,13 +119,13 @@ pub mod clock_util {
     ///
     /// # Panics
     ///
-    /// Panics if time is not frozen or if called from outside of the Tokio
+    /// Panics if time is not frozen or if called from outside of the kayrx::krse
     /// runtime.
     // pub async fn advance(duration: Duration) {
     //     CLOCK.with(|cell| {
     //         let ptr = match cell.get() {
     //             Some(ptr) => ptr,
-    //             None => panic!("time cannot be frozen from outside the Tokio runtime"),
+    //             None => panic!("time cannot be frozen from outside the kayrx::krse runtime"),
     //         };
 
     //         let clock = unsafe { &*ptr };

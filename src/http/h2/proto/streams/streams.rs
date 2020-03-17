@@ -683,7 +683,6 @@ where
         // prioritize layer. If prioritization reorders new streams, this
         // implicitly closes the earlier stream IDs.
         //
-        // See: hyperium/h2#11
         let mut me = self.inner.lock().unwrap();
         let me = &mut *me;
 

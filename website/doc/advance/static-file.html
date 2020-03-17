@@ -11,7 +11,7 @@ async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span cla
 
 <span class="hljs-meta">#\[kayrx::main]</span>
 async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
-    <span class="hljs-keyword">use</span> actix_web::{web, App, HttpServer};
+    <span class="hljs-keyword">use</span> kayrx::web::{web, App, HttpServer};
 
     HttpServer::new(|| App::new().route(<span class="hljs-string">"/{filename:.*}"</span>, web::get().to(index)))
         .bind(<span class="hljs-string">"127.0.0.1:8088"</span>)?
@@ -24,7 +24,7 @@ async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span cla
 <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> keclc_files <span class="hljs-keyword">as</span> fs;
 <span class="hljs-keyword">use</span> kayrx::web::{App, HttpServer};
 
-<span class="hljs-meta">#\[actix_rt::main]</span>
+<span class="hljs-meta">#\[kayrx::main]</span>
 async <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() -&gt; std::io::<span class="hljs-built_in">Result</span>&lt;()&gt; {
     HttpServer::new(|| {
         App::new().service(fs::Files::new(<span class="hljs-string">"/static"</span>, <span class="hljs-string">"."</span>).show_files_listing())

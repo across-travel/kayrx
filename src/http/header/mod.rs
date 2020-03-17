@@ -275,8 +275,6 @@ where
     Ok(())
 }
 
-// From hyper v0.11.27 src/header/parsing.rs
-
 /// The value part of an extended parameter consisting of three parts:
 /// the REQUIRED character set name (`charset`), the OPTIONAL language information (`language_tag`),
 /// and a character sequence representing the actual value (`value`), separated by single quote

@@ -1,5 +1,3 @@
-//! Copied for `hyper::header::shared`;
-
 pub use self::charset::Charset;
 pub use self::encoding::Encoding;
 pub use self::entity::EntityTag;

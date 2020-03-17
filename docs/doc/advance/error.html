@@ -156,7 +156,7 @@
 <pre><code class="language-rust"><div><span class="hljs-keyword">impl</span>&lt;T: Responder, E: <span class="hljs-built_in">Into</span>&lt;Error&gt;&gt; Responder <span class="hljs-keyword">for</span> <span class="hljs-built_in">Result</span>&lt;T, E&gt;
 </div></code></pre>
 <p>上面的代码中的<code>Error</code>是<code>kayrx::web</code>的错误定义，可以将实现<code>ResponseError</code>的任何错误自动转换.。</p>
-<p>Actix-web提供了一些常见的非<code>kayrx::web</code>错误的<code>ResponseError</code>实现。例如，如果处理程序以<code>io::Error</code>响应，则该错误将转换为<code>HttpInternalServerError</code>：</p>
+<p>kayrx-web提供了一些常见的非<code>kayrx::web</code>错误的<code>ResponseError</code>实现。例如，如果处理程序以<code>io::Error</code>响应，则该错误将转换为<code>HttpInternalServerError</code>：</p>
 <pre><code class="language-rust"><div><span class="hljs-keyword">use</span> std::io;
 
 <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">index</span></span>(_req: HttpRequest) -&gt; io::<span class="hljs-built_in">Result</span>&lt;fs::NamedFile&gt; {

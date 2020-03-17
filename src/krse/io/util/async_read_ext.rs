@@ -38,9 +38,8 @@ use bytes::BufMut;
     ///
     /// ```no_run
     /// use kayrx::krse::fs::File;
-    /// use tokio::prelude::*;
     ///
-    /// #[tokio::main]
+    /// #[kayrx::main]
     /// async fn main() -> io::Result<()> {
     ///     let mut f = File::open("foo.txt").await?;
     ///     let mut buffer = [0; 10];
@@ -72,7 +71,7 @@ use bytes::BufMut;
         /// use kayrx::krse::fs::File;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let f1 = File::open("foo.txt").await?;
         ///     let f2 = File::open("bar.txt").await?;
@@ -142,7 +141,7 @@ use bytes::BufMut;
         /// use kayrx::krse::fs::File;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut f = File::open("foo.txt").await?;
         ///     let mut buffer = [0; 10];
@@ -202,7 +201,7 @@ use bytes::BufMut;
         ///
         /// use bytes::BytesMut;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut f = File::open("foo.txt").await?;
         ///     let mut buffer = BytesMut::with_capacity(10);
@@ -266,7 +265,7 @@ use bytes::BufMut;
         /// use kayrx::krse::fs::File;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut f = File::open("foo.txt").await?;
         ///     let mut buffer = [0; 10];
@@ -312,7 +311,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![2, 5]);
             ///
@@ -350,7 +349,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![0x02, 0xfb]);
             ///
@@ -389,7 +388,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![2, 5, 3, 0]);
             ///
@@ -427,7 +426,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![0x00, 0xc1, 0xff, 0x7c]);
             ///
@@ -465,7 +464,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![0x00, 0x00, 0x01, 0x0b]);
             ///
@@ -503,7 +502,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![0xff, 0xff, 0x7a, 0x33]);
             ///
@@ -540,7 +539,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![
             ///         0x00, 0x03, 0x43, 0x95, 0x4d, 0x60, 0x86, 0x83
@@ -579,7 +578,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![0x80, 0, 0, 0, 0, 0, 0, 0]);
             ///
@@ -616,7 +615,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![
             ///         0x00, 0x03, 0x43, 0x95, 0x4d, 0x60, 0x86, 0x83,
@@ -656,7 +655,7 @@ use bytes::BufMut;
             ///
             /// use std::io::Cursor;
             ///
-            /// #[tokio::main]
+            /// #[kayrx::main]
             /// async fn main() -> io::Result<()> {
             ///     let mut reader = Cursor::new(vec![
             ///         0x80, 0, 0, 0, 0, 0, 0, 0,
@@ -698,7 +697,7 @@ use bytes::BufMut;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut f = File::open("foo.txt").await?;
         ///     let mut buffer = Vec::new();
@@ -746,7 +745,7 @@ use bytes::BufMut;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let mut f = File::open("foo.txt").await?;
         ///     let mut buffer = String::new();
@@ -782,7 +781,7 @@ use bytes::BufMut;
         /// use kayrx::krse::io::{self, AsyncReadExt};
         /// use kayrx::krse::fs::File;
         ///
-        /// #[tokio::main]
+        /// #[kayrx::main]
         /// async fn main() -> io::Result<()> {
         ///     let f = File::open("foo.txt").await?;
         ///     let mut buffer = [0; 5];

@@ -7,7 +7,7 @@
 //! the HTTP/2.0 handshake. See [here](../index.html#handshake) for more
 //! details.
 //!
-//! This could be as basic as using Tokio's [`TcpStream`] to connect to a remote
+//! This could be as basic as using kayrx's [`TcpStream`] to connect to a remote
 //! host, but usually it means using either ALPN or HTTP/1.1 protocol upgrades.
 //!
 //! Once a connection is obtained, it is passed to [`handshake`], which will
@@ -70,14 +70,14 @@
 //!
 //! use http::{Request, Method};
 //! use std::error::Error;
-//! use tokio::net::TcpStream;
+//! use kayrx::krse::net::TcpStream;
 //!
-//! #[tokio::main]
+//! #[kayrx::main]
 //! pub async fn main() -> Result<(), Box<dyn Error>> {
 //!     // Establish TCP connection to the server.
 //!     let tcp = TcpStream::connect("127.0.0.1:5928").await?;
 //!     let (h2, connection) = client::handshake(tcp).await?;
-//!     tokio::spawn(async move {
+//!     kayrx::spawn(async move {
 //!         connection.await.unwrap();
 //!     });
 //!
@@ -117,9 +117,7 @@
 //! }
 //! ```
 //!
-//! [`TcpStream`]: https://docs.rs/tokio-core/0.1/tokio_core/net/struct.TcpStream.html
 //! [`handshake`]: fn.handshake.html
-//! [executor]: https://docs.rs/futures/0.1/futures/future/trait.Executor.html
 //! [`SendRequest`]: struct.SendRequest.html
 //! [`SendStream`]: ../struct.SendStream.html
 //! [Making requests]: #making-requests
@@ -208,7 +206,7 @@ pub struct ReadySendRequest<B: Buf> {
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::client;
 /// # use h2::client::*;
 /// #
@@ -217,7 +215,7 @@ pub struct ReadySendRequest<B: Buf> {
 /// # {
 ///     let (send_request, connection) = client::handshake(my_io).await?;
 ///     // Submit the connection handle to an executor.
-///     tokio::spawn(async { connection.await.expect("connection failed"); });
+///     kayrx::spawn(async { connection.await.expect("connection failed"); });
 ///
 ///     // Now, use `send_request` to initialize HTTP/2.0 streams.
 ///     // ...
@@ -286,7 +284,7 @@ pub struct PushPromises {
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::client::*;
 /// # use bytes::Bytes;
 /// #
@@ -592,7 +590,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -634,7 +632,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -669,7 +667,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -703,7 +701,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -743,7 +741,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -792,7 +790,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -833,7 +831,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -878,7 +876,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -923,7 +921,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use std::time::Duration;
     /// # use bytes::Bytes;
@@ -961,7 +959,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use std::time::Duration;
     /// # use bytes::Bytes;
@@ -1019,7 +1017,7 @@ impl Builder {
     /// Basic usage:
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// # use bytes::Bytes;
     /// #
@@ -1040,7 +1038,7 @@ impl Builder {
     /// type will be `&'static [u8]`.
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::client::*;
     /// #
     /// # async fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -1093,7 +1091,7 @@ impl Default for Builder {
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::client;
 /// # use h2::client::*;
 /// #

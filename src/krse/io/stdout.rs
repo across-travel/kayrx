@@ -22,7 +22,7 @@ use std::task::Poll;
 
     /// Constructs a new handle to the standard output of the current process.
     ///
-    /// The returned handle allows writing to standard out from the within the Tokio
+    /// The returned handle allows writing to standard out from the within the kayrx
     /// runtime.
     pub fn stdout() -> Stdout {
         let std = io::stdout();

@@ -30,7 +30,7 @@ macro_rules! ready {
 /// A reference to an open file on the filesystem.
 ///
 /// This is a specialized version of [`std::fs::File`][std] for usage from the
-/// Tokio runtime.
+/// kayrx runtime.
 ///
 /// An instance of a `File` can be read and/or written depending on what options
 /// it was opened with. Files also implement Seek to alter the logical cursor
@@ -101,7 +101,7 @@ impl File {
     ///
     /// # Errors
     ///
-    /// This function will return an error if called from outside of the Tokio
+    /// This function will return an error if called from outside of the kayrx
     /// runtime or if path does not already exist. Other errors may also be
     /// returned according to OpenOptions::open.
     ///
@@ -138,7 +138,7 @@ impl File {
     ///
     /// # Errors
     ///
-    /// Results in an error if called from outside of the Tokio runtime or if
+    /// Results in an error if called from outside of the kayrx runtime or if
     /// the underlying [`create`] call results in an error.
     ///
     /// [`create`]: https://doc.rust-lang.org/std/fs/struct.File.html#method.create
@@ -168,7 +168,7 @@ impl File {
     /// # Examples
     ///
     /// ```no_run
-    /// // This line could block. It is not recommended to do this on the Tokio
+    /// // This line could block. It is not recommended to do this on the kayrx
     /// // runtime.
     /// let std_file = std::fs::File::open("foo.txt").unwrap();
     /// let file = kayrx::krse::fs::fs::File::from_std(std_file);

@@ -29,7 +29,7 @@ use std::task::{Context, Poll};
     /// # Examples
     ///
     /// ```rust
-    /// # use tokio::io::{self, AsyncWriteExt};
+    /// # use kayrx::krse::io::{self, AsyncWriteExt};
     /// # async fn dox() {
     /// let buffer = vec![1, 2, 3, 5, 8];
     /// let num_bytes = io::sink().write(&buffer).await.unwrap();

@@ -29,7 +29,7 @@ use std::task::{Context, Poll};
     /// A slightly sad example of not reading anything into a buffer:
     ///
     /// ```rust
-    /// # use tokio::io::{self, AsyncReadExt};
+    /// # use kayrx::krse::io::{self, AsyncReadExt};
     /// # async fn dox() {
     /// let mut buffer = String::new();
     /// io::empty().read_to_string(&mut buffer).await.unwrap();

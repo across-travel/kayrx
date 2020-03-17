@@ -24,7 +24,7 @@ use std::io;
 /// `ctrl_c` stream is created to listen for this signal, the time it arrives,
 /// it will be translated to a stream event, and the process will continue to
 /// execute.  **Even if this `Signal` instance is dropped, subsequent SIGINT
-/// deliveries will end up captured by Tokio, and the default platform behavior
+/// deliveries will end up captured by kayrx, and the default platform behavior
 /// will NOT be reset**.
 ///
 /// Thus, applications should take care to ensure the expected signal behavior

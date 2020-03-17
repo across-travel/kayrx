@@ -497,7 +497,7 @@ impl<'a> fmt::Display for FormatDisplay<'a> {
 
 //         let req = TestRequest::with_header(
 //             header::USER_AGENT,
-//             header::HeaderValue::from_static("ACTIX-WEB"),
+//             header::HeaderValue::from_static("kayrx-WEB"),
 //         )
 //         .to_srv_request();
 //         let _res = srv.call(req).await;
@@ -508,7 +508,7 @@ impl<'a> fmt::Display for FormatDisplay<'a> {
 //         let mut format = Format::new("%T %U");
 //         let req = TestRequest::with_header(
 //             header::USER_AGENT,
-//             header::HeaderValue::from_static("ACTIX-WEB"),
+//             header::HeaderValue::from_static("kayrx-WEB"),
 //         )
 //         .uri("/test/route/yeah")
 //         .to_srv_request();
@@ -540,7 +540,7 @@ impl<'a> fmt::Display for FormatDisplay<'a> {
 
 //         let req = TestRequest::with_header(
 //             header::USER_AGENT,
-//             header::HeaderValue::from_static("ACTIX-WEB"),
+//             header::HeaderValue::from_static("kayrx-WEB"),
 //         )
 //         .to_srv_request();
 
@@ -564,7 +564,7 @@ impl<'a> fmt::Display for FormatDisplay<'a> {
 //         let s = format!("{}", FormatDisplay(&render));
 //         assert!(s.contains("GET / HTTP/1.1"));
 //         assert!(s.contains("200 1024"));
-//         assert!(s.contains("ACTIX-WEB"));
+//         assert!(s.contains("kayrx-WEB"));
 //     }
 
 //     #[kayrx::test]

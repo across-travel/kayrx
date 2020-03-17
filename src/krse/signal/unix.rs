@@ -328,7 +328,7 @@ impl Driver {
 /// this signal, the next SIGINT that arrives will be translated to a stream
 /// event, and the process will continue to execute. **Even if this `Signal`
 /// instance is dropped, subsequent SIGINT deliveries will end up captured by
-/// Tokio, and the default platform behavior will NOT be reset**.
+/// kayrx, and the default platform behavior will NOT be reset**.
 ///
 /// Thus, applications should take care to ensure the expected signal behavior
 /// occurs as expected after listening for specific signals.

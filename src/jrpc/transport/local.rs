@@ -43,7 +43,7 @@
 //! let mut client = RawClient::new(raw_client);
 //! let mut server = RawServer::new(raw_server);
 //!
-//! async_std::task::spawn(async move {
+//! kayrx::fiber::spawn(async move {
 //!     loop {
 //!         match server.next_event().await {
 //!             RawServerEvent::Request(request) => {

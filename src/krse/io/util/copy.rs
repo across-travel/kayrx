@@ -52,7 +52,7 @@ macro_rules! ready {
     /// # Examples
     ///
     /// ```
-    /// use tokio::io;
+    /// use kayrx::krse::io;
     ///
     /// # async fn dox() -> std::io::Result<()> {
     /// let mut reader: &[u8] = b"hello";

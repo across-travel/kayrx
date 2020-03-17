@@ -6,7 +6,7 @@ use std::path::Path;
 /// Options and flags which can be used to configure how a file is opened.
 ///
 /// This is a specialized version of [`std::fs::OpenOptions`] for usage from
-/// the Tokio runtime.
+/// the kayrx runtime.
 ///
 /// `From<std::fs::OpenOptions>` is implemented for more advanced configuration
 /// than the methods provided here.
@@ -85,7 +85,7 @@ impl OpenOptions {
     /// # Errors
     ///
     /// `OpenOptionsFuture` results in an error if called from outside of the
-    /// Tokio runtime or if the underlying [`open`] call results in an error.
+    /// kayrx runtime or if the underlying [`open`] call results in an error.
     ///
     /// [`open`]: https://doc.rust-lang.org/std/fs/struct.OpenOptions.html#method.open
     pub async fn open(&self, path: impl AsRef<Path>) -> io::Result<File> {

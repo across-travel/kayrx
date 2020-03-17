@@ -29,7 +29,7 @@ use std::task::Poll;
     /// Constructs a new handle to the standard input of the current process.
     ///
     /// The returned handle allows reading from standard input from the within the
-    /// Tokio runtime.
+    /// kayrx runtime.
     pub fn stdin() -> Stdin {
         let std = io::stdin();
         Stdin {

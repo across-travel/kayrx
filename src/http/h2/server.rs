@@ -7,7 +7,7 @@
 //! begin the HTTP/2.0 handshake. See [here](../index.html#handshake) for more
 //! details.
 //!
-//! This could be as basic as using Tokio's [`TcpListener`] to accept
+//! This could be as basic as using kayrx's [`TcpListener`] to accept
 //! connections, but usually it means using either ALPN or HTTP/1.1 protocol
 //! upgrades.
 //!
@@ -54,8 +54,7 @@
 //!
 //! # Shutting down the server
 //!
-//! Graceful shutdown of the server is [not yet
-//! implemented](https://github.com/hyperium/h2/issues/69).
+//! Graceful shutdown of the server is not yet implemented
 //!
 //! # Example
 //!
@@ -66,9 +65,9 @@
 //! ```no_run
 //! use h2::server;
 //! use http::{Response, StatusCode};
-//! use tokio::net::TcpListener;
+//! use kayrx::krse::net::TcpListener;
 //!
-//! #[tokio::main]
+//! #[kayrx::main]
 //! pub async fn main() {
 //!     let mut listener = TcpListener::bind("127.0.0.1:5928").await.unwrap();
 //!
@@ -76,7 +75,7 @@
 //!     loop {
 //!         if let Ok((socket, _peer_addr)) = listener.accept().await {
 //!             // Spawn a new task to process each connection.
-//!             tokio::spawn(async {
+//!             kayrx::spawn(async {
 //!                 // Start the HTTP/2.0 connection handshake
 //!                 let mut h2 = server::handshake(socket).await.unwrap();
 //!                 // Accept all inbound HTTP/2.0 streams sent over the
@@ -113,7 +112,6 @@
 //! [`http::Request<RecvStream>`]: ../struct.RecvStream.html
 //! [`RecvStream`]: ../struct.RecvStream.html
 //! [`SendStream`]: ../struct.SendStream.html
-//! [`TcpListener`]: https://docs.rs/tokio-core/0.1/tokio_core/net/struct.TcpListener.html
 
 use crate::http::h2::codec::{Codec, RecvError, UserError};
 use crate::http::h2::frame::{self, Pseudo, PushPromiseHeaderError, Reason, Settings, StreamId};
@@ -172,7 +170,7 @@ pub struct Handshake<T, B: Buf = Bytes> {
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::server;
 /// # use h2::server::*;
 /// #
@@ -210,7 +208,7 @@ pub struct Connection<T, B: Buf> {
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::server::*;
 /// #
 /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -331,7 +329,7 @@ const PREFACE: [u8; 24] = *b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n";
 /// # Examples
 ///
 /// ```
-/// # use tokio::io::{AsyncRead, AsyncWrite};
+/// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
 /// # use h2::server;
 /// # use h2::server::*;
 /// #
@@ -555,7 +553,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -594,7 +592,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -628,7 +626,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -661,7 +659,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -700,7 +698,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -748,7 +746,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -794,7 +792,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -840,7 +838,7 @@ impl Builder {
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// # use std::time::Duration;
     /// #
@@ -883,7 +881,7 @@ impl Builder {
     /// Basic usage:
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)
@@ -903,7 +901,7 @@ impl Builder {
     /// type will be `&'static [u8]`.
     ///
     /// ```
-    /// # use tokio::io::{AsyncRead, AsyncWrite};
+    /// # use kayrx::krse::io::{AsyncRead, AsyncWrite};
     /// # use h2::server::*;
     /// #
     /// # fn doc<T: AsyncRead + AsyncWrite + Unpin>(my_io: T)

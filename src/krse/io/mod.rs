@@ -10,7 +10,7 @@
 //! [`AsyncWrite`] provide the most general interface for reading and writing
 //! input and output. Unlike the standard library's traits, however, they are
 //! _asynchronous_ &mdash; meaning that reading from or writing to a `kayrx::krse::io`
-//! type will _yield_ to the Tokio scheduler when IO is not ready, rather than
+//! type will _yield_ to the kayrx scheduler when IO is not ready, rather than
 //! blocking. This allows other tasks to run while waiting on IO.
 //!
 //! Another difference is that [`AsyncRead`] and [`AsyncWrite`] only contain
@@ -25,7 +25,7 @@
 //! extension traits. Library authors are expected to implement [`AsyncRead`]
 //! and [`AsyncWrite`] in order to provide types that behave like byte streams.
 //!
-//! Even with these differences, Tokio's [`AsyncRead`] and [`AsyncWrite`] traits
+//! Even with these differences, kayrx's [`AsyncRead`] and [`AsyncWrite`] traits
 //! can be used in almost exactly the same manner as the standard library's
 //! `Read` and `Write`. Most types in the standard library that implement `Read`
 //! and `Write` have asynchronous equivalents in `kayrx` that implement
@@ -47,7 +47,7 @@
 //! `std::io` comes with [support for _buffered_ readers and writers][stdbuf],
 //! and therefore, `kayrx::krse::io` does as well.
 //!
-//! Tokio provides an async version of the [`std::io::BufRead`] trait,
+//! kayrx provides an async version of the [`std::io::BufRead`] trait,
 //! [`AsyncBufRead`]; and async [`BufReader`] and [`BufWriter`] structs, which
 //! wrap readers and writers. These wrappers use a buffer, reducing the number
 //! of calls and providing nicer methods for accessing exactly what you want.
@@ -75,13 +75,13 @@
 //!
 //! # Standard input and output
 //!
-//! Tokio provides asynchronous APIs to standard [input], [output], and [error].
+//! kayrx provides asynchronous APIs to standard [input], [output], and [error].
 //! These APIs are very similar to the ones provided by `std`, but they also
 //! implement [`AsyncRead`] and [`AsyncWrite`].
 //!
 //! Note that the standard input / output APIs  **must** be used from the
-//! context of the Tokio runtime, as they require Tokio-specific features to
-//! function. Calling these functions outside of a Tokio runtime will panic.
+//! context of the kayrx runtime, as they require kayrx-specific features to
+//! function. Calling these functions outside of a kayrx runtime will panic.
 //!
 //! [input]: fn.stdin.html
 //! [output]: fn.stdout.html

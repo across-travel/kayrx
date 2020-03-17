@@ -8,7 +8,7 @@
 //! [`Unpark`][up] handle.
 //!
 //! The [`ParkThread`] struct implements [`Park`][p] using
-//! [`thread::park`][`std`] to put the thread to sleep. The Tokio reactor also
+//! [`thread::park`][`std`] to put the thread to sleep. The kayrx reactor also
 //! implements park, but uses [`mio::Poll`][mio] to block the thread instead.
 //!
 //! The [`Park`][p] trait is composable. A timer implementation might decorate a

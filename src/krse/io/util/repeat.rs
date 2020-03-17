@@ -29,7 +29,7 @@ use std::task::{Context, Poll};
     /// # Examples
     ///
     /// ```
-    /// # use tokio::io::{self, AsyncReadExt};
+    /// # use kayrx::krse::io::{self, AsyncReadExt};
     /// # async fn dox() {
     /// let mut buffer = [0; 3];
     /// io::repeat(0b101).read_exact(&mut buffer).await.unwrap();

@@ -91,7 +91,7 @@ pub(crate) fn set_default(handle: &Handle) -> DefaultGuard<'_> {
 
         assert!(
             current.is_none(),
-            "default Tokio reactor already set \
+            "default kayrx reactor already set \
              for execution context"
         );
 

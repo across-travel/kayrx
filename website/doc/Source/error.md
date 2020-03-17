@@ -19,7 +19,7 @@ impl<T: Responder, E: Into<Error>> Responder for Result<T, E>
 
 上面的代码中的`Error`是`kayrx::web`的错误定义，可以将实现`ResponseError`的任何错误自动转换.。
 
-Actix-web提供了一些常见的非`kayrx::web`错误的`ResponseError`实现。例如，如果处理程序以`io::Error`响应，则该错误将转换为`HttpInternalServerError`：
+kayrx-web提供了一些常见的非`kayrx::web`错误的`ResponseError`实现。例如，如果处理程序以`io::Error`响应，则该错误将转换为`HttpInternalServerError`：
 
 ```rust
 use std::io;
