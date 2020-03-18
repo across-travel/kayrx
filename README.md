@@ -14,7 +14,7 @@
 
   <h3>
     <a href="https://kayrx.pro">Website</a>
-    <span> | </span>
+    <span> • </span>
     <a href="https://github.com/kayrx/awesome/tree/master/examples">Examples</a>
   </h3>
 </div>
