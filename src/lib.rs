@@ -20,6 +20,7 @@ pub mod fiber;
 pub mod framed;
 pub mod http;
 pub mod jrpc;
+pub mod kdsl;
 pub mod krse;
 pub mod router;
 pub mod secure;
@@ -28,6 +29,7 @@ pub mod service;
 pub mod timer;
 pub mod web;
 pub mod websocket;
+pub mod udba;
 pub mod util;
 
 pub use fiber::{spawn, take, run};
