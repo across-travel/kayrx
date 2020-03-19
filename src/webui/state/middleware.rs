@@ -39,6 +39,6 @@
 /// store.add_middleware(shall_not_increment_middleware);
 /// ```
 
-use crate::state::Store;
+use crate::webui::state::Store;
 
 pub type Middleware<State, Action> = fn(&mut Store<State, Action>, Action) -> Option<Action>;
