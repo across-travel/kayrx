@@ -5,8 +5,7 @@ mod apply_patches;
 pub use apply_patches::patch;
 
 use std::collections::HashMap;
-
-use crate::webui::dom::node::{VText, VirtualNode};
+use crate::webui::vdom::node::{VText, VNode};
 
 /// A Patch encodes an operation that modifies a real DOM element.
 ///
@@ -44,12 +43,12 @@ use crate::webui::dom::node::{VText, VirtualNode};
 #[derive(Debug, PartialEq)]
 pub enum Patch<'a> {
     /// Append a vector of child nodes to a parent node id.
-    AppendChildren(NodeIdx, Vec<&'a VirtualNode>),
+    AppendChildren(NodeIdx, Vec<&'a VNode>),
     /// For a `node_i32`, remove all children besides the first `len`
     TruncateChildren(NodeIdx, usize),
     /// Replace a node with another node. This typically happens when a node's tag changes.
     /// ex: <div> becomes <span>
-    Replace(NodeIdx, &'a VirtualNode),
+    Replace(NodeIdx, &'a VNode),
     /// Add attributes that the new node has that the old node does not
     AddAttributes(NodeIdx, HashMap<&'a str, &'a str>),
     /// Remove attributes that the old node had that the new node doesn't

@@ -1,9 +1,5 @@
-pub mod web_sys {
-    pub use web_sys::*;
-}
+//! kayxr webui for building web user interface.
 
-pub mod dom;
+pub mod vdom;
 
-pub use wasm_bindgen::prelude::Closure;
-pub use wasm_bindgen::JsCast;
 pub use web_macro::html;

@@ -5,8 +5,8 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
 use web_sys::{Element, Node, Text};
 
-use crate::webui::dom::dom_updater::ActiveClosures;
-use crate::webui::dom::patch::Patch;
+use crate::webui::vdom::dom_updater::ActiveClosures;
+use crate::webui::vdom::patch::Patch;
 
 /// Apply all of the patches to our old root node in order to create the new root node
 /// that we desire.

@@ -2,18 +2,18 @@ use std::cmp::min;
 use std::collections::HashMap;
 use std::mem;
 
-use crate::webui::dom::patch::Patch;
-use crate::webui::dom::node::VirtualNode;
+use crate::webui::vdom::patch::Patch;
+use crate::webui::vdom::node::VNode;
 
-/// Given two VirtualNode's generate Patch's that would turn the old virtual node's
-/// real DOM node equivalent into the new VirtualNode's real DOM node equivalent.
-pub fn diff<'a>(old: &'a VirtualNode, new: &'a VirtualNode) -> Vec<Patch<'a>> {
+/// Given two VNode's generate Patch's that would turn the old virtual node's
+/// real DOM node equivalent into the new VNode's real DOM node equivalent.
+pub fn diff<'a>(old: &'a VNode, new: &'a VNode) -> Vec<Patch<'a>> {
     diff_recursive(&old, &new, &mut 0)
 }
 
 fn diff_recursive<'a, 'b>(
-    old: &'a VirtualNode,
-    new: &'a VirtualNode,
+    old: &'a VNode,
+    new: &'a VNode,
     cur_node_idx: &'b mut usize,
 ) -> Vec<Patch<'a>> {
     let mut patches = vec![];
@@ -24,7 +24,7 @@ fn diff_recursive<'a, 'b>(
         replace = true;
     }
 
-    if let (VirtualNode::Element(old_element), VirtualNode::Element(new_element)) = (old, new) {
+    if let (VNode::Element(old_element), VNode::Element(new_element)) = (old, new) {
         // Replace if there are different element tags
         if old_element.tag != new_element.tag {
             replace = true;
@@ -44,7 +44,7 @@ fn diff_recursive<'a, 'b>(
     // Handle replacing of a node
     if replace {
         patches.push(Patch::Replace(*cur_node_idx, &new));
-        if let VirtualNode::Element(old_element_node) = old {
+        if let VNode::Element(old_element_node) = old {
             for child in old_element_node.children.iter() {
                 increment_node_idx_for_children(child, cur_node_idx);
             }
@@ -57,14 +57,14 @@ fn diff_recursive<'a, 'b>(
     // discriminants.
     match (old, new) {
         // We're comparing two text nodes
-        (VirtualNode::Text(old_text), VirtualNode::Text(new_text)) => {
+        (VNode::Text(old_text), VNode::Text(new_text)) => {
             if old_text != new_text {
                 patches.push(Patch::ChangeText(*cur_node_idx, &new_text));
             }
         }
 
         // We're comparing two element nodes
-        (VirtualNode::Element(old_element), VirtualNode::Element(new_element)) => {
+        (VNode::Element(old_element), VNode::Element(new_element)) => {
             let mut add_attributes: HashMap<&str, &str> = HashMap::new();
             let mut remove_attributes: Vec<&str> = vec![];
 
@@ -111,7 +111,7 @@ fn diff_recursive<'a, 'b>(
             let new_child_count = new_element.children.len();
 
             if new_child_count > old_child_count {
-                let append_patch: Vec<&'a VirtualNode> =
+                let append_patch: Vec<&'a VNode> =
                     new_element.children[old_child_count..].iter().collect();
                 patches.push(Patch::AppendChildren(*cur_node_idx, append_patch))
             }
@@ -133,8 +133,8 @@ fn diff_recursive<'a, 'b>(
                 }
             }
         }
-        (VirtualNode::Text(_), VirtualNode::Element(_))
-        | (VirtualNode::Element(_), VirtualNode::Text(_)) => {
+        (VNode::Text(_), VNode::Element(_))
+        | (VNode::Element(_), VNode::Text(_)) => {
             unreachable!("Unequal variant discriminants should already have been handled");
         }
     };
@@ -143,9 +143,9 @@ fn diff_recursive<'a, 'b>(
     patches
 }
 
-fn increment_node_idx_for_children<'a, 'b>(old: &'a VirtualNode, cur_node_idx: &'b mut usize) {
+fn increment_node_idx_for_children<'a, 'b>(old: &'a VNode, cur_node_idx: &'b mut usize) {
     *cur_node_idx += 1;
-    if let VirtualNode::Element(element_node) = old {
+    if let VNode::Element(element_node) = old {
         for child in element_node.children.iter() {
             increment_node_idx_for_children(&child, cur_node_idx);
         }
@@ -160,7 +160,7 @@ use self::diff_test_case::*;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::webui::dom::{VText, VirtualNode};
+    use crate::webui::vdom::{VText, VNode};
     use crate::webui::html;
     use std::collections::HashMap;
 

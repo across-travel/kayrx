@@ -1,9 +1,9 @@
 //! A collection of functions that are useful for unit testing your html! views.
 
-use crate::webui::dom::node::VirtualNode;
+use crate::webui::vdom::node::VNode;
 
-impl VirtualNode {
-    /// Get a vector of all of the VirtualNode children / grandchildren / etc of
+impl VNode {
+    /// Get a vector of all of the VNode children / grandchildren / etc of
     /// your node that have a label that matches your filter.
     ///
     /// # Examples
@@ -24,15 +24,15 @@ impl VirtualNode {
     /// assert_eq!(hello_nodes.len(), 2);
     /// }
     /// ```
-    pub fn filter_label<'a, F>(&'a self, filter: F) -> Vec<&'a VirtualNode>
+    pub fn filter_label<'a, F>(&'a self, filter: F) -> Vec<&'a VNode>
     where
         F: Fn(&str) -> bool,
     {
         // Get descendants recursively
-        let mut descendants: Vec<&'a VirtualNode> = vec![];
+        let mut descendants: Vec<&'a VNode> = vec![];
         match self {
-            VirtualNode::Text(_) => { /* nothing to do */ }
-            VirtualNode::Element(element_node) => {
+            VNode::Text(_) => { /* nothing to do */ }
+            VNode::Element(element_node) => {
                 for child in element_node.children.iter() {
                     get_descendants(&mut descendants, child);
                 }
@@ -42,9 +42,9 @@ impl VirtualNode {
         // Filter descendants
         descendants
             .into_iter()
-            .filter(|vn: &&'a VirtualNode| match vn {
-                VirtualNode::Text(_) => false,
-                VirtualNode::Element(element_node) => match element_node.attrs.get("label") {
+            .filter(|vn: &&'a VNode| match vn {
+                VNode::Text(_) => false,
+                VNode::Element(element_node) => match element_node.attrs.get("label") {
                     Some(label) => filter(label),
                     None => false,
                 },
@@ -52,7 +52,7 @@ impl VirtualNode {
             .collect()
     }
 
-    /// Get a vector of all of the descendants of this VirtualNode
+    /// Get a vector of all of the descendants of this VNode
     /// that have the provided `filter`.
     ///
     /// # Examples
@@ -71,16 +71,16 @@ impl VirtualNode {
     /// assert_eq!(hello_nodes.len(), 2);
     /// }
     /// ```
-    pub fn filter_label_equals<'a>(&'a self, label: &str) -> Vec<&'a VirtualNode> {
+    pub fn filter_label_equals<'a>(&'a self, label: &str) -> Vec<&'a VNode> {
         self.filter_label(|node_label| node_label == label)
     }
 }
 
-fn get_descendants<'a>(descendants: &mut Vec<&'a VirtualNode>, node: &'a VirtualNode) {
+fn get_descendants<'a>(descendants: &mut Vec<&'a VNode>, node: &'a VNode) {
     descendants.push(node);
     match node {
-        VirtualNode::Text(_) => { /* nothing to do */ }
-        VirtualNode::Element(element_node) => {
+        VNode::Text(_) => { /* nothing to do */ }
+        VNode::Element(element_node) => {
             for child in element_node.children.iter() {
                 get_descendants(descendants, child);
             }
@@ -91,7 +91,7 @@ fn get_descendants<'a>(descendants: &mut Vec<&'a VirtualNode>, node: &'a Virtual
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::webui::dom::node::VElement;
+    use crate::webui::vdom::node::VElement;
     use std::collections::HashMap;
 
     // TODO: Move this test somewhere that we can use the `html!` macro
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn label_equals() {
-        let span = VirtualNode::element("span");
+        let span = VNode::element("span");
 
         let mut attrs = HashMap::new();
         attrs.insert("label".to_string(), "hello".to_string());
@@ -133,7 +133,7 @@ mod tests {
         html.children.push(span);
         html.children.push(em.into());
 
-        let html_node = VirtualNode::Element(html);
+        let html_node = VNode::Element(html);
         let hello_nodes = html_node.filter_label_equals("hello");
 
         assert_eq!(hello_nodes.len(), 1);
