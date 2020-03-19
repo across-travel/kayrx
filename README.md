@@ -46,6 +46,7 @@
 * SSL support with  Rustls
 * Middlewares (Logger, CORS, etc)
 * Asynchronous HTTP client
+* Webui for building web user interfaces
 
 [**And More**](https://github.com/kayrx/keclc)
 
