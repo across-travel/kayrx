@@ -1,12 +1,12 @@
 [package]
 name = "kayrx"
-version = "0.9.8"
+version = "0.10.0"
 authors = ["Nikolay Kim <fafhrd91@gmail.com>",  "Tokio Contributors <team@tokio.rs>", "krircc <krircc@qq.com>"]
 documentation = "https://docs.rs/kayrx/"
 repository = "https://github.com/kayrx/kayrx"
 description = "The Kayrx Framework"
 categories = ["asynchronous", "network-programming", "web-programming"]
-keywords = ["async", "non-blocking", "futures", "http", "web"]
+keywords = ["async", "non-blocking", "futures", "http", "web", "wasm", "webassembly"]
 license = "MIT"
 readme = "README.md"
 edition = "2018"
@@ -15,11 +15,17 @@ edition = "2018"
 members = [
   ".",
   "kayrx-macro",
+  "jrpc-macro",
+  "web-macro",
   "kayrx-test",
 ]
 
 [package.metadata.docs.rs]
 all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+features = ["full"]
 
 [features]
 default = []
@@ -81,14 +87,38 @@ webpki-roots = { version = "0.17" }
 coo-kie = { version = "0.13.3", package = "cookie", optional = true }
 
 #  jrpc
+jrpc-macro = "1.0"
 bs58 = "0.3.0"
 futures = "0.3.4"
 futures-timer = "3.0.2"
 globset = "0.4"
 hashbrown = "0.7.0"
-jrpc-macro = "1.0"
 smallvec = { version = "1.2.0", default-features = false }
 thiserror = "1.0.9"
+
+# webui
+web-macro = {path="./web-macro"}
+js-sys = "0.3"
+wasm-bindgen = "0.2.33"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+    "Comment",
+    "Document",
+    "Element",
+    "HtmlElement",
+    "EventTarget",
+    "HtmlCollection",
+    "Node",
+    "NodeList",
+    "Text",
+    "CharacterData",
+    "Window",
+    "Event",
+    "MouseEvent",
+    "InputEvent",
+]
 
 [dev-dependencies]
 bitflags = "1.2.1"
@@ -97,7 +127,19 @@ futures = "0.3"
 serde = { version = "1.0", features=["derive"] }
 serde_json = "1.0"
 derive_more = "0.99"
+wasm-bindgen-test = "0.2.33"
+console_error_panic_hook = "0.1.5"
 
+[dev-dependencies.web-sys]
+version = "0.3"
+features = [
+    "DomTokenList",
+    "HtmlInputElement",
+    "Event",
+    "MouseEvent",
+    "InputEvent",
+    "console",
+]
 
 [profile.release]
 lto = true

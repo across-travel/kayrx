@@ -14,7 +14,7 @@
 
   <h3>
     <a href="https://kayrx.pro">Website</a>
-    <span> | </span>
+    <span> • </span>
     <a href="https://github.com/kayrx/awesome/tree/master/examples">Examples</a>
   </h3>
 </div>
@@ -46,6 +46,7 @@
 * SSL support with  Rustls
 * Middlewares (Logger, CORS, etc)
 * Asynchronous HTTP client
+* Webui for building web user interfaces
 
 [**And More**](https://github.com/kayrx/keclc)
 
